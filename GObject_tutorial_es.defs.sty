@@ -1,0 +1,165 @@
+% GObject_tutorial_es.defs.sty
+%
+% Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
+% 1) Código LuaLatex:
+%    Licencia GPL-2.
+% 2) Producto en pdf, postscript, etc.:
+%    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
+%
+
+% ----------------------------------------------------------------------------
+% COLORES
+% ----------------------------------------------------------------------------
+\pgfplotsset{
+  colormap={greenyellow}{rgb255(0cm)=(0,128,0); rgb255(1cm)=(255,255,0)}
+}
+
+\pgfplotsset{
+  colormap={janrGRAYWHITE}{rgb255(0cm)=(180,180,180); rgb255(1cm)=(255,255,255)}
+}
+
+\pgfplotsset{
+  colormap = {GY}{%
+    color=(green!40!black)
+    color=(green!70!black)
+    color=(green!20!yellow)
+  },
+  colormap = {G}{%
+    color=(green!70!black)
+    color=(green!70!black)
+  },
+}
+
+% Color rojo en texto y en fórmula con el objetivo de destacar un error
+\newcommand{\errcolor}{red!80!black}
+% Color verde en texto y en fórmula con el objetivo de destacar un texto
+\newcommand{\infocolor}{green!55!black}
+% Color amarillo de los fondos de imágenes
+\newcommand{\bgcolor}{yellow!20}
+% Borde gris de los marcos de fondos de imágenes
+\newcommand{\bgbordercolor}{black!10}
+% Marcas de agua
+\newcommand{\marcaagua}{black!9}
+
+% ----------------------------------------------------------------------------
+% GROSOR DE LÍNEA DE BORDE DE FONDO DE IMAGEN
+\newcommand{\bgborderwidth}{1pt}
+
+% ----------------------------------------------------------------------------
+% CANCELACIÓN TÉRMINOS EN FÓRMULAS
+\newcommand{\cancelout}[1]{%
+  \tikz[baseline=(tocancel.base)]{%
+    \node[inner sep=1pt,outer sep=0pt] (tocancel) {$#1$}; \draw[red]
+    (tocancel.south west) -- (tocancel.north east); } }
+
+% ----------------------------------------------------------------------------
+
+% ----------------------------------------------------------------------------
+% MARCAS DE AGUA
+\SetWatermarkText{\textsf{BORRADOR}}
+\SetWatermarkScale{1}
+\SetWatermarkColor{\marcaagua}
+\SetWatermarkAngle{55}
+
+% ----------------------------------------------------------------------------
+
+%% ---------------------------------------------------------------------------
+% Longitudes
+% Para desplazamiento de subíndice en elementos de matrices en relatividad
+\newcommand{\ksub}{\kern4pt}
+
+% ----------------------------------------------------------------------------
+% Paquete 'tensind'
+\tensordelimiter{€}
+
+%% ----------- MACROS --------------------------------------------------------
+% Vectores
+\newcommand*{\vvv}[1]{%
+  % Actívese sólo una de las dos opciones
+  %\ensuremath{\vec{#1}}
+  %\ensuremath{\kern1.2pt\mathbf{#1}}
+  \ensuremath{\kern1.2pt\symbf{#1}}
+}
+
+% Matrices
+\newcommand*{\mmm}[1]{%
+  % Actívese sólo una de las dos opciones
+  %\ensuremath{\operatorname{#1}}
+  %\ensuremath{\kern1.2pt\mathbf{#1}}
+  \ensuremath{\kern1.2pt\symbf{#1}}
+}
+
+% Matrices representadas por letras griegas
+\newcommand*{\mmmg}[1]{%
+  % Actívese sólo una de las dos opciones
+  %\ensuremath{#1}
+  %\ensuremath{{\kern1.2pt\boldsymbol{#1}}}
+  \ensuremath{{\kern1.2pt\symbf{#1}}}
+}
+
+% Producto vectorial
+\newcommand{\prodvec}{%
+  % Actívese sólo una de las dos opciones
+  %\ensuremath{\wedge}
+  \ensuremath{\times}
+}
+
+\newcommand{\transp}{%
+  \ensuremath{{\top}}
+}
+
+\newcommand{\trasp}{%
+  \ensuremath{{\top}}
+}
+
+% Tensores
+\newcommand*{\ttt}[1]{%
+  % Actívese sólo una de las dos opciones
+  %\ensuremath{#1}
+  %\ensuremath{{\kern1.2pt\boldsymbol{#1}}}
+  \ensuremath{{\kern1.2pt\overbar{\symbf{#1}}}}
+}
+
+\newcommand{\xhat}[1]{%
+  % Actívese sólo una de las dos opciones
+  %\ensuremath{\kern5.2pt\pmb{{\kern-0.5em\hat{\mathrm{#1}}}}}
+  %\ensuremath{\kern1.2pt\pmb{\hat{#1}}}
+  \ensuremath{\kern1.2pt\symbf{\hat{#1}}}
+}
+
+% amsmath
+\DeclareMathOperator{\Tr}{Tr}
+
+%\xhat{\pmb{\mathrm{n}}}
+%% --------------------------------------------------------------------
+
+%% --------------------------------------------------------------------
+% Permite símbolos matemáticos en \chapter, \section, \subsection, etc.
+%\newcommand*\mathinhead[2]{\texorpdfstring{$\boldsymbol{#1}$}{#2}}
+\newcommand*\mathinhead[2]{\texorpdfstring{$\symbf{#1}$}{#2}}
+%% --------------------------------------------------------------------
+
+% PORTADA
+\newcommand*{\titleTH}{\begingroup% T&H Typography
+\raggedleft
+\vspace*{\baselineskip}
+{\bfseries Tutorial básico de}\\[\baselineskip]
+{\textcolor{red}{\Huge GObject}}\\[\baselineskip]
+%{\small Las matrices de Pauli y el spin. Entropía y cuántica}\par
+\vspace{5ex}
+\par
+% \vspace{2ex}
+{\Large José A. Navarro Ramón}\\[0.167\textheight]
+\today\par
+\vspace{2ex}
+{\Large \includegraphics[width=2.0cm]{./img/by-sa.eps}}\par
+\vspace*{3\baselineskip}
+\endgroup}
+
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-master: "GObject_tutorial_es.tex"
+%%% End:

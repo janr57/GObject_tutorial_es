@@ -1,0 +1,90 @@
+% introduccion.tex
+%
+% Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
+% 1) Código LuaLatex:
+%    Licencia GPL-2.
+% 2) Producto en pdf, postscript, etc.:
+%    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
+
+\section{Introducción}
+
+\subsection{Motivación} \label{subsec:motivacion}
+Desde hace mucho tiempo he tenido interés en programar aplicaciones con la API de GTK.
+Según la Wikipedia, GTK es una biblioteca de componentes gráficos multiplataforma para desarrollar
+interfaces gráficas de usuario, que está licenciada bajo los términos de la GNU LGPL, por lo que
+permite la creación de software libre e incluso privativo.
+Por una parte, tenía otras tareas que no me dejaban centrarme en este \textit{framework},
+por otra, cuando intentaba acercarme a los textos para principiantes que encontraba, me parecía un
+galimatías que no llegaba a entender, si acaso un poco, de manera que sí podía programar algo, pero
+copiando lo que encontraba en los textos y no terminaba de avanzar.
+
+Gran parte del problema tenía que ver con el sistema de objetos {\sffamily GObject} en el que se basa GTK.
+Ahora dispongo de más tiempo para aprender a programar con este sistema. Por tanto, escribo este
+resumen para consolidar  lo que voy aprendiendo. Además, es posible que sirva a algunas otras personas.
+
+Debo reconocer la ayuda que he encontrado en los textos y tutoriales que me han ayudado mucho y
+a los que hago referencia al final del texto. Hay uno en particular [CTLP] del que he tomado casi todo lo
+que incluyo. No obstante, aquí y allá he añadido o eliminado algo, para adaptarme a mi manera de entender
+la materia.
+\subsection{Objetivos} \label{subsec:objetivos}
+En orden:
+\begin{enumerate}
+\item Aprender usar {\sffamily GObject}.
+\item Desarrollar aplicaciones con GTK.
+  \item Escribir en castellano un tutorial de GObject mezclando ideas de otros tutoriales y de documentación.
+\item Implementar GTK en Common Lisp.
+\end{enumerate}
+
+\subsection{Introducción a {\sffamily GObject}} \label{subsec:introduccion_gobject}
+{\sffamily GObject} es el sistema de objetos en el que descansa GTK. Además es el objeto, a partir del que se
+construye el resto que forman los elementos de GTK. Por ejemplo, el objeto {\sffamily GtkApplicationWindow},
+que representa la ventana principal de una aplicación GTK, deriva en última instancia de {\sffamily GObject},
+como se puede apreciar en la figura~\ref{fig:jerarquia-gtkappwindow}.
+\begin{figure}[ht]
+  \centering
+  \def\scl{1}
+  \begin{tikzpicture}[%
+    scale=\scl,
+    every node/.style={font=\large\sffamily, outer xsep = -2pt},
+     background/.style={
+      line width=\bgborderwidth,
+      draw=\bgbordercolor,
+      fill=\bgcolor,
+    },
+   ]
+   % COORDENADAS
+   % - 
+   % DIBUJO
+   % Ejemplo de jerarquía de objetos de GObject 
+   \node (gobject) {GObject};
+   \node [below right = 4ex and 4.5em of gobject.west, anchor=west] (ginitiallyunowned) {GInitiallyUnowned};
+   \node [below right = 4ex and 4.5em of ginitiallyunowned.west, anchor = west] (gtkwidget)  {GtkWidget};
+   \node [below right = 4ex and 4.5em of gtkwidget.west, anchor = west] (gtkwindow) {GtkWindow};
+   \node [below right = 4ex and 4.5em of gtkwindow.west, anchor=west] (gtkappwindow) {GtkApplicationWindow};
+   \draw [shorten <= 0.5ex] (gobject.base west) + (1.7em,0) |- (ginitiallyunowned.west);
+   \draw [shorten <= 0.5ex] (ginitiallyunowned.base west) + (1.7em,0) |- (gtkwidget.west);
+   \draw [shorten <= 0.5ex] (gtkwidget.base west) + (1.7em,0) |- (gtkwindow.west);
+   \draw [shorten <= 0.5ex] (gtkwindow.base west) + (1.7em,0) |- (gtkappwindow.west);
+   % Fondo amarillo
+   \coordinate (limsupizda) at ($(gobject.north west)+(-6pt,6pt)$);
+   \coordinate (liminfdcha) at ($(gtkappwindow.south east)+(6pt,-6pt)$);
+   \begin{scope}[on background layer]
+     \node [background, fit= (liminfdcha) (limsupizda)] {};
+   \end{scope}
+\end{tikzpicture}
+\caption{Jerarquía del objeto {\sffamily GtkAplicationWindow} de GTK.}
+\label{fig:jerarquia-gtkappwindow}
+\end{figure}
+
+{\sffamily GObject} también se puede utilizar para desarrollar una jerarquía de objetos independiente de los
+elementos de GTK y que sea completamente independiente de ellos.
+
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-master: "../GObject_tutorial_es.tex"
+%%% End:
+
+% LaTeX-command: "lualatex --shell-escape"

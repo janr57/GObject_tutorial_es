@@ -1,0 +1,37 @@
+## Core tex auxiliary files:
+*.aux
+*.log
+*.toc
+*.pdf
+*~
+*-bak
+
+## Documentos
+*.pdf
+
+# Listados generados
+*.listing
+
+# Subdirectorios
+## 'auto' folder when using emacs and auctex
+./auto/*
+*.el
+bak
+
+./portada/*.aux
+./portada/*~
+
+./tablacontenidos/*.aux
+./tablacontenidos/*~
+./tablacontenidos/auto/*
+
+./texto/*.aux
+./texto/*~
+./texto/auto/*
+
+./apendices/*.aux
+./apendices/*~
+./apendices/auto/*
+
+./img/*.pdf
+

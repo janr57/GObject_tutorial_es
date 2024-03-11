@@ -1,0 +1,138 @@
+% GObject_tutorial_es.pkg.sty
+%
+% Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
+% 1) Código LuaLatex:
+%    Licencia GPL-2.
+% 2) Producto en pdf, postscript, etc.:
+%    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
+%    
+% ------------------------------------------------------------------------------
+% ----------- PAQUETES Y ALGO DE CONFIGURACIÓN ---------------------------------
+% ------------------------------------------------------------------------------
+
+% IMPORTANT: 'geometry' doesn't detect 'luatex' by default
+% and doesn't inform to the pdf reader about document size.
+\RequirePackage{luatex85}
+% ------------------------------------------------------------------------------
+% Basic packages
+\RequirePackage{polyglossia}
+\setmainlanguage{spanish}
+\RequirePackage{microtype}
+
+%\RequirePackage{titling}
+
+%\RequirePackage{upgreek}
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+%\RequirePackage{relsize}
+% \RequirePackage{exscale}
+%\RequirePackage{bigints}
+
+\RequirePackage{lualatex-math}
+
+\RequirePackage{fontspec}
+\RequirePackage[math-style=TeX]{unicode-math}
+\defaultfontfeatures{Ligatures=TeX}
+\RequirePackage{lualatex-math}
+% --------------------------------------------------------
+% Units
+\RequirePackage{siunitx}
+\sisetup{per-mode=reciprocal}
+\sisetup{exponent-product=\cdot}
+\sisetup{output-decimal-marker = {,}}
+\sisetup{retain-explicit-plus}
+\DeclareSIUnit\cv{CV}
+
+% --------------------------------------------------------
+% Headers and footers
+% Don't use \pagestyle{fancy} until document is paginated.
+\RequirePackage{fancyhdr}
+% --------------------------------------------------------
+% OTROS
+\RequirePackage{datetime}
+\RequirePackage{cancel}
+\RequirePackage{tabularx}
+\RequirePackage{caption}
+\captionsetup{font=small}
+\RequirePackage{nameref}
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{multicol}
+\RequirePackage{colortbl}
+\RequirePackage{nicematrix}
+
+\RequirePackage{braket}
+\RequirePackage{tensind}
+% ------------------------------------------------------------------------------
+% Graphic packages
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+% TIKZ
+\RequirePackage{tikz}
+% Arrows
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{bending}
+% Background layer
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{fit}
+% Angles
+\usetikzlibrary{angles}
+\usetikzlibrary{quotes}
+% Intersections
+\usetikzlibrary{intersections}
+% Positioning
+\usetikzlibrary{positioning}
+% Decorations
+\usetikzlibrary{decorations}
+%\usetikzlibrary{decorations.pathmorphing}
+%\usetikzlibrary{decorations.pathreplacing}
+%\usetikzlibrary{decorations.text}
+%
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
+%\usetikzlibrary{shapes.geometric}
+%\usetikzlibrary{shapes.misc}
+\usetikzlibrary{shadows}
+\usetikzlibrary{patterns}
+\usetikzlibrary{intersections}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{matrix}
+\usetikzlibrary{fit}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{spy}
+% Boxes
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins}
+\tcbuselibrary{breakable}
+\tcbuselibrary{raster}
+%\tcbuselibrary{listings}
+\tcbuselibrary{listingsutf8}
+%\tcbset{listing engine=listings}
+%\tcbuselibrary{minted}
+% Plots
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=newest}
+% 3D
+\RequirePackage{tikz-3dplot}
+
+% ------------------------------------------------------------------------------
+% Por defecto no imprimir marca de agua definida
+\RequirePackage[nostamp]{draftwatermark}
+% ------------------------------------------------------------------------------
+% Links and bookmarks
+\RequirePackage[%
+colorlinks,linkcolor=black!70,urlcolor=gray,runcolor=gray,plainpages=false,unicode
+]{hyperref}
+\RequirePackage{bookmark}
+% ------------------------------------------------------------------------------
+
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-master: "GObject_tutorial_es.tex"
+%%% End:
+
+
