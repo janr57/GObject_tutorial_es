@@ -29,9 +29,10 @@ la materia.
 \subsection{Objetivos} \label{subsec:objetivos}
 En orden:
 \begin{enumerate}
-\item Aprender usar {\sffamily GObject}.
-\item Desarrollar aplicaciones con GTK.
-  \item Escribir en castellano un tutorial de GObject mezclando ideas de otros tutoriales y de documentación.
+  \tightlist
+\item Utilizar {\sffamily GObject} en los programas en C.
+\item Desarrollar aplicaciones con GTK en C.
+\item Escribir en castellano un tutorial de GObject mezclando ideas de otros tutoriales y de documentación.
 \item Implementar GTK en Common Lisp.
 \end{enumerate}
 
@@ -45,7 +46,7 @@ como se puede apreciar en la figura~\ref{fig:jerarquia-gtkappwindow}.
   \def\scl{1}
   \begin{tikzpicture}[%
     scale=\scl,
-    every node/.style={font=\large\sffamily, outer xsep = -2pt},
+    every node/.style={font=\sffamily, outer xsep = -2pt},
      background/.style={
       line width=\bgborderwidth,
       draw=\bgbordercolor,
@@ -78,6 +79,32 @@ como se puede apreciar en la figura~\ref{fig:jerarquia-gtkappwindow}.
 
 {\sffamily GObject} también se puede utilizar para desarrollar una jerarquía de objetos independiente de los
 elementos de GTK y que sea completamente independiente de ellos.
+
+\subsection{Creación de instancias de {\sffamily GObject}} \label{subsec:creacion_instancias_gobject}
+Para crear una instancia de {\sffamily GObject} se utiliza la función
+\passthrough{\lstinline!g\_object\_new!}.
+
+\begin{lstlisting}[language=C, numbers=left]
+  #include <glib-object.h>
+
+  int
+  main (int argc, char **argv) {
+    GObject *instancia1, *instancia2;
+    GObjectClass *clase1, *clase2;
+
+    instancia1 = g_object_new (G_TYPE_OBJECT, NULL);
+    instancia2 = g_object_new (G_TYPE_OBJECT, NULL);
+    g_print ("Dirección de 'instancia1': %p\n", instancia1);
+    g_print ("Dirección de 'instancia2': %p\n", instancia2);
+
+    clase1 = G_OBJECT_GET_CLASS (instancia1);
+    clase2 = G_OBJECT_GET_CLASS (instancia2);
+    g_print ("Dirección de la clase de 'instancia1': %p\n", clase1);
+    g_print ("Dirección de la clase de 'instancia2': %p\n", clase2);
+
+    return 0;
+  }
+\end{lstlisting}
 
 
 %%% Local Variables:

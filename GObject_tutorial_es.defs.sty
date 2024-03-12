@@ -139,6 +139,17 @@
 \newcommand*\mathinhead[2]{\texorpdfstring{$\symbf{#1}$}{#2}}
 %% --------------------------------------------------------------------
 
+% TIGHT ENUMERATE
+%\newenvironment{tight_enumerate}{
+%\begin{enumerate}
+%  \setlength{\itemsep}{0pt}
+%  \setlength{\parskip}{0pt}
+%}{\end{enumerate}}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+%% --------------------------------------------------------------------
 % PORTADA
 \newcommand*{\titleTH}{\begingroup% T&H Typography
 \raggedleft
@@ -163,3 +174,4 @@
 %%% TeX-engine: luatex
 %%% TeX-master: "GObject_tutorial_es.tex"
 %%% End:
+
