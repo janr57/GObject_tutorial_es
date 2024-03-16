@@ -166,6 +166,13 @@ El listado es:
   }
 \end{lstlisting}
 
+\subsubsection{Ejemplo de salida del programa 'ejemplo1'}
+\textsf{Dirección de 'instancia1': 0x5605fdedb800}\par
+\textsf{Dirección de 'instancia2': 0x5605fdedb820}\par
+\textsf{Dirección de la clase de 'instancia1':  0x5605fdedb4f0}\par
+\textsf{Dirección de la clase de 'instancia2':  0x5605fdedb4f0}\par
+
+
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Líneas 6 y 7\par
@@ -193,8 +200,63 @@ El listado es:
   Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa. Nos podríamos
   preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
   esta duda se aclarará en la siguiente sección.
-  
 \end{itemize}
+
+
+
+\begin{figure}[ht]
+  \centering
+  \def\scl{1}
+  \begin{tikzpicture}[%
+    scale=\scl,
+    every node/.style={draw, font=\sffamily},
+    clase/.style={minimum size=20ex, inner sep=1em, fill=green!65},
+    instancia/.style={minimum size=15ex, inner sep=1em, fill=yellow!65},
+    flecha/.style={line width=1.6pt, -Stealth[round]},
+    background/.style={
+      line width=\bgborderwidth,
+      draw=\bgbordercolor,
+      fill=\bgcolor,
+    },
+    ]
+   % COORDENADAS
+   % - 
+   % DIBUJO
+   % Clase GObject
+    \node[clase, text centered]
+    (gobjectclass) {\Large \begin{tabular}{c} Clase GObject \\ (0x5605fdedb4f0) \end{tabular}};
+   % Instancias de GObject
+   \node [instancia, above right = 4ex and 10em of gobjectclass.east]
+   (instancia1) {\large \begin{tabular}{c} Instancia 1 \\ (0x5605fdedb800) \end{tabular}};
+   \node [instancia, below right = 4ex and 10em of gobjectclass.east]
+   (instancia2)  {\large \begin{tabular}{c} Instancia 2 \\ (0x5605fdedb820) \end{tabular}};
+   % Flechas
+   %\draw[flecha] (instancia1.west) -- (gobjectclass.15);
+   \draw[flecha] (instancia1.west) .. controls (3.5, 1.4) and (2.8, 0.5)  .. (gobjectclass.12);
+   \draw[flecha] (instancia2.west) .. controls (3.5, -1.4) and (2.8, -0.5)  .. (gobjectclass.-12);
+
+   % Puntos de control de las flechas
+%   \filldraw[fill=red, draw=black] (3.5, 1.4) circle[radius=2pt];
+%   \filldraw[fill=red, draw=black] (2.8, 0.5) circle[radius=2pt];
+%   
+%   \filldraw[fill=green, draw=black] (3.5, -1.4) circle[radius=2pt];
+%   \filldraw[fill=green, draw=black] (2.8, -0.5) circle[radius=2pt];
+   
+%   Fondo amarillo
+   \def\extra{15}
+   \coordinate (limsupdcha) at ($(instancia1.north east) + (\extra pt, \extra pt)$);
+   \coordinate (liminfdcha) at ($(instancia2.south east) - (\extra pt, \extra pt)$);
+   \coordinate(limizda) at ($(gobjectclass.west) - (\extra pt,0)$);
+   \begin{scope}[on background layer]
+     \node [background, fit= (limsupdcha) (liminfdcha) (limizda)] {};
+   \end{scope}
+\end{tikzpicture}
+\caption{Instancias de la clase \textsf{GObjectClass} creadas en el ejemplo 1.}
+\label{fig:gobject-instancias-ejemplo-uno}
+\end{figure}
+
+
+
 
 %%% Local Variables:
 %%% coding: utf-8
