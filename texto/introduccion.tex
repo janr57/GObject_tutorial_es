@@ -251,10 +251,47 @@ El listado es:
      \node [background, fit= (limsupdcha) (liminfdcha) (limizda)] {};
    \end{scope}
 \end{tikzpicture}
-\caption{Instancias de la clase \textsf{GObjectClass} creadas en el ejemplo 1.}
+\caption{Instancias de la clase \texttt{GObjectClass} creadas en el ejemplo 1.
+  Los valores hexadecimales entre paréntesis son posibles direcciones de la clase
+  \textsf{GObject} (\texttt{GObjectClass}) y de las dos instancias creadas de esa clase.}
 \label{fig:gobject-instancias-ejemplo-uno}
 \end{figure}
 
+
+\subsection{Referencias a instancias de \textsf{GObject}} \label{subsec:ref_instancias_gobject}
+Toda instancia de \textsf{GObject} tiene su propia memoria, que el sistema asigna e inicializa cuando
+esta se crea, mediante la función \passthrough{\lstinline!g\_object\_new!}. Cuando la instancia deja de ser
+útil, se debe eliminar, liberando la memoria que tiene asignada a ese objeto concreto (instancia).
+% \href{run:./sample.txt}{here}
+
+¿Pero cómo sabemos que ya no se utiliza una instancia?
+El sistema \textsf{GObject} resuelve este problema mediante el 
+\href{https://es.wikipedia.org/wiki/Conteo_de_referencias}{conteo de referencias}
+(\href{https://en.wikipedia.org/wiki/Reference_counting}{\textit{reference counting}}).
+Cuando se crea una instancia se dice que la instancia está \emph{referida}, y se le asigna una cuenta
+de referencia (\textit{reference count} o \texttt{ref\_count}) igual a 1, indicando que hay un módulo, función
+u objeto que está utilizando dicha instancia, llamemos \textbf{A} a este.
+Ahora pueden ocurrir diversas circunstancias; entre otras:
+\begin{itemize}
+  \tightlist
+\item Si ahora \textbf{A} no quiere utilizar más la instancia, la desreferencia mediante \passthrough{\lstinline!g\_object\_unref!}, utilizando el puntero a la instancia como argumento de la función.
+    Entonces, el sistema decrementa la cuenta de referencia en una
+    unidad, de manera que ahora es cero. En este caso el sistema detecta que ya no se utiliza la instancia, la
+    elimina, liberando la memoria asociada.
+  \item Pero imaginemos que se pasa la instancia (su puntero) a otro módulo, función u objeto del programa,
+    que llamaremos \textbf{B}. Este debe referenciar la instancia para evitar la posibilidad de que \textbf{A} la
+    elimine antes de \textb{B} termine de utilizarla. Para referenciar la instancia, \textbf{B} debe utilizar la
+    función \passthrough{\lstinline!g\_object\_ref!}, utilizando la instancia como argumento de la función.
+    Ahora la cuenta de referencia de la instancia se incrementa en una unidad, por lo que vale 2
+    Si \text{A}, declarara que ya no necesita la instancia, llamaría a \passthrough{\lstinline!g\_object\_unref!},
+    la cuenta de referencia bajaría a 1, pero esto indicaría al sistema  que todavía queda otro módulo, función
+    u objeto que está utilizándola, la memoria asociada no se liberaría, por lo que se mantiene hasta que
+    \textbf{B} no lo decide; en este caso, la cuenta de referenica bajaría a cero y, solo entonces, se liberaría la
+    memoria asociada y la instancia dejaría de existir en el sistema.
+  \end{itemize}
+
+
+\subsubsection{Teoría}
 
 
 
