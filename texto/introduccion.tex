@@ -259,39 +259,89 @@ El listado es:
 
 
 \subsection{Referencias a instancias de \textsf{GObject}} \label{subsec:ref_instancias_gobject}
-Toda instancia de \textsf{GObject} tiene su propia memoria, que el sistema asigna e inicializa cuando
-esta se crea, mediante la función \passthrough{\lstinline!g\_object\_new!}. Cuando la instancia deja de ser
-útil, se debe eliminar, liberando la memoria que tiene asignada a ese objeto concreto (instancia).
+\subsubsection{Teoría}
+Toda instancia de \textsf{GObject} contiene un bloque de memoria que el sistema asigna e inicializa cuando
+esta se crea.
+Cuando la instancia deja de ser necesaria, se debe eliminar liberando la memoria que tiene asignada.
 % \href{run:./sample.txt}{here}
 
-¿Pero cómo sabemos que ya no se utiliza una instancia?
-El sistema \textsf{GObject} resuelve este problema mediante el 
+¿Pero cómo sabe el sistema \textsf{GObject}  que no se utiliza una instancia?
+Esto se resuelve mediante el
 \href{https://es.wikipedia.org/wiki/Conteo_de_referencias}{conteo de referencias}
 (\href{https://en.wikipedia.org/wiki/Reference_counting}{\textit{reference counting}}).
-Cuando se crea una instancia se dice que la instancia está \emph{referida}, y se le asigna una cuenta
-de referencia (\textit{reference count} o \texttt{ref\_count}) igual a 1, indicando que hay un módulo, función
-u objeto que está utilizando dicha instancia, llamemos \textbf{A} a este.
-Ahora pueden ocurrir diversas circunstancias; entre otras:
+Cuando se crea una instancia (mediante la función \passthrough{\lstinline!g\_object\_new!}), se dice que
+la instancia está \emph{referida}, y se le asigna una cuenta de referencia (\textit{reference count} o \texttt{ref\_count}) igual a 1, indicando que hay un módulo, función
+u objeto que está utilizándola. Llamemos \textbf{A} a este.
+Ahora pueden ocurrir diversas circunstancias, entre otras:
 \begin{itemize}
   \tightlist
-\item Si ahora \textbf{A} no quiere utilizar más la instancia, la desreferencia mediante \passthrough{\lstinline!g\_object\_unref!}, utilizando el puntero a la instancia como argumento de la función.
-    Entonces, el sistema decrementa la cuenta de referencia en una
-    unidad, de manera que ahora es cero. En este caso el sistema detecta que ya no se utiliza la instancia, la
-    elimina, liberando la memoria asociada.
+\item Si \textbf{A} no necesita utilizar más la instancia, la desreferencia mediante \passthrough{\lstinline!g\_object\_unref!}, utilizando la instancia (un puntero) como argumento de la función.
+  Entonces, el sistema decrementa la cuenta de referencia en una unidad, de manera que ahora valdría cero.
+  En este caso el sistema detecta que ya no se utiliza la instancia y la elimina, liberando su memoria asociada.
   \item Pero imaginemos que se pasa la instancia (su puntero) a otro módulo, función u objeto del programa,
     que llamaremos \textbf{B}. Este debe referenciar la instancia para evitar la posibilidad de que \textbf{A} la
-    elimine antes de \textb{B} termine de utilizarla. Para referenciar la instancia, \textbf{B} debe utilizar la
-    función \passthrough{\lstinline!g\_object\_ref!}, utilizando la instancia como argumento de la función.
-    Ahora la cuenta de referencia de la instancia se incrementa en una unidad, por lo que vale 2
-    Si \text{A}, declarara que ya no necesita la instancia, llamaría a \passthrough{\lstinline!g\_object\_unref!},
-    la cuenta de referencia bajaría a 1, pero esto indicaría al sistema  que todavía queda otro módulo, función
-    u objeto que está utilizándola, la memoria asociada no se liberaría, por lo que se mantiene hasta que
-    \textbf{B} no lo decide; en este caso, la cuenta de referenica bajaría a cero y, solo entonces, se liberaría la
-    memoria asociada y la instancia dejaría de existir en el sistema.
+    elimine antes de \textbf{B} termine de utilizarla, y para ello debe llamar a la función
+    \passthrough{\lstinline!g\_object\_ref!}, utilizando la instancia como argumento.
+    Ahora la cuenta de referencia de la instancia se incrementaría en una unidad pasando a valer 2.
+
+    Si \textbf{A}, decidiera que ya no necesita más la instancia, llamaría a
+    \passthrough{\lstinline!g\_object\_unref!} y la cuenta de referencia bajaría a 1. Este valor indicaría al sistema
+    que todavía queda otro módulo, función u objeto que está utilizándola (en este caso \textbf{B}). Así,
+    la memoria asociada no se liberaría, hasta que \textbf{B} decidiera prescindir de la instania, en cuyo caso,
+    la cuenta de referencia bajaría a cero y, solo entonces, se liberaría la memoria asociada y la instancia dejaría de
+    existir en el sistema.
   \end{itemize}
 
+\subsubsection{Ejemplo 2}
+En el siguiente ejemplo se crean dos instancias diferentes de la clase \textsf{GObject} y se comprueba que
+solo hay una clase para estos objetos. En el directorio 'prog' se encuentran los programas de ejemplo.
+Para compilarlos todos basta con hacer
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make
+\end{lstlisting}
+o bien, solo el primer ejemplo:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make ejemplo01
+\end{lstlisting}
 
-\subsubsection{Teoría}
+El listado es:
+\begin{lstlisting}[language=C, numbers=left]
+  #include <locale.h>
+  #include <glib-object.h>
+
+  int
+  main (int argc, char **argv) {
+    GObject *instancia1, *instancia2;
+    GObjectClass *clase1, *clase2;
+
+    // Para que g_print no transforme la codificación de caracteres
+    // por su cuenta y no se vean los acentos.
+    setlocale(LC_CTYPE, "");
+
+    // Creación de dos instancias de la clase 'GObject'
+    instancia1 = g_object_new (G_TYPE_OBJECT, NULL);
+    instancia2 = g_object_new (G_TYPE_OBJECT, NULL);
+    g_print ("Dirección de 'instancia1': %p\n", instancia1);
+    g_print ("Dirección de 'instancia2': %p\n", instancia2);
+
+    // Comprobación de que solo hay una clase 'GObject'
+    clase1 = G_OBJECT_GET_CLASS (instancia1);
+    clase2 = G_OBJECT_GET_CLASS (instancia2);
+    g_print ("Dirección de la clase de 'instancia1': %p\n", clase1);
+    g_print ("Dirección de la clase de 'instancia2': %p\n", clase2);
+
+    // Liberación de las instancias
+    g_object_unref(instancia1);
+    g_object_unref(instancia2);
+
+    return 0;
+  }
+\end{lstlisting}
+  
+  
+
 
 
 
