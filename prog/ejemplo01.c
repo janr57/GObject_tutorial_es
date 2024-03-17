@@ -1,5 +1,6 @@
 /*
 * ejemplo01.c
+* Ejemplo de creación y destrucción de instancias de 'GObjectClass'.
  * https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec2.md
  * https://github.com/ToshioCP/Gobject-tutorial/tree/main
  */

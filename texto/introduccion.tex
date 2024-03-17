@@ -1,4 +1,4 @@
-% introduccion.tex
+>% introduccion.tex
 %
 % Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
 % 1) Código LuaLatex:
@@ -134,6 +134,13 @@ o bien, solo el primer ejemplo:
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
+/*
+  * ejemplo01.c
+* Ejemplo de creación y destrucción de instancias de 'GObjectClass'.
+ * https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec2.md
+ * https://github.com/ToshioCP/Gobject-tutorial/tree/main
+ */
+
   #include <locale.h>
   #include <glib-object.h>
 
@@ -166,7 +173,7 @@ El listado es:
   }
 \end{lstlisting}
 
-\subsubsection{Ejemplo de salida del programa 'ejemplo1'}
+\subsubsection{Ejemplo de salida del programa 'ejemplo01'}
 \textsf{Dirección de 'instancia1': 0x5605fdedb800}\par
 \textsf{Dirección de 'instancia2': 0x5605fdedb820}\par
 \textsf{Dirección de la clase de 'instancia1':  0x5605fdedb4f0}\par
@@ -201,8 +208,6 @@ El listado es:
   preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
   esta duda se aclarará en la siguiente sección.
 \end{itemize}
-
-
 
 \begin{figure}[ht]
   \centering
@@ -293,54 +298,125 @@ Ahora pueden ocurrir diversas circunstancias, entre otras:
   \end{itemize}
 
 \subsubsection{Ejemplo 2}
-En el siguiente ejemplo se crean dos instancias diferentes de la clase \textsf{GObject} y se comprueba que
-solo hay una clase para estos objetos. En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilarlos todos basta con hacer
+En el siguiente ejemplo se una instancia de la clase \textsf{GObject}, después se referencia una vez.
+Finalmente se desreferencia dos veces hasta que el sistema destruye la instancia y libera la memoria.
+
+Para compilar todos los ejemplos, basta con hacer
 \begin{lstlisting}[language=bash]
   $ cd prog
   $ make
 \end{lstlisting}
-o bien, solo el primer ejemplo:
+Para compilar solo el segundo ejemplo:
 \begin{lstlisting}[language=bash]
   $ cd prog
-  $ make ejemplo01
+  $ make ejemplo02
 \end{lstlisting}
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
-  #include <locale.h>
-  #include <glib-object.h>
+/*
+ * ejemplo02.c
+ * Prueba de las referencias a una instancia.
+ */
 
-  int
-  main (int argc, char **argv) {
-    GObject *instancia1, *instancia2;
-    GObjectClass *clase1, *clase2;
+#include <locale.h>
+#include <glib-object.h>
 
-    // Para que g_print no transforme la codificación de caracteres
-    // por su cuenta y no se vean los acentos.
-    setlocale(LC_CTYPE, "");
-
-    // Creación de dos instancias de la clase 'GObject'
-    instancia1 = g_object_new (G_TYPE_OBJECT, NULL);
-    instancia2 = g_object_new (G_TYPE_OBJECT, NULL);
-    g_print ("Dirección de 'instancia1': %p\n", instancia1);
-    g_print ("Dirección de 'instancia2': %p\n", instancia2);
-
-    // Comprobación de que solo hay una clase 'GObject'
-    clase1 = G_OBJECT_GET_CLASS (instancia1);
-    clase2 = G_OBJECT_GET_CLASS (instancia2);
-    g_print ("Dirección de la clase de 'instancia1': %p\n", clase1);
-    g_print ("Dirección de la clase de 'instancia2': %p\n", clase2);
-
-    // Liberación de las instancias
-    g_object_unref(instancia1);
-    g_object_unref(instancia2);
-
-    return 0;
+static void
+show_ref_count  (GObject *instancia) {
+  if  (G_IS_OBJECT (instancia)) {
+    /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
+       pues interferirían de una forma impredecible con GObject */
+    /* Aquí se utiliza solo como demostración */
+    g_print ("  La cuenta de referencia de la instancia es %d.\n", instancia->ref_count);
   }
+  else {
+    g_print ("  La instancia recibida no es un objeto de 'GObjectClass'.\n");
+  }
+}
+
+int
+main (int argc, char **argv)
+{
+  GObject *instancia;
+
+  // Para que g_print no transforme la codificación de caracteres
+  // por su cuenta y no se vean los acentos.
+  setlocale(LC_CTYPE, "");
+
+  g_print ("- Se crea el objeto 'instancia', llamando a 'g_object_new'.\n");
+  instancia = g_object_new(G_TYPE_OBJECT, NULL);
+  show_ref_count (instancia);
+  g_print("\n");
+  
+  g_print ("- Se añade una referencia a 'instancia', llamando a 'g_object_ref'.\n");
+  g_object_ref (instancia);
+  show_ref_count (instancia);
+  g_print("\n");
+
+  g_print ("- Se elimina una referencia, llamando a 'g_object_unref'.\n");
+  g_object_unref(instancia);
+  show_ref_count (instancia);
+  g_print("\n");
+
+  g_print ("- Se elimina la última referencia, llamando a 'g_object_unref'.\n");
+  g_object_unref (instancia);
+  g_print ("  La cuenta de referencia vale cero y la instancia se destruye.\n");
+  g_print ("  Su memoria asociada se libera.\n");
+  g_print("  Una llamada a 'show_ref_count(instance)' daría un error, pues la\n");
+  g_print("  instancia  no existe.\n");
+  g_print("  Por ello, se ha comentado esta línea en el código fuente.\n");
+  /* show_ref_count (instancia); */
+  
+  return 0;
+}
 \end{lstlisting}
-  
-  
+
+\subsubsection{Ejemplo de salida del programa 'ejemplo02'}
+\textsf{- Se crea el objeto 'instancia', llamando a 'g\_object\_new'.}\par
+\textsf{  La cuenta de referencia de la instancia es 1.}
+\par\textsf{ }\par
+\textsf{- Se añade una referencia a 'instancia', llamando a 'g\_object\_ref'.}\par
+\textsf{  La cuenta de referencia de la instancia es 2.}\par
+\par\textsf{ }\par
+\textsf{- Se elimina una referencia a 'instancia', llamando a 'g\_object\_unref'.}\par
+\textsf{  La cuenta de referencia de la instancia es 1.}\par
+\par\textsf{ }\par
+\textsf{- Se elimina la última referencia a 'instancia', llamando a 'g\_object\_unref'.}\par
+\textsf{  Ahora, la cuenta de referencia vale cero y la instancia se destruye.}\par
+\textsf{  Su memoria asociada se libera.}\par
+\textsf{  Una llamada a 'show\_ref\_count(instancia) daría un error, pues la}\par
+\textsf{  instancia ya no existe.}\par
+\textsf{  Por ello, se ha comentado esta línea en el código fuente.}\par
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Línea 25\par
+  Se declara un puntero a objeto de \textsf{GObject}, lo que no permitirá crear una instancia.
+\item Línea 29\par
+  Se asigna a una variable de entorno la cadena vacía para que la función
+  \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
+  y se puedan ver los acentos correctamente en la consola UTF-8.
+\item Líneas 31 -- 34\par
+  Se crea una instancia de \textsf{GObject} mediante la función \passthrough{\lstinline!g\_object\_new!}.
+  Se muestra el valor, 1,  de la cuenta de referencia de esa instancia.
+\item Líneas 20 -- 23\par
+  Se obtiene el puntero a la clase a la que pertenecen 'instancia1' e 'instancia2', estos punteros se
+  almacenan en 'clase1' y 'clase2', respectivamente. Esta tarea se realiza mediante la macro
+  \passthrough{\lstinline!G\_OBJECT\_GET\_CLASS!}. Al imprimir en pantalla los punteros de las
+  dos clases observamos que son iguales, de manera que ambas instancias pertenecen a la misma
+  clase \textsf{GObjectClass}, que se creó la primera vez que se ejecutó la función
+  \passthrough{\lstinline!g\_object\_new!} en la línea 14, a la vez que se creó la primera instancia,
+  'instancia1'.
+\item Líneas 26 -- 27\par
+  Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa. Nos podríamos
+  preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
+  esta duda se aclarará en la siguiente sección.
+\end{itemize}
+
+
+
+
 
 
 
