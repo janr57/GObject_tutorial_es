@@ -229,12 +229,12 @@ El listado es:
    % DIBUJO
    % Clase GObject
     \node[clase, text centered]
-    (gobjectclass) {\Large \begin{tabular}{c} Clase GObject \\ (0x5605fdedb4f0) \end{tabular}};
+    (gobjectclass) {\large \begin{tabular}{c} Clase GObject \\ (0x5605fdedb4f0) \end{tabular}};
    % Instancias de GObject
    \node [instancia, above right = 4ex and 10em of gobjectclass.east]
-   (instancia1) {\large \begin{tabular}{c} Instancia 1 \\ (0x5605fdedb800) \end{tabular}};
+   (instancia1) {\normalsize \begin{tabular}{c} Instancia 1 \\ (0x5605fdedb800) \end{tabular}};
    \node [instancia, below right = 4ex and 10em of gobjectclass.east]
-   (instancia2)  {\large \begin{tabular}{c} Instancia 2 \\ (0x5605fdedb820) \end{tabular}};
+   (instancia2)  {\normalsize \begin{tabular}{c} Instancia 2 \\ (0x5605fdedb820) \end{tabular}};
    % Flechas
    %\draw[flecha] (instancia1.west) -- (gobjectclass.15);
    \draw[flecha] (instancia1.west) .. controls (3.5, 1.4) and (2.8, 0.5)  .. (gobjectclass.12);

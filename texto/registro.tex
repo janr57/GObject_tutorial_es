@@ -7,7 +7,7 @@
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
 \section{Registro}
-\subsection{Sistema de tipos y registro de clases derivadas de \textsf{GObject}} \label{subsec:sistematipos_y_registro}
+\subsection{Sistema de tipos y registro de clases} \label{subsec:sistematipos_y_registro}
 \subsubsection{Introducción}
 \textsf{GObject} es un objeto básico. Es muy simple y no se puede hacer mucho con él, excepto crear
 clases derivadas e instanciar nuevos tipos de objetos.
@@ -33,6 +33,43 @@ Para el objeto de números reales que pondremos como ejemplo, se decide poner ``
 de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble}.
 Además serán objetos que derivan de \textsf{GObject}, representan números reales y el tipo del número
 será \textit{double}.
+
+\begin{figure}[ht]
+  \centering
+  \def\scl{1}
+  \begin{tikzpicture}[%
+    scale=\scl,
+    every node/.style={font=\LARGE\sffamily, minimum size= 8ex},
+     background/.style={
+      line width=\bgborderwidth,
+      draw=\bgbordercolor,
+      fill=\bgcolor,
+    },
+   ]
+   % COORDENADAS
+   % - 
+   % DIBUJO
+   % Convenio de nombres de objetos
+   \node[draw] (namespace)
+   {\begin{tabular}{c} \textcolor{gray}{Espacio de nombres} \\ T \end{tabular}};
+   \node [draw, right=1em of namespace] (name)
+   {\begin{tabular}{c} \textcolor{gray}{Nombre} \\ Doble \end{tabular}};
+   \node [right=1em of name] (tdoble) {$\equiv$ TDoble}; 
+   % Fondo amarillo
+   \def\margensup{18}
+   \def\margeninf{12}
+   \def\margenlateralizdo{18}
+   \def\margenlateraldcho{12}
+   \coordinate (limsupdcha) at ($(tdoble.north east)+(\margenlateraldcho pt, \margensup pt)$);
+   \coordinate (liminfizda) at ($(namespace.south west)-(\margenlateralizdo pt, \margeninf pt)$);
+   \begin{scope}[on background layer]
+     \node [background, fit= (liminfizda) (limsupdcha)] {};
+   \end{scope}
+\end{tikzpicture}
+\caption{Nombre del objeto \textsf{TDoble}.}
+\label{fig:nombre-objetos}
+\end{figure}
+
 
 \subsubsection{Tipo}
 Cuando decimos ``tipo'', nos podemos referir a dos conceptos diferentes, aunque relacionados.
@@ -77,6 +114,130 @@ diremos ``tipo de C'' o ``tipo del sistema''.
   \item Inicialización de \textsf{TDobleClass}.
   \item Inicialización de \textsf{TDoble}.
   \end{enumerate}
+
+%  \begin{figure}[ht]
+%  \centering
+%  \def\scl{1}
+%  \newcommand{\fondoTipoC}{green!10}
+%  \newcommand{\fondoTipoSistema}{green!20}
+%  \begin{tikzpicture}[%
+%    scale=\scl,
+%    every node/.style={font=\large\sffamily},
+%    nube/.style={fill=yellow!75},
+%    tipoC/.style={fill=\fondoTipoC, minimum size=8ex, inner sep=1em},
+%    tipoSistema/.style={fill=\fondoTipoSistema, minimum size=8ex, inner sep=1em},
+%    flecha/.style={line width=1.6pt, -Stealth[round]},  background/.style={
+%      line width=\bgborderwidth,
+%      draw=\bgbordercolor,
+%      fill=\bgcolor,
+%    },
+%   ]
+%   % COORDENADAS
+%   % - 
+%   % DIBUJO
+%   % Proceso de registro de una clase
+%   % Type System
+%   \node[nube, cloud, draw, aspect=2] (typesystem) {Sistema de tipos};
+%   \node[nube, cloud, draw, aspect=2, right=12em of typesystem] (memory)  {Memoria};
+%   \node[tipoC, draw, above=4em of typesystem] (tdobletype)
+%   {\begin{tabular}{c}TDoble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
+%   \node[tipoSistema, draw, below=6em of memory] (tdobleclass)
+%   {\begin{tabular}{c} Clase TDobleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+%   \node[tipoSistema, draw, left=11em of tdobleclass] (tdobleobject)
+%   {\begin{tabular}{c} Objeto TDoble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+%   % Flechas
+%   \draw[flecha] (tdobletype.south) --
+%   node[left] {$\color{blue}{\mbfone}$} node[right]  {\textcolor{blue}{Registro}}
+%   (typesystem.north);
+%   \draw[flecha] (typesystem.east) -- (memory.west);
+%   \draw[flecha] (memory.south) -- (tdobleclass.north);
+%   \draw[flecha] (tdobleclass.west) -- (tdobleobject.east);
+%   
+%   %   % Fondo amarillo
+%%   \def\margensup{18}
+%%   \def\margeninf{12}
+%%   \def\margenlateralizdo{18}
+%%   \def\margenlateraldcho{12}
+%%   \coordinate (limsupdcha) at ($(tdoble.north east)+(\margenlateraldcho pt, \margensup pt)$);
+%%   \coordinate (liminfizda) at ($(namespace.south west)-(\margenlateralizdo pt, \margeninf pt)$);
+%%   \begin{scope}[on background layer]
+%%     \node [background, fit= (liminfizda) (limsupdcha)] {};
+%%   \end{scope}
+%\end{tikzpicture}
+%\caption{Proceso de registro del objeto \textsf{TDoble}..}
+%\label{fig:proceso-registro}
+%\end{figure}
+
+  \begin{figure}[ht]
+  \centering
+  \def\scl{1}
+  \newcommand{\fondoTipoC}{green!20}
+  \newcommand{\fondoTipoSistema}{green!25}
+  \begin{tikzpicture}[%
+    scale=\scl,
+    every node/.style={font=\normalsize\sffamily},
+    nubeSistemaTipos/.style={fill=yellow!75},
+    nubeMemoria/.style={fill=black!2},
+    tipoC/.style={fill=\fondoTipoC, font=\ttfamily, minimum size=8ex, inner sep=1em},
+    tipoSistema/.style={fill=\fondoTipoSistema, minimum size=8ex, inner sep=1em},
+    flecha/.style={line width=1.6pt, -Stealth[round]},  background/.style={
+      line width=\bgborderwidth,
+      draw=\bgbordercolor,
+      fill=\bgcolor,
+    },
+   ]
+   % COORDENADAS
+   % - 
+   % DIBUJO
+   % Proceso de registro de una clase
+   % Type System
+   \node[nubeSistemaTipos, cloud, draw, aspect=2] (typesystem) {Sistema de tipos};
+   % Memoria
+   \node[nubeMemoria, cloud, draw, aspect=2, right=12em of typesystem] (memory)
+   {\begin{tabular}{c} Memoria \\ (TDobleClass y TDoble) \end{tabular}};
+   % TDoble (Tipo C)
+   \node[tipoC, draw, above=8ex of typesystem] (tdobleCtype)
+   {\begin{tabular}{c}TDoble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
+   % Objeto TDoble
+   \node[tipoSistema, draw, below=8ex of memory] (tdobleobject)
+   {\begin{tabular}{c} Objeto TDoble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+   % Clase TDobleClass
+   \node[tipoSistema, draw, left=12em of tdobleobject] (tdobleclass)
+   {\begin{tabular}{c} Clase TDobleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+   % Flechas
+   % TDoble (Tipo C) -> Sistema Tipos
+   \draw[flecha] (tdobleCtype.south) --
+   node[left] {\small $\mbfone$} node[right]  {\small Registro}
+   (typesystem.north);
+   % Sistema tipos -> memoria
+   \draw[flecha] (typesystem.east) --
+   node[below]{\small Asignación de memoria}
+   node[above]{\small $\mbftwo$}
+   (memory.west);
+   % Memoria -> Clase TDobleClass (Tipo sistema)
+   \draw[flecha] (memory.225) --
+   node[above right, sloped]{\small $\mbfthree$}
+   node[below right=0.2ex and -4ex, sloped]{\small Inicialización}
+   (tdobleclass.north);
+   % Memoria -> Objeto TDoble (Tipo sistema)
+   \draw[flecha] (memory.south) --
+   node[left] {\small $\mbffour$}
+   node[right] {\small Inicialización}
+   (tdobleobject.north);
+   
+% Fondo amarillo
+   \def\margen{16}
+   \coordinate (limizda) at ($(typesystem.west)-(\margen pt, 0pt)$);
+   \coordinate(limdcha) at ($(memory.east)+(\margen pt, 0pt)$);
+   \coordinate(liminf) at ($(tdobleobject.south)-(0pt, \margen pt)$);
+   \coordinate(limsup) at ($(tdobleCtype.north)+(0pt, \margen pt)$);
+   \begin{scope}[on background layer]
+     \node [background, fit= (liminf) (limsup) (limizda) (limdcha)] {};
+   \end{scope}
+\end{tikzpicture}
+\caption{Proceso de registro del objeto \textsf{TDoble}..}
+\label{fig:proceso-registro}
+\end{figure}
 
   
 
