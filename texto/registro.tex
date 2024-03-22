@@ -6,8 +6,8 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Registro}
-\subsection{Sistema de tipos y registro de clases} \label{subsec:sistematipos_y_registro}
+\section{Sistema de tipos y registro de clases}
+\subsection{Sistema de tipos} \label{subsec:sistematipos}
 \subsubsection{Introducción}
 \textsf{GObject} es un objeto básico. Es muy simple y no se puede hacer mucho con él, excepto crear
 clases derivadas e instanciar nuevos tipos de objetos.
@@ -105,8 +105,10 @@ diremos ``tipo de C'' o ``tipo del sistema''.
   \textsf{TDoble} tiene su propio miembro ``\texttt{valor}'', que es el valor de las instancias de \textsf{TDoble}.
   La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
 
-  \subsubsection{Procedimiento para crear un objeto descendiente de \textsf{GObject}}
-  Para crear un tipo \text{TDoble} hay que:
+  \subsection{Proceso de registro}
+  \subsubsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
+  Para crear un tipo del sistema, a partir de un tipo creado como una estructura en C,
+  como \text{TDoble}, se llevan a cabo los siguientes pasos:
   \begin{enumerate}
     \tightlist
   \item Registro del tipo en C \texttt{TDoble} en el sistema de tipos.
@@ -114,59 +116,6 @@ diremos ``tipo de C'' o ``tipo del sistema''.
   \item Inicialización de \textsf{TDobleClass}.
   \item Inicialización de \textsf{TDoble}.
   \end{enumerate}
-
-%  \begin{figure}[ht]
-%  \centering
-%  \def\scl{1}
-%  \newcommand{\fondoTipoC}{green!10}
-%  \newcommand{\fondoTipoSistema}{green!20}
-%  \begin{tikzpicture}[%
-%    scale=\scl,
-%    every node/.style={font=\large\sffamily},
-%    nube/.style={fill=yellow!75},
-%    tipoC/.style={fill=\fondoTipoC, minimum size=8ex, inner sep=1em},
-%    tipoSistema/.style={fill=\fondoTipoSistema, minimum size=8ex, inner sep=1em},
-%    flecha/.style={line width=1.6pt, -Stealth[round]},  background/.style={
-%      line width=\bgborderwidth,
-%      draw=\bgbordercolor,
-%      fill=\bgcolor,
-%    },
-%   ]
-%   % COORDENADAS
-%   % - 
-%   % DIBUJO
-%   % Proceso de registro de una clase
-%   % Type System
-%   \node[nube, cloud, draw, aspect=2] (typesystem) {Sistema de tipos};
-%   \node[nube, cloud, draw, aspect=2, right=12em of typesystem] (memory)  {Memoria};
-%   \node[tipoC, draw, above=4em of typesystem] (tdobletype)
-%   {\begin{tabular}{c}TDoble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
-%   \node[tipoSistema, draw, below=6em of memory] (tdobleclass)
-%   {\begin{tabular}{c} Clase TDobleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
-%   \node[tipoSistema, draw, left=11em of tdobleclass] (tdobleobject)
-%   {\begin{tabular}{c} Objeto TDoble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
-%   % Flechas
-%   \draw[flecha] (tdobletype.south) --
-%   node[left] {$\color{blue}{\mbfone}$} node[right]  {\textcolor{blue}{Registro}}
-%   (typesystem.north);
-%   \draw[flecha] (typesystem.east) -- (memory.west);
-%   \draw[flecha] (memory.south) -- (tdobleclass.north);
-%   \draw[flecha] (tdobleclass.west) -- (tdobleobject.east);
-%   
-%   %   % Fondo amarillo
-%%   \def\margensup{18}
-%%   \def\margeninf{12}
-%%   \def\margenlateralizdo{18}
-%%   \def\margenlateraldcho{12}
-%%   \coordinate (limsupdcha) at ($(tdoble.north east)+(\margenlateraldcho pt, \margensup pt)$);
-%%   \coordinate (liminfizda) at ($(namespace.south west)-(\margenlateralizdo pt, \margeninf pt)$);
-%%   \begin{scope}[on background layer]
-%%     \node [background, fit= (liminfizda) (limsupdcha)] {};
-%%   \end{scope}
-%\end{tikzpicture}
-%\caption{Proceso de registro del objeto \textsf{TDoble}..}
-%\label{fig:proceso-registro}
-%\end{figure}
 
   \begin{figure}[ht]
   \centering
@@ -235,12 +184,101 @@ diremos ``tipo de C'' o ``tipo del sistema''.
      \node [background, fit= (liminf) (limsup) (limizda) (limdcha)] {};
    \end{scope}
 \end{tikzpicture}
-\caption{Proceso de registro del objeto \textsf{TDoble}..}
+\caption{Proceso de registro del objeto \textsf{TDoble}.}
 \label{fig:proceso-registro}
 \end{figure}
 
-  
+\subsubsection{Registro}
+Generalmente, el proceso de registro se lleva a cabo mediante unas macros, como
+\texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, de manera que no
+necesitamos preocuparnos por los detalles. Pero aquí es importante entender el
+sistema de tipos de \textsf{GObject}, por lo que empezaremos analizando el proceso
+de registro sin macros.
 
+Hay dos clases de tipos de \textsf{GObject}, estáticos y dinámicos. Los tipos estáticos
+no destruyen su clase aunque se hubieran destruido todas sus instancias. Los dinámicos
+destruyen su clase cuando se elimina su última instancia.
+
+El tipo de \textsf{GObject}, y de todos los objetos que derivan de él, es estático.
+La función que registra tipos estáticos es
+\passthrough{\lstinline!g\_type\_register\_static!}.
+El código que se muestra a continuación se encuentra en el fichero \textsf{gtype.h} de
+\text{GLib}.
+
+\begin{lstlisting}[language=C]
+GType
+g_type_register_static (GType           parent_type,
+                        const gchar     *type_name,
+                        const GTypeInfo *info,
+                        GTypeFlags      flags);
+\end{lstlisting}
+
+Descripción de los parámetros implicados en el registro:
+\begin{itemize}
+  \tightlist
+\item \texttt{parent\_type}: Es el nombre del tipo padre.
+\item \texttt{type\_name}: Es el nombre del tipo que se va a registrar,
+  por ejemplo, "\textsf{TDoble}".
+\item \texttt{info}: Es una estructura \texttt{GTypeInfo} que contiene información acerca
+  del tipo que se va a registrar. Esta estructura se explica cuando se termine esta
+  descripción.
+\item \texttt{flags}: Si el tipo que se registra es abstracto o es un valor de tipo
+  abstracto\footnotemark{} hay que especificarlo aquí. En caso contrario su valor es cero.
+  \footnotetext{No veo clara la diferencia entre un tipo abstracto y un valor de tipo
+    abstracto. Aunque pienso que, por ahora, no necesito profundizar más.}
+\end{itemize}
+Después del registro, la función \passthrough{\lstinline!g\_type\_register\_static!} retorna
+el tipo del nuevo objeto. La definición de la estructura \texttt{GTypeInfo} es
+\begin{lstlisting}[language=C]
+typedef struct _GTypeInfo  GTypeInfo;
+
+struct _GTypeInfo
+{
+  /* interface types, classed types, instantiated types */
+  guint16                class_size;
+
+  GBaseInitFunc          base_init;
+  GBaseFinalizeFunc      base_finalize;
+
+  /* interface types, classed types, instantiated types */
+  GClassInitFunc         class_init;
+  GClassFinalizeFunc     class_finalize;
+  gconstpointer          class_data;
+
+  /* instantiated types */
+  guint16                instance_size;
+  guint16                n_preallocs;
+  GInstanceInitFunc      instance_init;
+
+  /* value handling */
+  const GTypeValueTable  *value_table;
+};
+\end{lstlisting}
+
+Esta estructura se debe crear antes del registro.
+
+\begin{itemize}
+  \tightlist
+\item \texttt{class\_size}: Tamaño de la clase. Por ejemplo, el tamaño de la clase
+  \textsf{TDoble} es \texttt{sizeof (TDobleClass)}.
+\item \texttt{base\_init}, \text{base\_finalize}: Estas funciones inicializan/finalizan
+  los miembros dinámicos de la clase. En la mayoría de los casos no son necesarias y
+  su valor es \texttt{NULL}. Para más información ver:
+  \href{https://docs.gtk.org/gobject/callback.BaseInitFunc.html}
+  {\textit{GObject API Reference -- BaseInitFunc}} y
+  \href{https://docs.gtk.org/gobject/callback.ClassInitFunc.html}
+  {\textit{GObject API Reference -- ClassInitFunc}}
+\end{itemize}
+
+%base_init, base_finalize: These functions initialize/finalize the dynamic members of the class. In many cases, they aren't necessary, and are assigned NULL. For further information, see GObject API Reference -- BaseInitFunc and GObject API Reference -- ClassInitFunc.
+%class_init: Initializes static members of the class. Assign your class initialization function to class_init member. By convention, the name is <name space>_<name>_class_init, for example, t_double_class_init.
+%class_finalize: Finalizes the class. Because descendant type of GObjec is static, it doesn't have a finalize function. Assign NULL to class_finalize member.
+%class_data: User-supplied data passed to the class init/finalize functions. Usually NULL is assigned.
+%instance_size: The size of the instance. For example, TDouble's instance size is sizeof (TDouble).
+%n_preallocs: This is ignored. it has been used by the old version of Glib.
+%instance_init: Initializes instance members. Assign your instance initialization function to instance_init member. By convention, the name is <name space>_<name>_init, for example, t_double_init.
+%value_table: This is usually only useful for fundamental types. If the type is descendant of GObject, assign NULL.
+%These information is kept by the type system and used when the object is created or destroyed. Class_size and instance_size are used to allocate memory for the class and instance. Class_init and instance_init functions are called when class or instance is initialized.
 
 %%% Local Variables:
 %%% coding: utf-8
