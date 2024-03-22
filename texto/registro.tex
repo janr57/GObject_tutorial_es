@@ -280,15 +280,20 @@ Esta estructura se debe crear antes del registro.
   de inicialización y finalización de la clase. Normalmente se asigna \texttt{NULL}.
 \item \texttt{instance\_size}: El tamaño de cada objeto que se instancia. Por ejemplo, el de una instancia
   de \textsf{TDoble} es "\texttt{sizeof (TDoble)}".
-\item \texttt{n\_preallocs}:
-\item \texttt{instance\_init}:
-\item \texttt{*value\_table}:
+\item \texttt{n\_preallocs}: Este campo se debe ignorar porque se usaba en la antigua versión de \textsf{GLib}.
+\item \texttt{instance\_init}: Inicializa los miembros de la instancia. Asigna tu función de inicialización a este
+  método. Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_init}. En nuestro caso, con
+  el objeto \textsf{GObject}, el nombre sería \textsf{TObject\_init}.
+\item \texttt{*value\_table}:  Generalmente, este campo solo es útil para tipos fundamentales. Si el tipo deriva
+  de \textsf{GObject}, se debe asignar \texttt{NULL}.
 \end{itemize}
+Esta información la almacena el sistema de tipos y se usa cuando se crea o destruye el objeto.
+Los valores \texttt{class\_size} e \texttt{instance\_size} se usan para reservar memoria para la clase y la instancia,
+respectivamente. Los métodos \texttt{class\_init} e \texttt{instance\_init} se ejecutan cuando se inicializan
+la clase y la instancia, también respectivamente.
 
-%n_preallocs: This is ignored. it has been used by the old version of Glib.
-%instance_init: Initializes instance members. Assign your instance initialization function to instance_init member. By convention, the name is <name space>_<name>_init, for example, t_double_init.
-%value_table: This is usually only useful for fundamental types. If the type is descendant of GObject, assign NULL.
-%These information is kept by the type system and used when the object is created or destroyed. Class_size and instance_size are used to allocate memory for the class and instance. Class_init and instance_init functions are called when class or instance is initialized.
+
+
 
 %%% Local Variables:
 %%% coding: utf-8
