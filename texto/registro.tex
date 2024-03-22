@@ -217,9 +217,9 @@ Descripción de los parámetros implicados en el registro:
 \begin{itemize}
   \tightlist
 \item \texttt{parent\_type}: Es el nombre del tipo padre.
-\item \texttt{type\_name}: Es el nombre del tipo que se va a registrar,
+\item \texttt{*type\_name}: Es el nombre del tipo que se va a registrar,
   por ejemplo, "\textsf{TDoble}".
-\item \texttt{info}: Es una estructura \texttt{GTypeInfo} que contiene información acerca
+\item \texttt{*info}: Es una estructura \texttt{GTypeInfo} que contiene información acerca
   del tipo que se va a registrar. Esta estructura se explica cuando se termine esta
   descripción.
 \item \texttt{flags}: Si el tipo que se registra es abstracto o es un valor de tipo
@@ -260,21 +260,31 @@ Esta estructura se debe crear antes del registro.
 \begin{itemize}
   \tightlist
 \item \texttt{class\_size}: Tamaño de la clase. Por ejemplo, el tamaño de la clase
-  \textsf{TDoble} es \texttt{sizeof (TDobleClass)}.
+  \textsf{TDoble} es "\texttt{sizeof (TDobleClass)}''.
 \item \texttt{base\_init}, \text{base\_finalize}: Estas funciones inicializan/finalizan
   los miembros dinámicos de la clase. En la mayoría de los casos no son necesarias y
-  su valor es \texttt{NULL}. Para más información ver:
+  su valor es \texttt{NULL}.
+  Para más información ver:
   \href{https://docs.gtk.org/gobject/callback.BaseInitFunc.html}
   {\textit{GObject API Reference -- BaseInitFunc}} y
   \href{https://docs.gtk.org/gobject/callback.ClassInitFunc.html}
-  {\textit{GObject API Reference -- ClassInitFunc}}
+  {\textit{GObject API Reference -- ClassInitFunc}}.
+\item \texttt{class\_init}: Esta función inicializa los miembros estáticos de la clase. Asigna tu función de
+  inicialización de la clase a esta función.
+  Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}.
+\item \texttt{class\_finalize}: Esta función finaliza la clase. Pero, como el tipo de los objetos derivados de
+  \textsf{GObject} es estático, no se les asigna ninguna función de finalización. Por tanto a \textsf{TDoble}
+  se le asigna \texttt{NULL} aquí.
+  Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}.
+\item \texttt{class\_data}: Datos que el usuario le pasa a las funciones de los dos métodos anteriores
+  de inicialización y finalización de la clase. Normalmente se asigna \texttt{NULL}.
+\item \texttt{instance\_size}: El tamaño de cada objeto que se instancia. Por ejemplo, el de una instancia
+  de \textsf{TDoble} es "\texttt{sizeof (TDoble)}".
+\item \texttt{n\_preallocs}:
+\item \texttt{instance\_init}:
+\item \texttt{*value\_table}:
 \end{itemize}
 
-%base_init, base_finalize: These functions initialize/finalize the dynamic members of the class. In many cases, they aren't necessary, and are assigned NULL. For further information, see GObject API Reference -- BaseInitFunc and GObject API Reference -- ClassInitFunc.
-%class_init: Initializes static members of the class. Assign your class initialization function to class_init member. By convention, the name is <name space>_<name>_class_init, for example, t_double_class_init.
-%class_finalize: Finalizes the class. Because descendant type of GObjec is static, it doesn't have a finalize function. Assign NULL to class_finalize member.
-%class_data: User-supplied data passed to the class init/finalize functions. Usually NULL is assigned.
-%instance_size: The size of the instance. For example, TDouble's instance size is sizeof (TDouble).
 %n_preallocs: This is ignored. it has been used by the old version of Glib.
 %instance_init: Initializes instance members. Assign your instance initialization function to instance_init member. By convention, the name is <name space>_<name>_init, for example, t_double_init.
 %value_table: This is usually only useful for fundamental types. If the type is descendant of GObject, assign NULL.
