@@ -292,8 +292,117 @@ Los valores \texttt{class\_size} e \texttt{instance\_size} se usan para reservar
 respectivamente. Los métodos \texttt{class\_init} e \texttt{instance\_init} se ejecutan cuando se inicializan
 la clase y la instancia, también respectivamente.
 
+\subsubsection{Ejemplo 3}
+El siguiente ejemplo muestra cómo utilizar la función \passthrough{\lstinline!g\_type\_register\_static!}.
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * ejemplo03.c
+ * Prueba la función 'g_type_register_static'.
+ */
+
+#include <locale.h>
+#include <glib-object.h>
+ 
+ #define T_TYPE_DOBLE  (t_doble_get_type ())
+ 
+ typedef struct _TDoble TDoble;
+ struct _TDoble {
+   GObject parent;
+   double value;
+ };
+ 
+ typedef struct _TDobleClass TDobleClass;
+ struct _TDobleClass {
+   GObjectClass parent_class;
+ };
+ 
+ static void
+ t_doble_class_init (TDobleClass *class) {
+ }
+ 
+ static void
+ t_doble_init (TDoble *self) {
+ }
+ 
+ GType
+ t_doble_get_type (void) {
+   static GType type = 0;
+   GTypeInfo info;
+ 
+   if (type == 0) {
+     info.class_size = sizeof (TDobleClass);
+     info.base_init = NULL;
+     info.base_finalize = NULL;
+     info.class_init = (GClassInitFunc)  t_doble_class_init;
+     info.class_finalize = NULL;
+     info.class_data = NULL;
+     info.instance_size = sizeof (TDoble);
+     info.n_preallocs = 0;
+     info.instance_init = (GInstanceInitFunc)  t_doble_init;
+     info.value_table = NULL;
+     type = g_type_register_static (G_TYPE_OBJECT, "TDoble", &info, 0);
+   }
+   return type;
+ }
+ 
+ int
+ main (int argc, char **argv) {
+   GType dtype;
+   TDoble *d;
+
+  // Para que g_print no transforme la codificación de caracteres
+  // por su cuenta y no se vean los acentos.
+  setlocale(LC_CTYPE, "");
+   
+  dtype = t_doble_get_type (); /* equivale a  'dtype = T_TYPE_DOBLE' */
+  if (dtype)
+    g_print ("Registro correcto. El tipo es %lx.\n", dtype);
+  else
+    g_print ("Registro incorrecto.\n");
+ 
+  d = g_object_new (T_TYPE_DOBLE, NULL);
+  if (d)
+    g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
+  else
+    g_print ("Error en la creación de la instancia.\n");
+  g_object_unref (d); /* Elimina el objeto 'd'. */
+  
+  return 0;
+ }
+ \end{lstlisting}
+
+ \subsubsection{Salida del programa 'ejemplo03'}
+\textsf{Registro correcto. El tipo es 0x563c801b24f0.}\par
+\textsf{La instancia se ha creado correctamente Su dirección es 0x563c801b4000.}\par
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Líneas 22--28:\par
+  Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
+  estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no tienen ningún
+  código en este caso, pero son necesarias para el registro.
+\item Líneas 30--49:\par
+  Se define la función \passthrough{\lstinline!t\_doble\_get\_type!}. Esta función retorna el tipo del objeto
+  \textsf{TDoble}.
+  Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta función reemplaza
+  a la macro \textsf{<ESPACIO-DE-NOMBRES>\_TYPE\_<NOMBRE>} (todos los caracteres en mayúsculas).
+  En la línea 9. la macro \texttt{T\_TYPE\_DOBLE} se reemplaza por \passthrough{\lstinline!t\_doble\_get\_type!}.
+  Esta función define una variable estática, \texttt{type}, para mantener el tipo del objeto que se define.
+  Al ejecutarse por primera vez la función, se asigna el valor cero a la variable (\texttt{type = 0}).
+  Después, se llama a g\_type\_register\_static para registrar el objeto en el sistema de tipos. En las subsecuentes
+  llamadas, la función lo único que se hace es retornar el tipo que se definió en la primera ejecución.
+\item Líneas 36--46:\par
+  Establece campos de la estructura \texttt{info} y llama a \passthrough{\lstinline!g\_type\_register\_static!}.
+\item Líneas 51--74:\par
+  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
+  del tipo \text{TDoble}.
+  \end{itemize}
+ \par
+%45-64: Main function. Gets the type of TDouble object and displays it. The function g_object_new is used to instantiate the object. The GObject API reference says that the function returns a pointer to a GObject instance but it actually returns a gpointer. Gpointer is the same as void * and it can be assigned to a pointer that points any type. So, the statement d = g_object_new (T_TYPE_DOUBLE, NULL); is correct. If the function g_object_new returned GObject *, it would be necessary to cast the returned pointer. After the creation, it shows the address of the instance. Finally, the instance is released and destroyed with the function g_object_unref.
 
 
+  
 
 %%% Local Variables:
 %%% coding: utf-8

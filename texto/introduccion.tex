@@ -173,7 +173,7 @@ El listado es:
   }
 \end{lstlisting}
 
-\subsubsection{Ejemplo de salida del programa 'ejemplo01'}
+\subsubsection{Salida del programa 'ejemplo01'}
 \textsf{Dirección de 'instancia1': 0x5605fdedb800}\par
 \textsf{Dirección de 'instancia2': 0x5605fdedb820}\par
 \textsf{Dirección de la clase de 'instancia1':  0x5605fdedb4f0}\par
@@ -182,20 +182,20 @@ El listado es:
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Líneas 6 y 7\par
+\item Líneas 6 y 7:\par
   Se declaran dos punteros a objetos de \textsf{GObject}, por lo que podremos crear dos
   instancias de esta clase.
   Se declaran dos punteros de \textsf{GObjectClass}, a los que asignaremos la clase a la que pertenecen
   las instancias anteriores.
-\item Línea 11\par
+\item Línea 11:\par
   Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la función
   \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
   y se puedan ver los acentos correctamente en la consola UTF-8.
-\item Líneas 14 -- 17\par
+\item Líneas 14 -- 17:\par
   Se crean dos instancias diferentes de \textsf{GObject} mediante la función 
   \passthrough{\lstinline!g\_object\_new!}. Posteriormente se comprueba que son diferentes, dado que
   sus punteros son distintos.
-\item Líneas 20 -- 23\par
+\item Líneas 20 -- 23:\par
   Se obtiene el puntero a la clase a la que pertenecen 'instancia1' e 'instancia2', estos punteros se
   almacenan en 'clase1' y 'clase2', respectivamente. Esta tarea se realiza mediante la macro
   \passthrough{\lstinline!G\_OBJECT\_GET\_CLASS!}. Al imprimir en pantalla los punteros de las
@@ -203,7 +203,7 @@ El listado es:
   clase \textsf{GObjectClass}, que se creó la primera vez que se ejecutó la función
   \passthrough{\lstinline!g\_object\_new!} en la línea 14, a la vez que se creó la primera instancia,
   'instancia1'.
-\item Líneas 26 -- 27\par
+\item Líneas 26 -- 27:\par
   Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa. Nos podríamos
   preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
   esta duda se aclarará en la siguiente sección.
@@ -372,7 +372,7 @@ main (int argc, char **argv)
 }
 \end{lstlisting}
 
-\subsubsection{Ejemplo de salida del programa 'ejemplo02'}
+\subsubsection{Salida del programa 'ejemplo02'}
 \textsf{- Se crea el objeto 'instancia', llamando a 'g\_object\_new'.}\par
 \textsf{  La cuenta de referencia de la instancia es 1.}
 \par\textsf{ }\par
@@ -391,22 +391,22 @@ main (int argc, char **argv)
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Línea 25\par
+\item Línea 25:\par
   Se declara un puntero a objeto de \textsf{GObject}, lo que no permitirá crear una instancia.
-\item Línea 29\par
+\item Línea 29:\par
   Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la función
   \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
   y se puedan ver los acentos correctamente en la consola UTF-8.
-\item Líneas 31 -- 34\par
+\item Líneas 31 -- 34:\par
   Se crea una instancia de \textsf{GObject} mediante la función \passthrough{\lstinline!g\_object\_new!}.
   Se muestra el valor, 1,  de la cuenta de referencia de esa instancia.
-\item Líneas 36 -- 39\par
+\item Líneas 36 -- 39:\par
   Se añade una referencia a la instancia mediante la función  \passthrough{\lstinline!g\_object\_ref!}.
   Se muestra el valor, 2,  de la cuenta de referencia de esa instancia.
-\item Líneas 41 -- 44\par
+\item Líneas 41 -- 44:\par
   Se elimina una referencia a la instancia mediante la función  \passthrough{\lstinline!g\_object\_unref!}.
   Se muestra el valor, 1,  de la cuenta de referencia de esa instancia.
-\item Líneas 46 -- 53\par
+\item Líneas 46 -- 53:\par
   Se elimina la  última referencia que quedaba de la instancia.
   Por tanto, se destruye el objeto 'instancia' y se libera su memoria asociada.
   Por esa razón, no se puede mostrar su cuenta de referencia, porque
