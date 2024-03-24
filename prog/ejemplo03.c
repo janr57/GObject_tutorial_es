@@ -68,6 +68,7 @@
     g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
   else
     g_print ("Error en la creación de la instancia.\n");
+
   g_object_unref (d); /* Elimina el objeto 'd'. */
   
   return 0;
