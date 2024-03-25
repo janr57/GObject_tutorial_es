@@ -58,16 +58,18 @@
   setlocale(LC_CTYPE, "");
    
   dtype = t_doble_get_type (); /* equivale a  'dtype = T_TYPE_DOBLE' */
-  if (dtype)
+  if (dtype) {
     g_print ("Registro correcto. El tipo es %lx.\n", dtype);
-  else
+  } else {
     g_print ("Registro incorrecto.\n");
+  }
  
   d = g_object_new (T_TYPE_DOBLE, NULL);
-  if (d)
-    g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
-  else
+  if (d) {
+    g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
+  } else {
     g_print ("Error en la creación de la instancia.\n");
+  }
 
   g_object_unref (d); /* Elimina el objeto 'd'. */
   

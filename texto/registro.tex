@@ -6,9 +6,9 @@ x% registro.tex
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Sistema de tipos y registro de clases}
-\subsection{Sistema de tipos} \label{subsec:sistematipos}
-\subsubsection{Introducción}
+\section{Sistema de tipos}
+%\subsection{Sistema de tipos} \label{subsec:sistematipos}
+\subsection{Introducción}
 \textsf{GObject} es un objeto básico. Es muy simple y no se puede hacer mucho con él, excepto crear
 clases derivadas e instanciar nuevos tipos de objetos.
 En realidad esta es la característica más importante de \textsf{GObject}.
@@ -18,7 +18,7 @@ En esta sección se crearán objetos que representan números reales. Este ejemp
 el lenguaje C ya tiene un tipo \emph{double} que representa números reales. Sin embargo, será útil para
 conocer la técnica para definir clases y objetos derivados de \textsf{GObject}.
 
-\subsubsection{Convenio de nombres}
+\subsection{Convenio de nombres}
 Primero se debe conocer el convenio de nombres que se usará. El nombre de un objeto tiene dos partes:
 \begin{enumerate}
   \tightlist
@@ -70,8 +70,7 @@ será \textit{double}.
 \label{fig:nombre-objetos}
 \end{figure}
 
-
-\subsubsection{Tipo}
+\subsection{Tipo}
 Cuando decimos ``tipo'', nos podemos referir a dos conceptos diferentes, aunque relacionados.
 Por un lado, el tipo del sistema de objetos y, por otro, el tipo del lenguaje C. Por ejemplo, \textsf{GObject} es
 un tipo del sistema de tipos. Pero, ``char'', o `double'', por otro lado son tipos del lenguaje C.
@@ -105,8 +104,8 @@ diremos ``tipo de C'' o ``tipo del sistema''.
   \textsf{TDoble} tiene su propio miembro ``\texttt{valor}'', que es el valor de las instancias de \textsf{TDoble}.
   La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
 
-  \subsection{Proceso de registro}
-  \subsubsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
+  \section{Proceso de registro}
+  \subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
   Para crear un tipo del sistema, a partir de un tipo creado como una estructura en C,
   como \text{TDoble}, se llevan a cabo los siguientes pasos:
   \begin{enumerate}
@@ -188,7 +187,7 @@ diremos ``tipo de C'' o ``tipo del sistema''.
 \label{fig:proceso-registro}
 \end{figure}
 
-\subsubsection{Registro}
+\subsection{Registro realizado sin macros}
 Generalmente, el proceso de registro se lleva a cabo mediante unas macros, como
 \texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, de manera que no
 necesitamos preocuparnos por los detalles. Pero aquí es importante entender el
@@ -378,16 +377,18 @@ El listado es:
   setlocale(LC_CTYPE, "");
    
   dtype = t_doble_get_type (); /* equivale a  'dtype = T_TYPE_DOBLE' */
-  if (dtype)
+  if (dtype) {
     g_print ("Registro correcto. El tipo es %lx.\n", dtype);
-  else
-    g_print ("Registro incorrecto.\n");
+    } else {
+      g_print ("Registro incorrecto.\n");
+    }
  
   d = g_object_new (T_TYPE_DOBLE, NULL);
-  if (d)
-    g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
-  else
-  g_print ("Error en la creación de la instancia.\n");
+  if (d) {
+    g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
+  } else {
+    g_print ("Error en la creación de la instancia.\n");
+  }
   
   g_object_unref (d); /* Elimina el objeto 'd'. */
   
@@ -457,10 +458,170 @@ El listado es:
 \item Línea 72:\par
   Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
 \end{itemize}
- \par
 
+\subsection{Registro mediante la macro \texttt{G\_DEFINE\_TYPE}}
+El proceso de registro realizado anteriormente se lleva a cabo siempre con el mismo algoritmo, por tanto,
+el sistema puede definir una macro, como \texttt{G\_DEFINE\_TYPE}  que lo lleve a cabo automáticamente,
+con solo invocarla.
 
+\texttt{G\_DEFINE\_TYPE} hace lo siguiente:
+\begin{itemize}
+  \tightlist
+\item Declara una función de inicialización de la clase. Su nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}. Por ejemplo, para el objeto \textsf{TDoble}, la función
+  sería \texttt{t\_doble\_class\_init}. Esto es una declaración, no una definición, por lo que necesitamos
+  definirla más adelante.
+\item Declara una función de inicialización para las instancias. Su nombre es
+\textsf{<espacio-de-nombres>\_<nombre>\_init}. Por ejemplo, para el objeto \textsf{TDoble}, la función
+sería \texttt{t\_doble\_class\_init}. Esto es una declaración, no una definición, por lo que necesitamos
+definirla más adelante.
+\item Define una variable estática que apunte a la clase de la que deriva. Su nombre es
+  \textsf{<espacio-de-nombres>\_<nombre>\_parent\_class}. Por ejemplo, para el objeto \textsf{TDoble},
+  la variable es \texttt{t\_doble\_parent\_class}.
+\item Define una función \textsf{<espacio-de-nombres>\_<nombre>\_get\_type ()}. Por ejemplo para
+  el objeto \textsf{TDoble}, la función es \texttt{t\_doble\_get\_type}. El registro se lleva a cabo como
+  se hizo anteriormente.
+\end{itemize}
+
+Al usar esta macro se reduce en número de líneas de programa. Ver el ejemplo 4.
+
+\subsubsection{Ejemplo 4}
+Este ejemplo realiza lo mismo que el ejemplo 3, pero con menos líneas de código.
+Gracias a \texttt{G\_DEFINE\_TYPE} no tenemos que escribir código como la variable \texttt{GTypeInfo info}
+o definir la función  \passthrough{\lstinline!g\_type\_register\_static!}.
+Es importante seguir las convención en el nombre de las funciones de inicialización.
+A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} en lugar de
+\texttt{G\_DEFINE\_TYPE}, para clases finales.
+
+En el directorio 'prog' se encuentran los programas de ejemplo.
+Para compilarlos todos basta con hacer
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make
+\end{lstlisting}
+o bien, solo el cuarto ejemplo:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make ejemplo04
+\end{lstlisting}
+Para borrar los ejecutables:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make clean
+\end{lstlisting}
+
+El listado es:
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * ejemplo04.c
+ * Prueba la macro G_DEFINE_TYPE
+ */
+
+#include <locale.h>
+#include <glib-object.h>
+
+#define T_TYPE_DOBLE  (t_doble_get_type ())
+
+typedef struct _TDoble TDoble;
+struct _TDoble {
+  GObject parent;
+  double value;
+};
+
+typedef struct _TDobleClass TDobleClass;
+struct _TDobleClass {
+  GObjectClass parent_class;
+};
+
+G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+
+static void
+t_doble_class_init (TDobleClass *class) {
+}
+
+static void
+t_doble_init (TDoble *self) {
+}
+
+int
+main (int argc, char **argv) {
+  GType dtype;
+  TDoble *d;
+
+  // Para que g_print no transforme la codificación de caracteres
+  // por su cuenta y no se vean los acentos.
+  setlocale(LC_CTYPE, "");
   
+  dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
+  if (dtype) {
+    g_print ("Registro correcto. El tipo es %lx.\n", dtype);
+    } else {
+      g_print ("Registro incorrecto.\n");
+    }
+
+  d = g_object_new (T_TYPE_DOBLE, NULL);
+  if (d) {
+    g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
+    } else {
+      g_print ("Error en la creación de la instancia.\n");
+    }
+
+  g_object_unref (d); /* Elimina el objeto 'd'. */
+
+  return 0;
+}
+\end{lstlisting}
+
+ \subsubsection{Salida del programa 'ejemplo04'}
+\textsf{Registro correcto. El tipo es 0x55e94aa2d4f0.}\par
+\textsf{La instancia se ha creado correctamente Su dirección es 0x55e94aa2e000.}\par
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Línea 9:\par
+  Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
+  \passthrough{\lstinline!t\_doble\_get\_type!}, se define automaticamente por el sistema y se ejecuta cuando
+  se llama a la macro. Cuando se ejecuta, se registra la nueva clase y se crean las instancias que se pidan.
+\item Líneas 11--15:\par
+  Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
+\item Líneas 17--20:\par
+  Se define el tipo C de la clase \textsf{TDobleClass} y la estructura que lo define \texttt{struct \_TDobleClass}.
+\item Línea 22:\par
+  Se ejecuta la macro \texttt{G\_DEFINE\_TYPE}. El primer argumento es el nombre del objeto que se define,
+  el segundo es \textsf{<espacio-de-nombres>\_<nombre>} en minúsculas, y el último es el objeto padre.
+  En este ejemplo, los argumentos son: \texttt{TDoble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
+  A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} para clases finales.
+\item Líneas 24--30:\par
+  Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
+  estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
+  necesitan ningún código en este caso, pero son necesarias para el registro.
+\item Líneas 32--56:\par
+  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
+  del tipo \text{TDoble}.
+\item Líneas 34--35:\par
+  Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOBLE}, y de la
+  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 47.
+\item Línea 39:\par
+  Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
+  \passthrough{\lstinline!g\_print!} no cambie el el sistema de caracteres del texto que imprimirá.
+  Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
+  que las cadenas (en este caso utilizamos UTF-8).
+\item Líneas 41-46:\par
+  Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
+  También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
+  "\texttt{dtype = T\_TYPE\_DOBLE}".
+\item Líneas 48--53:\par
+  Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
+  dirección. En la referencia de la API de \textsf{GObject} se dice que la función
+  \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
+  \texttt{gpointer}, que es lo mismo que \texttt{void *}, que puede asignarse a cualquier puntero, sea cual sea
+  su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDoble}, por lo que la línea
+  "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
+  \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
+  "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
+\item Línea 55:\par
+  Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
+\end{itemize}
+
 
 %%% Local Variables:
 %%% coding: utf-8
