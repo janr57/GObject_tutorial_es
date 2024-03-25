@@ -442,11 +442,11 @@ El listado es:
   \passthrough{\lstinline!g\_print!} no cambie el el sistema de caracteres del texto que imprimirá.
   Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
   que las cadenas (en este caso utilizamos UTF-8).
-\item Líneas 60--64:\par
+\item Líneas 60--65:\par
   Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
   También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
   "\texttt{dtype = T\_TYPE\_DOBLE}".
-\item Líneas 66--70:\par
+\item Líneas 67--72:\par
   Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
   \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
@@ -455,7 +455,7 @@ El listado es:
   "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
   \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
   "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
-\item Línea 72:\par
+\item Línea 74:\par
   Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
 \end{itemize}
 
