@@ -294,6 +294,28 @@ la clase y la instancia, también respectivamente.
 
 \subsubsection{Ejemplo 3}
 El siguiente ejemplo muestra cómo utilizar la función \passthrough{\lstinline!g\_type\_register\_static!}.
+En la práctica se utilizará una macro que realiza esta tarea automáticamente. Pero aquí se realiza sin
+la macro con fines didácticos.
+
+En el directorio 'prog' se encuentran los programas de ejemplo.
+Para compilarlos todos basta con hacer
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make
+\end{lstlisting}
+o bien, solo el tercer ejemplo:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make ejemplo03
+\end{lstlisting}
+Para borrar los ejecutables:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make clean
+\end{lstlisting}
+
+
+El listado es:
 
 \begin{lstlisting}[language=C, numbers=left]
 /*
@@ -380,28 +402,27 @@ El siguiente ejemplo muestra cómo utilizar la función \passthrough{\lstinline!
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Línea 9:\par
-  Se define la macro \texttt{T\_TYPE\_DOBLE} que se sustituye por la función
-  \passthrough{\lstinline!t\_doble\_get\_type!}, que se definirá más adelante.
-  Se necesitará definir la función anterior porque vamos a registrar la clase \textsf{T\_Doble\_Class} y
-  el objeto \textsf{T\_Doble} manualmente. utilizando esta función, que a su vez, ejecuta
-  \passthrough{\lstinline!g\_type\_register\_static!}. Aquí lo haremos manualmente en las líneas
-  30--49. Pero normalmente el sistema de tipos generará unas macros automáticamente que
-  se encargarán de esa definición.
+  Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
+  \passthrough{\lstinline!t\_doble\_get\_type!}, Esta función se definirá manualmente más adelante porque
+  vamos a registrar la clase \textsf{T\_Doble\_Class} y  el objeto \textsf{T\_Doble} manualmente, con fines didácticos.
+  Esta función, a su vez, ejecuta \passthrough{\lstinline!g\_type\_register\_static!}, que realiza
+  el proceso de registro; todo esto se hará en las líneas 30--49.
+  Ten en cuenta que normalmente, el sistema de tipos generará unas macros automáticamente que se encargarán
+  de esta tarea, cuando las llamemos en el código.
 \item Líneas 11--15:\par
   Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
 \item Líneas 17--20:\par
   Se define el tipo C de la clase \textsf{TDobleClass} y la estructura que lo define \texttt{struct \_TDobleClass}.
 \item Líneas 22--28:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
-  estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no tienen ningún
-  código en este caso, pero son necesarias para el registro.
+  estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
+  necesitan ningún código en este caso, pero son necesarias para el registro.
 \item Líneas 30--49:\par
-  Se define la función \passthrough{\lstinline!t\_doble\_get\_type!}. Esta función retorna el tipo del objeto
-  \textsf{TDoble}. Esta función es la que sustituye a la macro \texttt{T\_TYPE\_DOBLE} definida en la línea 9.
+  Se define la función \passthrough{\lstinline!t\_doble\_get\_type!}, a la que se hacía referencia en la línea 9.
+  Esta función sustituye a la macro \texttt{T\_TYPE\_DOBLE} y retorna el tipo del objeto \textsf{TDoble}.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta función reemplaza
   a la macro \textsf{<ESPACIO-DE-NOMBRES>\_TYPE\_<NOMBRE>} (todos los caracteres en mayúsculas).
-  En la línea 9. la macro \texttt{T\_TYPE\_DOBLE} se reemplaza por \passthrough{\lstinline!t\_doble\_get\_type!}.
-  Esta función define una variable estática, \texttt{type}, para mantener el tipo del objeto que se define.
+  En su código se define una variable estática, \texttt{type}, para mantener el tipo del objeto que se define.
   Al ejecutarse por primera vez la función, se asigna el valor cero a la variable (\texttt{type = 0}).
   Después, se llama a g\_type\_register\_static para registrar el objeto en el sistema de tipos. En las subsecuentes
   llamadas, la función lo único que se hace es retornar el tipo que se definió en la primera ejecución.\par
@@ -426,12 +447,17 @@ El siguiente ejemplo muestra cómo utilizar la función \passthrough{\lstinline!
   "\texttt{dtype = T\_TYPE\_DOBLE}".
 \item Líneas 66--70:\par
   Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
-  dirección.
+  dirección. En la referencia de la API de \textsf{GObject} se dice que la función
+  \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
+  \texttt{gpointer}, que es lo mismo que \texttt{void *}, que puede asignarse a cualquier puntero, sea cual sea
+  su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDoble}, por lo que la línea
+  "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
+  \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
+  "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
 \item Línea 72:\par
-  Se elimina la instancia.
-  \end{itemize}
+  Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
+\end{itemize}
  \par
-%45-64: Main function. Gets the type of TDouble object and displays it. The function g_object_new is used to instantiate the object. The GObject API reference says that the function returns a pointer to a GObject instance but it actually returns a gpointer. Gpointer is the same as void * and it can be assigned to a pointer that points any type. So, the statement d = g_object_new (T_TYPE_DOUBLE, NULL); is correct. If the function g_object_new returned GObject *, it would be necessary to cast the returned pointer. After the creation, it shows the address of the instance. Finally, the instance is released and destroyed with the function g_object_unref.
 
 
   
