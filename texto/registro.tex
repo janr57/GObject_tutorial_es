@@ -622,6 +622,38 @@ main (int argc, char **argv) {
   Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
 \end{itemize}
 
+\subsection{La macro \texttt{G\_DECLARE\_FINAL\_TYPE}}
+Otra macro útil es \texttt{G\_DECLARE\_FINAL\_TYPE}, que se puede usar para objetos de tipo final.
+Los tipos finales no tienen hijos, esto es, no se pueden derivar objetos a partir de ellos.
+En cambio, los tipos derivables permiten definir objetos hijos. Si quieres definir un objeto de tipo
+derivable debes usar \texttt{G\_DECLARE\_DERIVABLE\_TYPE} en su lugar. Sin embargo, en la mayoría de
+las ocasiones utilizarás objetos finales.
+
+\texttt{G\_DECLARE\_FINAL\_TYPE} hace lo siguiente:
+\begin{itemize}
+  \tightlist
+\item Declara la función \texttt{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta es solo una declaración,
+  Nosotros deberíamos definirla, pero usando la macro \texttt{G\_DEFINE\_TYPE}, se define la función
+  automáticamente. Así, en realidad, no necesitamos escribir la definición de la función.
+\item El tipo C del objeto se define aplicando \texttt{typedef} a una estructura. Por ejemplo, para el objeto
+  \textsf{TDoble}, entonces se define el tipo C \texttt{TDoble}, mediante el comando
+  \texttt{typedef struct \_TDoble TDoble}, aunque tendremos que definir la estructura \texttt{struct \_TDoble}
+  antes de utilizar \texttt{G\_DEFINE\_...\_TYPE}.
+\item Se define la macro \texttt{<ESPACIO-DE-NOMBRES>\_<NOMBRE>}. Por ejemplo, para el objeto
+  \textsf{TDoble}, la macro será \texttt{T\_DOBLE}, que se expandirá a una función que ajusta el argumento
+  a un puntero al objeto. Por ejemplo, \texttt{T\_DOBLE(obj)} ajusta el tipo de puntero a objeto a
+  \texttt{TDoble *}.
+\item Se define la macro \texttt{<ESPACIO-DE-NOMBRES>\_IS\_<NOMBRE>}. Por ejemplo, para el objeto
+  \textsf{TDoble}, la macro será \texttt{T_DOBLE_\ID
+
+\end{itemize}
+  
+
+%<NAME SPACE>_<NAME> macro is defined. For example, if the object is TDouble the macro is T_DOUBLE. It will be expanded to a function which casts the argument to the pointer to the object. For example, T_DOUBLE (obj) casts the type of obj to TDouble *.
+%<NAME SPACE>_IS_<NAME> macro is defined. For example, if the object is TDouble the macro is T_IS_DOUBLE. It will be expanded to a function which checks if the argument points the instance of TDouble. It returns true if the argument points a descendant of TDouble.
+%The class structure is defined. A final type object doesn't need to have its own member of class structure. The definition is like the line 11 to 14 in the example4.c.
+
+
 
 %%% Local Variables:
 %%% coding: utf-8
