@@ -59,7 +59,7 @@
    
   dtype = t_doble_get_type (); /* equivale a  'dtype = T_TYPE_DOBLE' */
   if (dtype) {
-    g_print ("Registro correcto. El tipo es %lx.\n", dtype);
+    g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
   } else {
     g_print ("Registro incorrecto.\n");
   }

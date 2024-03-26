@@ -1,4 +1,4 @@
-x% registro.tex
+% registro.tex
 %
 % Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
 % 1) Código LuaLatex:
@@ -553,7 +553,7 @@ main (int argc, char **argv) {
   
   dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
   if (dtype) {
-    g_print ("Registro correcto. El tipo es %lx.\n", dtype);
+    g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
     } else {
       g_print ("Registro incorrecto.\n");
     }
@@ -572,7 +572,7 @@ main (int argc, char **argv) {
 \end{lstlisting}
 
  \subsubsection{Salida del programa 'ejemplo04'}
-\textsf{Registro correcto. El tipo es 0x55e94aa2d4f0.}\par
+\textsf{Registro correcto. El tipo de objeto es 0x55e94aa2d4f0.}\par
 \textsf{La instancia se ha creado correctamente Su dirección es 0x55e94aa2e000.}\par
 
 \subsubsection{Comentarios}
@@ -644,14 +644,141 @@ las ocasiones utilizarás objetos finales.
   a un puntero al objeto. Por ejemplo, \texttt{T\_DOBLE(obj)} ajusta el tipo de puntero a objeto a
   \texttt{TDoble *}.
 \item Se define la macro \texttt{<ESPACIO-DE-NOMBRES>\_IS\_<NOMBRE>}. Por ejemplo, para el objeto
-  \textsf{TDoble}, la macro será \texttt{T_DOBLE_\ID
-
+  \textsf{TDoble}, la macro será \texttt{T\_IS\_DOBLE}. Cuando se ejecuta, se expande a una función que
+  comprueba si el argumento es un puntero a una instancia de \textsf{TDoble}. Retorna 'true' si el argumento
+  apunta a un objeto que deriva de \textsf{TDoble}.
+\item Se define la estructura de la clase. Una clase final no necesita tener miembros en la estructura de la clase,
+  con excepción de la clase padre. La definición es como la de las líneas 17 a 20 del código de  ejemplo04.c.
 \end{itemize}
-  
 
-%<NAME SPACE>_<NAME> macro is defined. For example, if the object is TDouble the macro is T_DOUBLE. It will be expanded to a function which casts the argument to the pointer to the object. For example, T_DOUBLE (obj) casts the type of obj to TDouble *.
-%<NAME SPACE>_IS_<NAME> macro is defined. For example, if the object is TDouble the macro is T_IS_DOUBLE. It will be expanded to a function which checks if the argument points the instance of TDouble. It returns true if the argument points a descendant of TDouble.
-%The class structure is defined. A final type object doesn't need to have its own member of class structure. The definition is like the line 11 to 14 in the example4.c.
+Se debe escribir la macro que define el tipo de objeto, antes de que se llame a
+\texttt{G\_DECLARE\_FINAL\_TYPE}. Por ejemplo, para el objeto \textsf{TDoble}, hay que escribir
+\texttt{\#define T\_TYPE\_DOBLE (t\_doble\_get\_type ())} antes que \texttt{G\_DECLARE\_FINAL\_TYPE}.
+
+\subsubsection{Ejemplo 5}
+En este ejemplo se prueban las macros que ayudan a crear e identificar los objetos finales que derivan
+de \textsf{GObject}. En particular, la macro \texttt{G\_DEFINE\_FINAL\_TYPE}.
+
+En el directorio 'prog' se encuentran los programas de ejemplo.
+Para compilarlos todos basta con hacer
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make
+\end{lstlisting}
+o bien, solo el quinto ejemplo:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make ejemplo05
+\end{lstlisting}
+Para borrar los ejecutables:
+\begin{lstlisting}[language=bash]
+  $ cd prog
+  $ make clean
+\end{lstlisting}
+
+El listado es:
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * ejemplo05.c
+ * Prueba la macro G_DEFINE_FINAL_TYPE
+ */
+
+#include <locale.h>
+ #include <glib-object.h>
+ 
+ #define T_TYPE_DOBLE  (t_doble_get_type ())
+ G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+ 
+ struct _TDoble {
+   GObject parent;
+   double value;
+ };
+ 
+ G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+ 
+ static void
+ t_doble_class_init (TDobleClass *class) {
+ }
+ 
+ static void
+ t_doble_init (TDoble *self) {
+ }
+ 
+int
+main (int argc, char **argv) {
+  GType dtype;
+  TDoble *d;
+
+  // Para que g_print no transforme la codificación de caracteres
+  // por su cuenta y no se vean los acentos.
+  setlocale(LC_CTYPE, "");
+  
+  dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
+  if (dtype) {
+    g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
+  } else {
+    g_print ("Registro incorrecto.\n");
+  }
+ 
+  d = g_object_new (T_TYPE_DOBLE, NULL);
+  if (d) {
+    g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
+  } else {
+    g_print ("Error en la creación de la instancia.\n");
+  }
+ 
+  if (T_IS_DOBLE (d)) {
+    g_print ("La variable 'd' es una instancia de TDoble.\n");
+  } else {
+    g_print ("La variable 'd' no es una instancia de TDoble.\n");
+  }
+ 
+  if (G_IS_OBJECT (d)) {
+    g_print ("La variable 'd' es una instancia de GObject.\n");
+  } else {
+    g_print ("La variable 'd' no es una instancia de GObject.\n");
+  }
+  
+  g_object_unref (d);
+ 
+  return 0;
+ }
+\end{lstlisting}
+
+ \subsubsection{Salida del programa 'ejemplo05'}
+\textsf{Registro correcto. El tipo de objeto es 0x559b2af2c4f0.}\par
+\textsf{La instancia se ha creado correctamente Su dirección es 0x559b2af2d000.}\par
+\textsf{La variable 'd' es una instancia de TDoble.}\par
+\textsf{La variable 'd' es una instancia de GObject.}\par
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Líneas 9--10:\par
+  Se define la macro \texttt{T\_TYPE\_DOBLE}, que se expandirá a la función
+  \passthrough{\lstinline!t\_doble\_get\_type!} y, después se declara el tipo \textsf{TDoble} por medio
+  de la macro \texttt{G\_DECLARE\_FINAL\_TYPE}, en ese orden.
+\item Líneas 12--15:\par
+  Se define la estructura \texttt{struct \_TDoble}. Ya no es necesario definir el tipo C \texttt{TDoble} mediante
+  \texttt{typedef}; se realiza automáticamente en la línea 17.
+\item Línea 17:\par
+  Se expande la macro \texttt{G\_DEFINE\_TYPE} que realiza la definición del tipo C de la clase
+  \textsf{TDobleClass} y del objeto \textsf{TDoble}.
+  El primer argumento es el nombre del objeto que se define,   el segundo es \textsf{<espacio-de-nombres>\_<nombre>} en minúsculas, que será el prefijo de las funciones de esa clase,
+  y el último es el objeto padre.
+  En este ejemplo, los argumentos son: \texttt{TDoble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
+  A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} para clases finales.
+\item Líneas 19--25:\par
+  Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
+  estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
+  necesitan ningún código en este caso, pero son necesarias para el registro.
+\item Líneas 27--65:\par
+  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
+  del tipo \text{TDoble}. Además, comprueba que la instancia creada es un objeto que deriva, tanto de
+  \textsf{TDoble}, como de \textsf{GObject}.
+\end{itemize}
+
+
+
 
 
 
