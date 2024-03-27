@@ -777,6 +777,108 @@ main (int argc, char **argv) {
   \textsf{TDoble}, como de \textsf{GObject}.
 \end{itemize}
 
+\subsection{Separación del programa en ficheros individuales \textsf{tdoble.h}, \textsf{tdoble.c} y \textsf{main.c}}
+Ahora es el momento de separar el contenido del programa en tres ficheros:
+\textsf{tdoble.h}, \textsf{tdoble.c} y \textsf{main.c}. El objeto \textsf{TDoble} se declara y define en
+los dos primeros ficheros, respectivamente.
+
+\subsubsection{Declaración del objeto \textsf{TDoble}: fichero de cabecera \textsf{tdoble.h}}
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * tdoble.h
+ * Declaración del objeto TDoble.
+ */
+
+#pragma once
+ 
+ #include <glib-object.h>
+ 
+ #define T_TYPE_DOBLE  (t_doble_get_type ())
+ G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+ 
+ gboolean
+ t_doble_get_value (TDoble *self, double *valor);
+ 
+ void
+ t_doble_set_value (TDoble *self, double valor);
+ 
+ TDoble *
+ t_doble_new (double valor);
+ \end{lstlisting}
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Este fichero de cabecera incluye macros, que proporcionan información sobre el tipo, conversión de
+  tipo de puntero (\textit{cast}), comprobación del tipo de objeto y funciones públicas.
+\item Línea 6:\par
+  La directiva \texttt{\#pragma once} impide que este fichero de cabecera se lea más de una vez.
+  Esta directiva no está oficialmente definida, pero es compatible con muchos compiladores.
+\item Líneas 10--11:\par
+  Se declara la macro \texttt{T\_TYPE\_DOBLE} que se expandirá a \texttt{t\_doble\_get\_type ()}.
+  Se declara el tipo de objeto \textsf{TObject}, mediante la macro\texttt{G\_DECLARE\_FINAL\_TYPE}
+  a la que se añaden los argumentos: \texttt{TDoble}, \texttt{t\_doble} y \texttt{GObject}.
+\item Líneas 13--17:\par
+  Se declaran las funciones públicas. La primera retorna el valor del objeto \textsf{TDoble} y la
+  segunda lo cambia.
+\item Líneas 19--20:\par
+  Se declara la función que crea instancias de \textsf{TDoble}.
+\end{itemize}
+
+\subsubsection{Definición del objeto \textsf{TDoble}: fichero \textsf{tdoble.c}}
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * tdoble.c
+ * Definición del objeto TDoble.
+ */
+ 
+#include "tdoble.h"
+
+struct _TDoble {
+  GObject parent;
+  double value;
+};
+
+G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+
+static void
+t_doble_class_init (TDobleClass *class) {
+}
+
+static void
+t_doble_init (TDoble *self) {
+}
+
+gboolean
+t_doble_get_value (TDoble *self, double *value) {
+  g_return_val_if_fail (T_IS_DOBLE (self), FALSE);
+
+  *value = self->value;
+  return TRUE;
+}
+
+void
+t_doble_set_value (TDoble *self, double value) {
+  g_return_if_fail (T_IS_DOBLE (self));
+
+  self->value = value;
+}
+
+TDoble *
+t_doble_new (double value) {
+  TDoble *d;
+
+  d = g_object_new (T_TYPE_DOBLE, NULL);
+  d->value = value;
+  return d;
+}
+ \end{lstlisting}
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Este fichero 
+\end{itemize}
 
 
 
