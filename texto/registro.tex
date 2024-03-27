@@ -297,22 +297,21 @@ En la práctica se utilizará una macro que realiza esta tarea automáticamente.
 la macro con fines didácticos.
 
 En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilarlos todos basta con hacer
+Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make
 \end{lstlisting}
 o bien, solo el tercer ejemplo:
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make ejemplo03
 \end{lstlisting}
 Para borrar los ejecutables:
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/0105
   $ make clean
 \end{lstlisting}
-
 
 El listado es:
 
@@ -493,19 +492,19 @@ A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FIN
 \texttt{G\_DEFINE\_TYPE}, para clases finales.
 
 En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilarlos todos basta con hacer
+Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make
 \end{lstlisting}
 o bien, solo el cuarto ejemplo:
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make ejemplo04
 \end{lstlisting}
 Para borrar los ejecutables:
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make clean
 \end{lstlisting}
 
@@ -660,19 +659,19 @@ En este ejemplo se prueban las macros que ayudan a crear e identificar los objet
 de \textsf{GObject}. En particular, la macro \texttt{G\_DEFINE\_FINAL\_TYPE}.
 
 En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilarlos todos basta con hacer
+Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make
 \end{lstlisting}
 o bien, solo el quinto ejemplo:
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make ejemplo05
 \end{lstlisting}
 Para borrar los ejecutables:
 \begin{lstlisting}[language=bash]
-  $ cd prog
+  $ cd prog/ej0105
   $ make clean
 \end{lstlisting}
 
@@ -777,10 +776,30 @@ main (int argc, char **argv) {
   \textsf{TDoble}, como de \textsf{GObject}.
 \end{itemize}
 
-\subsection{Separación del programa en ficheros individuales \textsf{tdoble.h}, \textsf{tdoble.c} y \textsf{main.c}}
-Ahora es el momento de separar el contenido del programa en tres ficheros:
-\textsf{tdoble.h}, \textsf{tdoble.c} y \textsf{main.c}. El objeto \textsf{TDoble} se declara y define en
-los dos primeros ficheros, respectivamente.
+\subsection{Ejemplo 6}
+Se estructura un programa que usa objetos \textsf{TDoble}, en ficheros individuales \textsf{tdoble.h},
+\textsf{tdoble.c} y \textsf{main.c}.
+El objeto \textsf{TDoble} se declara y define en los dos primeros ficheros, respectivamente.
+
+Este ejemplo se puede compilar de dos formas diferentes:
+\begin{itemize}
+  \item Utilizando \textsf{make}:
+\begin{lstlisting}[language=bash]
+  $ cd prog/ej06
+  $ make
+\end{lstlisting}
+\item Utilizando \textsf{ninja}:
+\begin{lstlisting}[language=bash]
+  $ cd prog/ej06
+  $ meson setup _build
+  $ ninja -C _build
+\end{lstlisting}
+\end{itemize}
+Para borrar el ejecutable y ficheros auxiliares:
+\begin{lstlisting}[language=bash]
+  $ cd prog/ej06
+  $ make clean
+\end{lstlisting}
 
 \subsubsection{Declaración del objeto \textsf{TDoble}: fichero de cabecera \textsf{tdoble.h}}
 
@@ -790,38 +809,40 @@ los dos primeros ficheros, respectivamente.
  * Declaración del objeto TDoble.
  */
 
-#pragma once
+#ifndef T_DOBLE_H
+#define T_DOBLE_H
  
- #include <glib-object.h>
+#include <glib-object.h>
  
- #define T_TYPE_DOBLE  (t_doble_get_type ())
- G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+#define T_TYPE_DOBLE  (t_doble_get_type ())
+G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
  
- gboolean
- t_doble_get_value (TDoble *self, double *valor);
+gboolean
+t_doble_get_value (TDoble *self, double *valor);
  
- void
- t_doble_set_value (TDoble *self, double valor);
+void
+t_doble_set_value (TDoble *self, double valor);
  
- TDoble *
- t_doble_new (double valor);
- \end{lstlisting}
+TDoble *
+t_doble_new (double valor);
+
+#endif /* T_DOBLE_H */
+\end{lstlisting}
 
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Este fichero de cabecera incluye macros, que proporcionan información sobre el tipo, conversión de
   tipo de puntero (\textit{cast}), comprobación del tipo de objeto y funciones públicas.
-\item Línea 6:\par
-  La directiva \texttt{\#pragma once} impide que este fichero de cabecera se lea más de una vez.
-  Esta directiva no está oficialmente definida, pero es compatible con muchos compiladores.
-\item Líneas 10--11:\par
+\item Línea 6--7, 23:\par
+  Se añaden estas líneas para garantizar que este fichero solo se lee una vez.
+\item Líneas 11--12:\par
   Se declara la macro \texttt{T\_TYPE\_DOBLE} que se expandirá a \texttt{t\_doble\_get\_type ()}.
   Se declara el tipo de objeto \textsf{TObject}, mediante la macro\texttt{G\_DECLARE\_FINAL\_TYPE}
   a la que se añaden los argumentos: \texttt{TDoble}, \texttt{t\_doble} y \texttt{GObject}.
-\item Líneas 13--17:\par
+\item Líneas 14--18:\par
   Se declaran las funciones públicas. La primera retorna el valor del objeto \textsf{TDoble} y la
   segunda lo cambia.
-\item Líneas 19--20:\par
+\item Líneas 20--21:\par
   Se declara la función que crea instancias de \textsf{TDoble}.
 \end{itemize}
 
@@ -837,7 +858,7 @@ los dos primeros ficheros, respectivamente.
 
 struct _TDoble {
   GObject parent;
-  double value;
+  double valor;
 };
 
 G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
@@ -851,35 +872,129 @@ t_doble_init (TDoble *self) {
 }
 
 gboolean
-t_doble_get_value (TDoble *self, double *value) {
+t_doble_get_value (TDoble *self, double *valor) {
   g_return_val_if_fail (T_IS_DOBLE (self), FALSE);
 
-  *value = self->value;
+  *valor = self->valor;
   return TRUE;
 }
 
 void
-t_doble_set_value (TDoble *self, double value) {
+t_doble_set_value (TDoble *self, double valor) {
   g_return_if_fail (T_IS_DOBLE (self));
 
-  self->value = value;
+  self->valor = valor;
 }
 
 TDoble *
-t_doble_new (double value) {
+t_doble_new (double valor) {
   TDoble *d;
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
-  d->value = value;
+  d->valor = valor;
   return d;
 }
  \end{lstlisting}
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Este fichero 
+\item Líneas 8--11:\par
+  Estructura de los objetos \textsf{TDoble}. Su nombre debe ser \texttt{\_TDoble} porque la macro
+  \texttt{G\_DECLARE\_FINAL\_TYPE} en el fichero de cabecera, en su expansión define el tipo en C
+  \texttt{TDoble} (\texttt{typedef struct \_TDoble}), necesita ese nombre.
+\item Línea 13:\par
+  Se expande la macro que define y  el objeto \textsf{TDoble} y su registro.
+\item Líneas 15--21:\par
+  Se definen las funciones de inicialización de la clase y de las instancias. No hacen nada, por ahora.
+\item Líneas 23--29:\par
+  Definición de la función \textit{getter}. El argumento \texttt{valor} es un puntero a una variable de tipo C
+  \texttt{double}. Asigna el valor del objeto \texttt{self->valor} a la variable. Si no hay error retorna \texttt{TRUE}.
+  La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} se utiliza para comprobar el tipo de objeto que
+  se le pasa como argumento. Si no es de tipo \textsf{TDoble}, envía un mensaje de error al fichero
+  de registro de errores, advertencias y mensajes (fichero \textit{log}), e inmediatamente retorna \texttt{FALSE}.
+  Este registro le sirve al programador para informar del error, pero no se debe utilizar para informar del
+  error al usuario. Para más información, ver \href{https://docs.gtk.org/glib/error-reporting.html}
+  {\textit{error reporting}} en la API de referencia de Glib.
+  La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} no se usa en funciones de clase estáticas, que son
+  privadas, porque las funciones estáticas se ejecutan solo desde funciones que están en el mismo fichero y estas
+  conocen el tipo de los parámetros.
+\item Líneas 31--36:\par
+  Definición de la función \textit{setter}. La función \passthrough{\lstinline!g\_return\_if\_fail!} se usa
+  para comprobar el objeto que se pasa como argumento. Esta función no retorna ningún valor, porque
+  el tipo de \texttt{t\_doble\_set\_value} es \texttt{void}. Por tanto, usamos esa función, en lugar de
+  \passthrough{\lstinline!g\_return\_val\_if\_fail!}.
+\item Líneas 38--45:\par
+  Definición de la función que instancia objetos. Tiene un parámetro, que es el valor del objeto.
+\item Línea 42:\par
+  Esta función usa \passthrough{\lstinline!g\_object\_new!} para instanciar un objeto. El argumento
+  \texttt{T\_TYPE\_DOBLE} se expande a la función \passthrough{\lstinline!t\_doble\_get\_type ()!}.
+  Cuando esta función se llama por primera vez, se lleva a cabo el proceso de registro de \textsf{TObject}.
 \end{itemize}
 
+\subsubsection{Prueba de \textsf{TDoble}: fichero \textsf{main.c}}
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * main.c
+ * Se prueba el objeto TDoble.
+ */
+
+#include <locale.h>
+#include <glib-object.h>
+#include "tdoble.h"
+
+int
+main (int argc, char **argv) {
+  TDoble *d;
+  double valor;
+
+  // Para que g_print no transforme la codificación de caracteres
+  // por su cuenta y no se vean los acentos.
+  setlocale(LC_CTYPE, "");
+
+  d = t_doble_new (10.0);
+  if (t_doble_get_value (d, &valor)) {
+    g_print ("t_double_get_value succesfully assigned %lf to value.\n", valor);
+  } else {
+    g_print ("t_double_get_value failed.\n");
+  }
+
+  t_doble_set_value (d, -20.0);
+  g_print ("Now, set d (tDouble object) with %lf.\n", -20.0);
+  
+  if (t_doble_get_value (d, &valor)) {
+    g_print ("t_double_get_value succesfully assigned %lf to value.\n", valor);
+  } else {
+    g_print ("t_double_get_value failed.\n");
+  }
+  
+  g_object_unref (d);
+
+  return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Línea 8:\par
+  Es necesaria para acceder a \textsf{TDoble}.
+\item Líneas 12--13:\par
+  Se declara un puntero \texttt{d} al tipo de objeto \texttt{TDoble} y una variable \texttt{valor} de tipo C,
+  \texttt{double}.
+\item Línea 17:\par
+  Se utiliza para que la función \texttt{g\_print} no modifique la codificación de caracteres. Esto se hace
+  para que se puedan ver las tildes que imprime.
+\item Línea 19:\par
+  Se instancia un objeto \textsf{TDoble} y se hace que \texttt{d} apunte al objeto.
+\item Líneas 20--24:\par
+  Se prueba la función \textit{getter} del objeto.
+\item Línea 26:\par
+  Se prueba la función \textit{setter} del objeto, cambiando el valor de la instancia \texttt{d}.
+\item Líneas 29--33:\par
+  Se vuelve a probar la función \textit{getter}, para comprobar que cambió el valor de la instancia \texttt{d}.
+\item Línea 35:\par
+  Se libera la instancia \texttt{d}.
+\end{itemize}
 
 
 

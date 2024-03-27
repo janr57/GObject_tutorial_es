@@ -3,7 +3,8 @@
  * Declaración del objeto TDoble.
  */
 
-#pragma once
+#ifndef T_DOBLE_H
+#define T_DOBLE_H
  
  #include <glib-object.h>
  
@@ -18,3 +19,5 @@
  
  TDoble *
  t_doble_new (double valor);
+
+#endif /* T_DOBLE_H */
