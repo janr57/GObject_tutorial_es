@@ -4,24 +4,26 @@
  */
 
 #include <locale.h>
- #include <glib-object.h>
+#include <glib-object.h>
  
- #define T_TYPE_DOBLE  (t_doble_get_type ())
- G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+#define T_TYPE_DOBLE  (t_doble_get_type ())
+G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
  
- struct _TDoble {
-   GObject parent;
-   double value;
- };
+struct _TDoble {
+  GObject parent;
+  double value;
+};
  
- G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+ 
+static void
+t_doble_class_init (TDobleClass *class)
+{
+}
  
  static void
- t_doble_class_init (TDobleClass *class) {
- }
- 
- static void
- t_doble_init (TDoble *self) {
+ t_doble_init (TDoble *self)
+ {
  }
  
 int
@@ -63,4 +65,3 @@ main (int argc, char **argv) {
  
   return 0;
  }
- 

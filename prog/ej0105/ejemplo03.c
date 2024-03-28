@@ -20,15 +20,18 @@
  };
  
  static void
- t_doble_class_init (TDobleClass *class) {
+ t_doble_class_init (TDobleClass *class)
+ {
  }
  
  static void
- t_doble_init (TDoble *self) {
+ t_doble_init (TDoble *self)
+ {
  }
  
  GType
- t_doble_get_type (void) {
+ t_doble_get_type (void)
+ {
    static GType type = 0;
    GTypeInfo info;
  
@@ -45,11 +48,13 @@
      info.value_table = NULL;
      type = g_type_register_static (G_TYPE_OBJECT, "TDoble", &info, 0);
    }
+   
    return type;
  }
  
  int
- main (int argc, char **argv) {
+ main (int argc, char **argv)
+ {
    GType dtype;
    TDoble *d;
 

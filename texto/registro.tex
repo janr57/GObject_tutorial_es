@@ -231,8 +231,7 @@ el tipo del nuevo objeto. La definición de la estructura \texttt{GTypeInfo} es
 \begin{lstlisting}[language=C]
 typedef struct _GTypeInfo  GTypeInfo;
 
-struct _GTypeInfo
-{
+struct _GTypeInfo {
   /* interface types, classed types, instantiated types */
   guint16                class_size;
 
@@ -338,15 +337,18 @@ El listado es:
  };
  
  static void
- t_doble_class_init (TDobleClass *class) {
+ t_doble_class_init (TDobleClass *class)
+ {
  }
  
  static void
- t_doble_init (TDoble *self) {
+ t_doble_init (TDoble *self)
+ {
  }
  
  GType
- t_doble_get_type (void) {
+ t_doble_get_type (void)
+ {
    static GType type = 0;
    GTypeInfo info;
  
@@ -363,11 +365,13 @@ El listado es:
      info.value_table = NULL;
      type = g_type_register_static (G_TYPE_OBJECT, "TDoble", &info, 0);
    }
+   
    return type;
  }
  
  int
- main (int argc, char **argv) {
+ main (int argc, char **argv)
+ {
    GType dtype;
    TDoble *d;
 
@@ -413,11 +417,11 @@ El listado es:
   Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
 \item Líneas 17--20:\par
   Se define el tipo C de la clase \textsf{TDobleClass} y la estructura que lo define \texttt{struct \_TDobleClass}.
-\item Líneas 22--28:\par
+\item Líneas 22--30:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
   estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
   necesitan ningún código en este caso, pero son necesarias para el registro.
-\item Líneas 30--49:\par
+\item Líneas 32--53:\par
   Se define la función \passthrough{\lstinline!t\_doble\_get\_type!}, a la que se hacía referencia en la línea 9.
   Esta función sustituye a la macro \texttt{T\_TYPE\_DOBLE} y retorna el tipo del objeto \textsf{TDoble}.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta función reemplaza
@@ -428,24 +432,24 @@ El listado es:
   llamadas, la función lo único que se hace es retornar el tipo que se definió en la primera ejecución.\par
   Cuando se utilicen las macros \texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, no será
   necesario definir la función esta función \passthrough{\lstinline!t\_doble\_get\_type!}; de esto se encargarán las macros anteriores.
-\item Líneas 36--46:\par
+\item Líneas 39--49:\par
   Establece campos de la estructura \texttt{info} y llama a \passthrough{\lstinline!g\_type\_register\_static!}.
-\item Líneas 51--75:\par
+\item Líneas 55--82:\par
   La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
   del tipo \text{TDoble}.
-\item Líneas 53--54:\par
+\item Líneas 58--59:\par
   Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOBLE}, y de la
   variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 66.
-\item Línea 58:\par
+\item Línea 63:\par
   Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
   \passthrough{\lstinline!g\_print!} no cambie el el sistema de caracteres del texto que imprimirá.
   Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
   que las cadenas (en este caso utilizamos UTF-8).
-\item Líneas 60--65:\par
+\item Líneas 65--70:\par
   Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
   También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
   "\texttt{dtype = T\_TYPE\_DOBLE}".
-\item Líneas 67--72:\par
+\item Líneas 72--77:\par
   Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
   \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
@@ -454,7 +458,7 @@ El listado es:
   "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
   \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
   "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
-\item Línea 74:\par
+\item Línea 79:\par
   Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
 \end{itemize}
 
@@ -534,15 +538,18 @@ struct _TDobleClass {
 G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
 
 static void
-t_doble_class_init (TDobleClass *class) {
+t_doble_class_init (TDobleClass *class)
+{
 }
 
 static void
-t_doble_init (TDoble *self) {
+t_doble_init (TDoble *self)
+{
 }
 
 int
-main (int argc, char **argv) {
+main (int argc, char **argv)
+{
   GType dtype;
   TDoble *d;
 
@@ -553,16 +560,16 @@ main (int argc, char **argv) {
   dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
   if (dtype) {
     g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
-    } else {
-      g_print ("Registro incorrecto.\n");
-    }
+  } else {
+    g_print ("Registro incorrecto.\n");
+  }
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
   if (d) {
     g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
-    } else {
-      g_print ("Error en la creación de la instancia.\n");
-    }
+  } else {
+    g_print ("Error en la creación de la instancia.\n");
+  }
 
   g_object_unref (d); /* Elimina el objeto 'd'. */
 
@@ -589,26 +596,26 @@ main (int argc, char **argv) {
   el segundo es \textsf{<espacio-de-nombres>\_<nombre>} en minúsculas, y el último es el objeto padre.
   En este ejemplo, los argumentos son: \texttt{TDoble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
   A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} para clases finales.
-\item Líneas 24--30:\par
+\item Líneas 24--32:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
   estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
   necesitan ningún código en este caso, pero son necesarias para el registro.
-\item Líneas 32--56:\par
+\item Líneas 34--60:\par
   La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
   del tipo \text{TDoble}.
-\item Líneas 34--35:\par
+\item Líneas 37--38:\par
   Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOBLE}, y de la
   variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 47.
-\item Línea 39:\par
+\item Línea 42:\par
   Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
   \passthrough{\lstinline!g\_print!} no cambie el el sistema de caracteres del texto que imprimirá.
   Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
   que las cadenas (en este caso utilizamos UTF-8).
-\item Líneas 41-46:\par
+\item Líneas 44-49:\par
   Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
   También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
   "\texttt{dtype = T\_TYPE\_DOBLE}".
-\item Líneas 48--53:\par
+\item Líneas 51--56:\par
   Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
   \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
@@ -617,7 +624,7 @@ main (int argc, char **argv) {
   "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
   \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
   "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
-\item Línea 55:\par
+\item Línea 58:\par
   Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
 \end{itemize}
 
@@ -683,28 +690,31 @@ El listado es:
  */
 
 #include <locale.h>
- #include <glib-object.h>
+#include <glib-object.h>
  
- #define T_TYPE_DOBLE  (t_doble_get_type ())
- G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+#define T_TYPE_DOBLE  (t_doble_get_type ())
+G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
  
- struct _TDoble {
-   GObject parent;
-   double value;
- };
+struct _TDoble {
+  GObject parent;
+  double value;
+};
  
- G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+ 
+static void
+t_doble_class_init (TDobleClass *class)
+{
+}
  
  static void
- t_doble_class_init (TDobleClass *class) {
- }
- 
- static void
- t_doble_init (TDoble *self) {
+ t_doble_init (TDoble *self)
+ {
  }
  
 int
-main (int argc, char **argv) {
+main (int argc, char **argv)
+{
   GType dtype;
   TDoble *d;
 
@@ -766,11 +776,11 @@ main (int argc, char **argv) {
   y el último es el objeto padre.
   En este ejemplo, los argumentos son: \texttt{TDoble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
   A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} para clases finales.
-\item Líneas 19--25:\par
+\item Líneas 19--27:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
   estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
   necesitan ningún código en este caso, pero son necesarias para el registro.
-\item Líneas 27--65:\par
+\item Líneas 29--68:\par
   La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
   del tipo \text{TDoble}. Además, comprueba que la instancia creada es un objeto que deriva, tanto de
   \textsf{TDoble}, como de \textsf{GObject}.
@@ -864,34 +874,41 @@ struct _TDoble {
 G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
 
 static void
-t_doble_class_init (TDobleClass *class) {
+t_doble_class_init (TDobleClass *class)
+{
 }
 
 static void
-t_doble_init (TDoble *self) {
+t_doble_init (TDoble *self)
+{
 }
 
 gboolean
-t_doble_get_value (TDoble *self, double *valor) {
+t_doble_get_value (TDoble *self, double *valor)
+{
   g_return_val_if_fail (T_IS_DOBLE (self), FALSE);
 
   *valor = self->valor;
+  
   return TRUE;
 }
 
 void
-t_doble_set_value (TDoble *self, double valor) {
+t_doble_set_value (TDoble *self, double valor)
+{
   g_return_if_fail (T_IS_DOBLE (self));
 
   self->valor = valor;
 }
 
 TDoble *
-t_doble_new (double valor) {
+t_doble_new (double valor)
+{
   TDoble *d;
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
   d->valor = valor;
+  
   return d;
 }
  \end{lstlisting}
@@ -904,28 +921,31 @@ t_doble_new (double valor) {
   \texttt{TDoble} (\texttt{typedef struct \_TDoble}), necesita ese nombre.
 \item Línea 13:\par
   Se expande la macro que define y  el objeto \textsf{TDoble} y su registro.
-\item Líneas 15--21:\par
+\item Líneas 15--23:\par
   Se definen las funciones de inicialización de la clase y de las instancias. No hacen nada, por ahora.
-\item Líneas 23--29:\par
+\item Líneas 25--33:\par
   Definición de la función \textit{getter}. El argumento \texttt{valor} es un puntero a una variable de tipo C
   \texttt{double}. Asigna el valor del objeto \texttt{self->valor} a la variable. Si no hay error retorna \texttt{TRUE}.
   La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} se utiliza para comprobar el tipo de objeto que
   se le pasa como argumento. Si no es de tipo \textsf{TDoble}, envía un mensaje de error al fichero
   de registro de errores, advertencias y mensajes (fichero \textit{log}), e inmediatamente retorna \texttt{FALSE}.
-  Este registro le sirve al programador para informar del error, pero no se debe utilizar para informar del
-  error al usuario. Para más información, ver \href{https://docs.gtk.org/glib/error-reporting.html}
+  Este registro sirve para informar al programador del error, pero no se debe utilizar para informar del
+  mismo al usuario. Para más información, ver \href{https://docs.gtk.org/glib/error-reporting.html}
   {\textit{error reporting}} en la API de referencia de Glib.
+  {\color{red}
   La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} no se usa en funciones de clase estáticas, que son
   privadas, porque las funciones estáticas se ejecutan solo desde funciones que están en el mismo fichero y estas
-  conocen el tipo de los parámetros.
-\item Líneas 31--36:\par
+  conocen el tipo de los parámetros\footnotemark{}.}
+  \footnotetext{Debo esforzarme en traducir mejor esta última oración y entenderla (las dos cosas).
+  Me está queriendo informar de algo que no capto.}
+\item Líneas 35--41:\par
   Definición de la función \textit{setter}. La función \passthrough{\lstinline!g\_return\_if\_fail!} se usa
   para comprobar el objeto que se pasa como argumento. Esta función no retorna ningún valor, porque
   el tipo de \texttt{t\_doble\_set\_value} es \texttt{void}. Por tanto, usamos esa función, en lugar de
   \passthrough{\lstinline!g\_return\_val\_if\_fail!}.
-\item Líneas 38--45:\par
+\item Líneas 43--52:\par
   Definición de la función que instancia objetos. Tiene un parámetro, que es el valor del objeto.
-\item Línea 42:\par
+\item Línea 48:\par
   Esta función usa \passthrough{\lstinline!g\_object\_new!} para instanciar un objeto. El argumento
   \texttt{T\_TYPE\_DOBLE} se expande a la función \passthrough{\lstinline!t\_doble\_get\_type ()!}.
   Cuando esta función se llama por primera vez, se lleva a cabo el proceso de registro de \textsf{TObject}.
@@ -940,11 +960,11 @@ t_doble_new (double valor) {
  */
 
 #include <locale.h>
-#include <glib-object.h>
 #include "tdoble.h"
 
 int
-main (int argc, char **argv) {
+main (int argc, char **argv)
+{
   TDoble *d;
   double valor;
 
@@ -976,7 +996,7 @@ main (int argc, char **argv) {
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Línea 8:\par
+\item Línea 7:\par
   Es necesaria para acceder a \textsf{TDoble}.
 \item Líneas 12--13:\par
   Se declara un puntero \texttt{d} al tipo de objeto \texttt{TDoble} y una variable \texttt{valor} de tipo C,

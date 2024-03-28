@@ -1,4 +1,4 @@
- >% introduccion.tex
+% introduccion.tex
 %
 % Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
 % 1) Código LuaLatex:
@@ -150,7 +150,8 @@ El listado es:
   #include <glib-object.h>
 
   int
-  main (int argc, char **argv) {
+  main (int argc, char **argv)
+  {
     GObject *instancia1, *instancia2;
     GObjectClass *clase1, *clase2;
 
@@ -187,20 +188,20 @@ El listado es:
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Líneas 6 y 7:\par
+\item Líneas 14 y 15:\par
   Se declaran dos punteros a objetos de \textsf{GObject}, por lo que podremos crear dos
   instancias de esta clase.
   Se declaran dos punteros de \textsf{GObjectClass}, a los que asignaremos la clase a la que pertenecen
   las instancias anteriores.
-\item Línea 11:\par
+\item Línea 19:\par
   Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la función
   \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
   y se puedan ver los acentos correctamente en la consola UTF-8.
-\item Líneas 14 -- 17:\par
+\item Líneas 22 -- 25:\par
   Se crean dos instancias diferentes de \textsf{GObject} mediante la función 
   \passthrough{\lstinline!g\_object\_new!}. Posteriormente se comprueba que son diferentes, dado que
   sus punteros son distintos.
-\item Líneas 20 -- 23:\par
+\item Líneas 28 -- 31:\par
   Se obtiene el puntero a la clase a la que pertenecen 'instancia1' e 'instancia2', estos punteros se
   almacenan en 'clase1' y 'clase2', respectivamente. Esta tarea se realiza mediante la macro
   \passthrough{\lstinline!G\_OBJECT\_GET\_CLASS!}. Al imprimir en pantalla los punteros de las
@@ -208,7 +209,7 @@ El listado es:
   clase \textsf{GObjectClass}, que se creó la primera vez que se ejecutó la función
   \passthrough{\lstinline!g\_object\_new!} en la línea 14, a la vez que se creó la primera instancia,
   'instancia1'.
-\item Líneas 26 -- 27:\par
+\item Líneas 34 -- 35:\par
   Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa. Nos podríamos
   preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
   esta duda se aclarará en la siguiente sección.
@@ -333,7 +334,8 @@ El listado es:
 #include <glib-object.h>
 
 static void
-show_ref_count  (GObject *instancia) {
+show_ref_count  (GObject *instancia)
+{
   if  (G_IS_OBJECT (instancia)) {
     /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
        pues interferirían de una forma impredecible con GObject */
@@ -401,27 +403,27 @@ main (int argc, char **argv)
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Línea 25:\par
+\item Línea 26:\par
   Se declara un puntero a objeto de \textsf{GObject}, lo que no permitirá crear una instancia.
-\item Línea 29:\par
+\item Línea 30:\par
   Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la función
   \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
   y se puedan ver los acentos correctamente en la consola UTF-8.
-\item Líneas 31 -- 34:\par
+\item Líneas 32 -- 35:\par
   Se crea una instancia de \textsf{GObject} mediante la función \passthrough{\lstinline!g\_object\_new!}.
   Se muestra el valor, 1,  de la cuenta de referencia de esa instancia.
-\item Líneas 36 -- 39:\par
+\item Líneas 37 -- 40:\par
   Se añade una referencia a la instancia mediante la función  \passthrough{\lstinline!g\_object\_ref!}.
   Se muestra el valor, 2,  de la cuenta de referencia de esa instancia.
-\item Líneas 41 -- 44:\par
+\item Líneas 42 -- 45:\par
   Se elimina una referencia a la instancia mediante la función  \passthrough{\lstinline!g\_object\_unref!}.
   Se muestra el valor, 1,  de la cuenta de referencia de esa instancia.
-\item Líneas 46 -- 53:\par
+\item Líneas 47 -- 54:\par
   Se elimina la  última referencia que quedaba de la instancia.
   Por tanto, se destruye el objeto 'instancia' y se libera su memoria asociada.
   Por esa razón, no se puede mostrar su cuenta de referencia, porque
-  \passthrough{\lstinline!instancia->ref_count!}, de la línea 15 daría un error.
-  Por ello, se ha comentado la línea 53 que produciría ese error.
+  \passthrough{\lstinline!instancia->ref_count!}, de la línea 16 daría un error.
+  Por ello, se ha comentado la línea 54 que produciría ese error.
   El lector puede descomentar la citada línea y comprobar el error de segmentación que se produciría.
   \end{itemize}
 

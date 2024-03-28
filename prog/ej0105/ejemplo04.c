@@ -22,15 +22,18 @@ struct _TDobleClass {
 G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
 
 static void
-t_doble_class_init (TDobleClass *class) {
+t_doble_class_init (TDobleClass *class)
+{
 }
 
 static void
-t_doble_init (TDoble *self) {
+t_doble_init (TDoble *self)
+{
 }
 
 int
-main (int argc, char **argv) {
+main (int argc, char **argv)
+{
   GType dtype;
   TDoble *d;
 

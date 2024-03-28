@@ -7,7 +7,8 @@
 #include <glib-object.h>
 
 static void
-show_ref_count  (GObject *instancia) {
+show_ref_count  (GObject *instancia)
+{
   if  (G_IS_OBJECT (instancia)) {
     /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
        pues interferirían de una forma impredecible con GObject */
