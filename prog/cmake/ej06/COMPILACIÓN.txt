@@ -1,0 +1,14 @@
+COMPILACIÓN
+-----------
+
+Se utilizan 'cmake' y 'ninja':
+------------------------------
+Se genera el ejecutable y ficheros auxiliares en un directorio
+separado del código fuente, típicamente 'build'.
+Para ello, se teclea:
+
+$ cmake -B build -G Ninja
+$ ninja -C build
+
+El fichero ejecutable se encontrará en el directorio elegido, 'build'.
+
