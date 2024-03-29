@@ -295,25 +295,48 @@ El siguiente ejemplo muestra cómo utilizar la función \passthrough{\lstinline!
 En la práctica se utilizará una macro que realiza esta tarea automáticamente. Pero aquí se realiza sin
 la macro con fines didácticos.
 
-En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
+Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
+\begin{itemize}
+  \tightlist
+\item Utilizando 'make':
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make
 \end{lstlisting}
-o bien, solo el tercer ejemplo:
+Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
-  $ make ejemplo03
-\end{lstlisting}
-Para borrar los ejecutables:
-\begin{lstlisting}[language=bash]
-  $ cd prog/0105
+  $ cd prog/make/ej0105
   $ make clean
 \end{lstlisting}
+\item Utilizando 'meson'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ meson setup build
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\item Utilizando 'cmake'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ cmake -B build -G Ninja
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\end{itemize}
 
 El listado es:
-
 \begin{lstlisting}[language=C, numbers=left]
 /*
  * ejemplo03.c
@@ -495,22 +518,46 @@ Es importante seguir las convención en el nombre de las funciones de inicializa
 A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} en lugar de
 \texttt{G\_DEFINE\_TYPE}, para clases finales.
 
-En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
+Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
+\begin{itemize}
+  \tightlist
+\item Utilizando 'make':
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make
 \end{lstlisting}
-o bien, solo el cuarto ejemplo:
+Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
-  $ make ejemplo04
-\end{lstlisting}
-Para borrar los ejecutables:
-\begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make clean
 \end{lstlisting}
+\item Utilizando 'meson'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ meson setup build
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\item Utilizando 'cmake'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ cmake -B build -G Ninja
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\end{itemize}
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
@@ -665,22 +712,46 @@ Se debe escribir la macro que define el tipo de objeto, antes de que se llame a
 En este ejemplo se prueban las macros que ayudan a crear e identificar los objetos finales que derivan
 de \textsf{GObject}. En particular, la macro \texttt{G\_DEFINE\_FINAL\_TYPE}.
 
-En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
+Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
+\begin{itemize}
+  \tightlist
+\item Utilizando 'make':
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make
 \end{lstlisting}
-o bien, solo el quinto ejemplo:
+Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
-  $ make ejemplo05
-\end{lstlisting}
-Para borrar los ejecutables:
-\begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make clean
 \end{lstlisting}
+\item Utilizando 'meson'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ meson setup build
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\item Utilizando 'cmake'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ cmake -B build -G Ninja
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\end{itemize}
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
@@ -791,25 +862,46 @@ Se estructura un programa que usa objetos \textsf{TDoble}, en ficheros individua
 \textsf{tdoble.c} y \textsf{main.c}.
 El objeto \textsf{TDoble} se declara y define en los dos primeros ficheros, respectivamente.
 
-Este ejemplo se puede compilar de dos formas diferentes:
+Se proporcionan tres métodos para compilar el ejemplo 6:
 \begin{itemize}
-  \item Utilizando \textsf{make}:
+  \tightlist
+\item Utilizando 'make':
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej06
+  $ cd prog/make/ej06
   $ make
 \end{lstlisting}
-\item Utilizando \textsf{ninja}:
+Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej06
-  $ meson setup _build
-  $ ninja -C _build
-\end{lstlisting}
-\end{itemize}
-Para borrar el ejecutable y ficheros auxiliares:
-\begin{lstlisting}[language=bash]
-  $ cd prog/ej06
+  $ cd prog/make/ej06
   $ make clean
 \end{lstlisting}
+\item Utilizando 'meson'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej06
+  $ meson setup build
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej06
+  $ rm -rf build
+\end{lstlisting}
+\item Utilizando 'cmake'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej06
+  $ cmake -B build -G Ninja
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej06
+  $ rm -rf build
+\end{lstlisting}
+\end{itemize}
 
 \subsubsection{Declaración del objeto \textsf{TDoble}: fichero de cabecera \textsf{tdoble.h}}
 

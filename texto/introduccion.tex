@@ -119,23 +119,48 @@ se muestra la definición de la estructura tomada de \passthrough{\lstinline!gob
 necesita entrar en detalle en su definición, pues es más compleja que la estructura anterior.
 
 \subsubsection{Ejemplo 1}
-En el siguiente ejemplo se crean dos instancias diferentes de la clase \textsf{GObject} y se comprueba que
+En este ejemplo se crean dos instancias diferentes de la clase \textsf{GObject} y se comprueba que
 solo hay una clase para estos objetos. En el directorio 'prog' se encuentran los programas de ejemplo.
-Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
+Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
+\begin{itemize}
+  \tightlist
+\item Utilizando 'make':
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make
 \end{lstlisting}
-o bien, solo el primer ejemplo:
+Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
-  $ make ejemplo01
-\end{lstlisting}
-Para borrar los ejecutables:
-\begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make clean
 \end{lstlisting}
+\item Utilizando 'meson'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ meson setup build
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\item Utilizando 'cmake'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ cmake -B build -G Ninja
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\end{itemize}
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
@@ -306,22 +331,46 @@ Ahora pueden ocurrir diversas circunstancias, entre otras:
 \subsubsection{Ejemplo 2}
 En el siguiente ejemplo se una instancia de la clase \textsf{GObject}, después se referencia una vez.
 Finalmente se desreferencia dos veces hasta que el sistema destruye la instancia y libera la memoria.
-
-Para compilar los ejemplos 1, 2, 3, 4 y 5, basta con hacer
+Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
+\begin{itemize}
+  \tightlist
+\item Utilizando 'make':
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make
 \end{lstlisting}
-Para compilar solo el segundo ejemplo:
+Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
 \begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
-  $ make ejemplo02
-\end{lstlisting}
-Para borrar los ejecutables:
-\begin{lstlisting}[language=bash]
-  $ cd prog/ej0105
+  $ cd prog/make/ej0105
   $ make clean
 \end{lstlisting}
+\item Utilizando 'meson'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ meson setup build
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/meson/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\item Utilizando 'cmake'.
+  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
+  (típicamente 'build'):
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ cmake -B build -G Ninja
+  $ ninja -C build
+\end{lstlisting}
+Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
+\begin{lstlisting}[language=bash]
+  $ cd prog/cmake/ej0105
+  $ rm -rf build
+\end{lstlisting}
+\end{itemize}
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
