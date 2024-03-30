@@ -6,19 +6,19 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-  \section{Proceso de registro de un objeto derivado}
-  \subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
-  Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
-  ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
-  \begin{enumerate}
-    \tightlist
-  \item Registro del tipo en C \texttt{TDoble} en el sistema de tipos.
-  \item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble}, por parte del sistema de tipos.
-  \item Inicialización de \textsf{TDobleClass}.
-  \item Inicialización de \textsf{TDoble}.
-  \end{enumerate}
+\section{Proceso de registro de un objeto derivado}
+\subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
+Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
+ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
+\begin{enumerate}
+  \tightlist
+\item Registro del tipo en C \texttt{TDoble} en el sistema de tipos.
+\item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble}, por parte del sistema de tipos.
+\item Inicialización de \textsf{TDobleClass}.
+\item Inicialización de \textsf{TDoble}.
+\end{enumerate}
 
-  \begin{figure}[ht]
+\begin{figure}[ht]
   \centering
   \def\scl{1}
   \newcommand{\fondoTipoC}{green!20}
@@ -35,47 +35,48 @@
       draw=\bgbordercolor,
       fill=\bgcolor,
     },
-   ]
-   % COORDENADAS
-   % - 
-   % DIBUJO
-   % Proceso de registro de una clase
-   % Type System
-   \node[nubeSistemaTipos, cloud, draw, aspect=2] (typesystem) {Sistema de tipos};
-   % Memoria
-   \node[nubeMemoria, cloud, draw, aspect=2, right=12em of typesystem] (memory)
-   {\begin{tabular}{c} Memoria \\ (TDobleClass y TDoble) \end{tabular}};
-   % TDoble (Tipo C)
-   \node[tipoC, draw, above=8ex of typesystem] (tdobleCtype)
-   {\begin{tabular}{c}TDoble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
-   % Objeto TDoble
-   \node[tipoSistema, draw, below=8ex of memory] (tdobleobject)
-   {\begin{tabular}{c} Objeto TDoble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
-   % Clase TDobleClass
-   \node[tipoSistema, draw, left=12em of tdobleobject] (tdobleclass)
-   {\begin{tabular}{c} Clase TDobleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
-   % Flechas
-   % TDoble (Tipo C) -> Sistema Tipos
-   \draw[flecha] (tdobleCtype.south) --
-   node[left] {\small $\mbfone$} node[right]  {\small Registro}
-   (typesystem.north);
-   % Sistema tipos -> memoria
-   \draw[flecha] (typesystem.east) --
-   node[below]{\small Asignación de memoria}
-   node[above]{\small $\mbftwo$}
-   (memory.west);
-   % Memoria -> Clase TDobleClass (Tipo sistema)
-   \draw[flecha] (memory.225) --
-   node[above right, sloped]{\small $\mbfthree$}
-   node[below right=0.2ex and -4ex, sloped]{\small Inicialización}
-   (tdobleclass.north);
-   % Memoria -> Objeto TDoble (Tipo sistema)
-   \draw[flecha] (memory.south) --
-   node[left] {\small $\mbffour$}
-   node[right] {\small Inicialización}
+    ]
+    % COORDENADAS
+    % - 
+    % DIBUJO
+    % Proceso de registro de una clase
+    % Type System
+    \node[nubeSistemaTipos, cloud, draw, aspect=2] (typesystem) % {Sistema de tipos};
+    {\begin{tabular}{c} Sistema de Tipos \\ (\texttt{GType}) \end{tabular}};
+    % Memoria
+    \node[nubeMemoria, cloud, draw, aspect=2, right=12em of typesystem] (memory)
+    {\begin{tabular}{c} Memoria \\ (TDobleClass y TDoble) \end{tabular}};
+    % TDoble (Tipo C)
+    \node[tipoC, draw, above=8ex of typesystem] (tdobleCtype)
+    {\begin{tabular}{c}TDoble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
+    % Objeto TDoble
+    \node[tipoSistema, draw, below=8ex of memory] (tdobleobject)
+    {\begin{tabular}{c} Objeto TDoble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+    % Clase TDobleClass
+    \node[tipoSistema, draw, left=12em of tdobleobject] (tdobleclass)
+    {\begin{tabular}{c} Clase TDobleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+    % Flechas
+    % TDoble (Tipo C) -> Sistema Tipos
+    \draw[flecha] (tdobleCtype.south) --
+    node[left] {\small $\mbfone$} node[right]  {\small Registro}
+    (typesystem.north);
+    % Sistema tipos -> memoria
+    \draw[flecha] (typesystem.east) --
+    node[below]{\small Asignación de memoria}
+    node[above]{\small $\mbftwo$}
+    (memory.west);
+    % Memoria -> Clase TDobleClass (Tipo sistema)
+    \draw[flecha] (memory.225) --
+    node[above right, sloped]{\small $\mbfthree$}
+    node[below right=0.2ex and -4ex, sloped]{\small Inicialización}
+    (tdobleclass.north);
+    % Memoria -> Objeto TDoble (Tipo sistema)
+    \draw[flecha] (memory.south) --
+    node[left] {\small $\mbffour$}
+    node[right] {\small Inicialización}
    (tdobleobject.north);
    
-% Fondo amarillo
+   % Fondo amarillo
    \def\margen{16}
    \coordinate (limizda) at ($(typesystem.west)-(\margen pt, 0pt)$);
    \coordinate(limdcha) at ($(memory.east)+(\margen pt, 0pt)$);
@@ -84,9 +85,9 @@
    \begin{scope}[on background layer]
      \node [background, fit= (liminf) (limsup) (limizda) (limdcha)] {};
    \end{scope}
-\end{tikzpicture}
-\caption{Proceso de registro del objeto \textsf{TDoble}.}
-\label{fig:proceso-registro}
+ \end{tikzpicture}
+ \caption{Proceso de registro del objeto \textsf{TDoble}.}
+ \label{fig:proceso-registro}
 \end{figure}
 
 \subsection{Registro realizado sin macros}
@@ -94,18 +95,16 @@ Generalmente, el proceso de registro se lleva a cabo mediante unas macros, como
 \texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, de manera que no
 necesitamos preocuparnos por los detalles. Pero aquí es importante entender el
 sistema de tipos de \textsf{GObject}, por lo que empezaremos analizando el proceso
-de registro sin macros.
+de registro sin ayuda de macros.
 
-Hay dos clases de tipos de \textsf{GObject}, estáticos y dinámicos. Los tipos estáticos
-no destruyen su clase aunque se hubieran destruido todas sus instancias. Los dinámicos
-destruyen su clase cuando se elimina su última instancia.
+Hay dos clases de tipos de \textsf{GObject}, estáticos y dinámicos.
+La clase de los tipos estáticos no se destruye cuando lo hacen todas sus instancias.
+En cambio, la clase de los tipos dinámicos sí se destruye cuando se elimina la última instancia.
 
 El tipo de \textsf{GObject}, y de todos los objetos que derivan de él, es estático.
-La función que registra tipos estáticos es
-\passthrough{\lstinline!g\_type\_register\_static!}.
-El código que se muestra a continuación se encuentra en el fichero \textsf{gtype.h} de
-\text{GLib}.
-
+La función que registra tipos estáticos es \texttt{g\_type\_register\_static}.
+El código que se muestra a continuación se encuentra en el fichero '\textsf{gtype.h}' de
+\textsf{GLib}:
 \begin{lstlisting}[language=C]
 GType
 g_type_register_static (GType           parent_type,
@@ -114,6 +113,7 @@ g_type_register_static (GType           parent_type,
                         GTypeFlags      flags);
 \end{lstlisting}
 
+\newpage
 Descripción de los parámetros implicados en el registro:
 \begin{itemize}
   \tightlist
@@ -121,18 +121,16 @@ Descripción de los parámetros implicados en el registro:
 \item \texttt{*type\_name}: Es el nombre del tipo que se va a registrar,
   por ejemplo, "\textsf{TDoble}".
 \item \texttt{*info}: Es una estructura \texttt{GTypeInfo} que contiene información acerca
-  del tipo que se va a registrar. Esta estructura se explica cuando se termine esta
-  descripción.
+  del tipo que se va a registrar. Esta estructura se explica al terminar esta descripción.
 \item \texttt{flags}: Si el tipo que se registra es abstracto o es un valor de tipo
   abstracto\footnotemark{} hay que especificarlo aquí. En caso contrario su valor es cero.
   \footnotetext{No veo clara la diferencia entre un tipo abstracto y un valor de tipo
     abstracto. Aunque pienso que, por ahora, no necesito profundizar más.}
 \end{itemize}
-Después del registro, la función \passthrough{\lstinline!g\_type\_register\_static!} retorna
+Después del registro, la función \texttt{g\_type\_register\_static} retorna
 el tipo del nuevo objeto. La definición de la estructura \texttt{GTypeInfo} es
 \begin{lstlisting}[language=C]
 typedef struct _GTypeInfo  GTypeInfo;
-
 struct _GTypeInfo {
   /* interface types, classed types, instantiated types */
   guint16                class_size;
@@ -172,6 +170,7 @@ Esta estructura se debe crear antes del registro.
 \item \texttt{class\_init}: Esta función inicializa los miembros estáticos de la clase. Asigna tu función de
   inicialización de la clase a esta función.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}.
+  Esta función hay que definirla y asignarla a este campo aunque no tenga código.
 \item \texttt{class\_finalize}: Esta función finaliza la clase. Pero, como el tipo de los objetos derivados de
   \textsf{GObject} es estático, no se les asigna ninguna función de finalización. Por tanto a \textsf{TDoble}
   se le asigna \texttt{NULL} aquí.
@@ -184,6 +183,7 @@ Esta estructura se debe crear antes del registro.
 \item \texttt{instance\_init}: Inicializa los miembros de la instancia. Asigna tu función de inicialización a este
   método. Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_init}. En nuestro caso, con
   el objeto \textsf{GObject}, el nombre sería \textsf{TObject\_init}.
+  Esta función hay que definirla y asignarla a ese campo aunque no tenga código.
 \item \texttt{*value\_table}:  Generalmente, este campo solo es útil para tipos fundamentales. Si el tipo deriva
   de \textsf{GObject}, se debe asignar \texttt{NULL}.
 \end{itemize}
@@ -193,7 +193,7 @@ respectivamente. Los métodos \texttt{class\_init} e \texttt{instance\_init} se 
 la clase y la instancia, también respectivamente.
 
 \subsubsection{Ejemplo 3}
-El siguiente ejemplo muestra cómo utilizar la función \passthrough{\lstinline!g\_type\_register\_static!}.
+El siguiente ejemplo muestra cómo utilizar la función \texttt{g\_type\_register\_static}.
 En la práctica se utilizará una macro que realiza esta tarea automáticamente. Pero aquí se realiza sin
 la macro con fines didácticos.
 
@@ -332,25 +332,25 @@ El listado es:
 \begin{itemize}
 \item Línea 9:\par
   Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
-  \passthrough{\lstinline!t\_doble\_get\_type!}, Esta función se definirá manualmente más adelante porque
-  vamos a registrar la clase \textsf{T\_Doble\_Class} y  el objeto \textsf{T\_Doble} manualmente, con fines didácticos.
-  Esta función, a su vez, ejecuta \passthrough{\lstinline!g\_type\_register\_static!}, que realiza
-  el proceso de registro; todo esto se hará en las líneas 30--49.
+  \texttt{t\_doble\_get\_type}, Esta función se definirá más adelante porque vamos a registrar la clase \textsf{T\_Doble\_Class} y  el objeto \textsf{T\_Doble} manualmente, con fines didácticos.
+  La primera vez que se llama a esta función, se ejecuta \texttt{g\_type\_register\_static}, que realiza el
+  proceso de registro. En las siguientes llamadas a \texttt{t\_doble\_get\_type} solo se devuelve el tipo de objeto.
+  Todo esto se hará en las líneas 32--50.
   Ten en cuenta que normalmente, el sistema de tipos generará unas macros automáticamente que se encargarán
-  de esta tarea, cuando las llamemos en el código.
+  de esta tarea. Estas macros serán las que debemos escribir en nuestro código.
 \item Líneas 11--15:\par
   Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
 \item Líneas 17--20:\par
   Se define el tipo C de la clase \textsf{TDobleClass} y la estructura que lo define \texttt{struct \_TDobleClass}.
 \item Líneas 22--30:\par
-  Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
-  estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
-  necesitan ningún código en este caso, pero son necesarias para el registro.
+  Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a
+  la estructura de la clase y \texttt{self} apunta a la estructura de la instancia.
+  Como se aprecia, no contienen ningún código ---en este caso---, pero son necesarias para el registro.
 \item Líneas 32--53:\par
-  Se define la función \passthrough{\lstinline!t\_doble\_get\_type!}, a la que se hacía referencia en la línea 9.
+  Se define la función \texttt{t\_doble\_get\_type}, a la que se hacía referencia en la línea 9.
   Esta función sustituye a la macro \texttt{T\_TYPE\_DOBLE} y retorna el tipo del objeto \textsf{TDoble}.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta función reemplaza
-  a la macro \textsf{<ESPACIO-DE-NOMBRES>\_TYPE\_<NOMBRE>} (todos los caracteres en mayúsculas).
+  a la macro \textsf{\small <ESPACIO-DE-NOMBRES>\_TYPE\_<NOMBRE>} (todos los caracteres en mayúsculas).
   En su código se define una variable estática, \texttt{type}, para mantener el tipo del objeto que se define.
   Al ejecutarse por primera vez la función, se asigna el valor cero a la variable (\texttt{type = 0}).
   Después, se llama a g\_type\_register\_static para registrar el objeto en el sistema de tipos. En las subsecuentes
@@ -358,7 +358,7 @@ El listado es:
   Cuando se utilicen las macros \texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, no será
   necesario definir la función esta función \passthrough{\lstinline!t\_doble\_get\_type!}; de esto se encargarán las macros anteriores.
 \item Líneas 39--49:\par
-  Establece campos de la estructura \texttt{info} y llama a \passthrough{\lstinline!g\_type\_register\_static!}.
+  Establece campos de la estructura \texttt{info} y llama a \texttt{g\_type\_register\_static}.
 \item Líneas 55--82:\par
   La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
   del tipo \text{TDoble}.
@@ -367,7 +367,7 @@ El listado es:
   variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 66.
 \item Línea 63:\par
   Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
-  \passthrough{\lstinline!g\_print!} no cambie el el sistema de caracteres del texto que imprimirá.
+  \texttt{g\_print} no cambie el el sistema de caracteres del texto que imprimirá.
   Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
   que las cadenas (en este caso utilizamos UTF-8).
 \item Líneas 65--70:\par
@@ -377,14 +377,14 @@ El listado es:
 \item Líneas 72--77:\par
   Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
-  \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
+  \texttt{g\_object\_new} returna un puntero a \textsf{GObject}, pero en realidad retorna un
   \texttt{gpointer}, que es lo mismo que \texttt{void *}, que puede asignarse a cualquier puntero, sea cual sea
   su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDoble}, por lo que la línea
   "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
-  \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
+  \texttt{g\_object\_new} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
   "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
 \item Línea 79:\par
-  Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
+  Se elimina la instancia llamando a la función \texttt{g\_object\_unref}.
 \end{itemize}
 
 \subsection{Registro mediante la macro \texttt{G\_DEFINE\_TYPE}}
