@@ -389,25 +389,29 @@ El listado es:
 
 \subsection{Registro mediante la macro \texttt{G\_DEFINE\_TYPE}}
 El proceso de registro realizado anteriormente se lleva a cabo siempre con el mismo algoritmo, por tanto,
-el sistema puede definir una macro, como \texttt{G\_DEFINE\_TYPE}  que lo lleve a cabo automáticamente,
+el sistema puede definir una macro, como \texttt{G\_DEFINE\_TYPE}  que lo lleve a cabo automáticamente
 con solo invocarla.
 
 \texttt{G\_DEFINE\_TYPE} hace lo siguiente:
 \begin{itemize}
   \tightlist
-\item Declara una función de inicialización de la clase. Su nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}. Por ejemplo, para el objeto \textsf{TDoble}, la función
-  sería \texttt{t\_doble\_class\_init}. Esto es una declaración, no una definición, por lo que necesitamos
-  definirla más adelante.
+\item Declara una función de inicialización de la clase. Su nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}. Esto es una declaración, no una definición,
+  por lo que necesitamos definirla más adelante.
+
+  Por ejemplo, para el objeto \textsf{TDoble}, la función sería \texttt{t\_doble\_class\_init}.
 \item Declara una función de inicialización para las instancias. Su nombre es
-\textsf{<espacio-de-nombres>\_<nombre>\_init}. Por ejemplo, para el objeto \textsf{TDoble}, la función
-sería \texttt{t\_doble\_class\_init}. Esto es una declaración, no una definición, por lo que necesitamos
-definirla más adelante.
+  \textsf{<espacio-de-nombres>\_<nombre>\_init}.
+  Esto es una declaración, no una definición, por lo que necesitamos definirla más adelante.
+
+  Por ejemplo, para el objeto \textsf{TDoble}, la función sería \texttt{t\_doble\_class\_init}.
 \item Define una variable estática que apunte a la clase de la que deriva. Su nombre es
-  \textsf{<espacio-de-nombres>\_<nombre>\_parent\_class}. Por ejemplo, para el objeto \textsf{TDoble},
-  la variable es \texttt{t\_doble\_parent\_class}.
-\item Define una función \textsf{<espacio-de-nombres>\_<nombre>\_get\_type ()}. Por ejemplo para
-  el objeto \textsf{TDoble}, la función es \texttt{t\_doble\_get\_type}. El registro se lleva a cabo como
-  se hizo anteriormente.
+  \textsf{<espacio-de-nombres>\_<nombre>\_parent\_class}.
+  
+  Por ejemplo, para el objeto \textsf{TDoble}, la variable es \texttt{t\_doble\_parent\_class}.
+\item Define una función \textsf{<espacio-de-nombres>\_<nombre>\_get\_type ()}.
+  
+  Por ejemplo para el objeto \textsf{TDoble}, la función es \texttt{t\_doble\_get\_type}.
+  El registro se lleva a cabo como se hizo anteriormente.
 \end{itemize}
 
 Al usar esta macro se reduce en número de líneas de programa. Ver el ejemplo 4.
