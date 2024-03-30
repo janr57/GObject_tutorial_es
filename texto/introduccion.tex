@@ -6,7 +6,13 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Introducción}
+% OBSERVACIÓN:
+% Una función se puede escribir así, utilizando el paquete 'listings':
+% \passthrough{\lstinline!g\_object\_new!}
+% El tamaño de la fuente es algo menor que el que se obtiene mediante
+% \texttt{g\_object\_new}. Aquí sigo este segundo método.
+
+\section{Introducción a \textsf{GObject}}
 
 \subsection{Motivación} \label{subsec:motivacion}
 Tuve, desde hace muchos años, interés en programar aplicaciones con la API de \textsf{GTK}.
@@ -36,7 +42,7 @@ este tutorial, al menos el principio. No obstante, aquí y allá he añadido o e
 \item Implementar GTK en Common Lisp.
 \end{enumerate}
 
-\subsection{Introducción a {\sffamily GObject}} \label{subsec:introduccion_gobject}
+\subsection{¿Qué es {\sffamily GObject}?} \label{subsec:introduccion_gobject}
 \textsf{GObject} es el sistema de objetos en el que descansa \textsf{GTK}.
 Además es el objeto, a partir del que se construye el resto que forman los elementos de \textsf{GTK}.
 Por ejemplo, el objeto \textsf{GtkApplicationWindow}, que representa la ventana principal de una
@@ -81,29 +87,23 @@ figura~\ref{fig:jerarquia-gtkappwindow}.
 {\sffamily GObject} también se puede utilizar para desarrollar una jerarquía de objetos independiente de los
 elementos de GTK y que sea completamente independiente de ellos.
 
-\subsection{Creación de instancias de \textsf{GObject}} \label{subsec:creacion_instancias_gobject}
+\subsection{Clase e instancias de \textsf{GObject}} \label{subsec:clase_instancias_gobject}
 
 \subsubsection{Teoría}
-Para crear una instancia de \textsf{GObject} se utiliza la función \texttt{g\_object\_new}.
-\textsf{GObject} proporciona dos entidades relacionadas: instancias y clases:
+En sentido amplio, \textsf{GObject} es un objeto, que proporciona dos entidades relacionadas:
+instancias y clases. La función \texttt{g\_object\_new} se encarga de crearlas:
 \begin{itemize}
   \tightlist
-\item Una clase \textsf{GObject} ---\textsf{GObjectClass}---, se crea la primera vez que se ejecuta la función
+\item Una clase \textsf{GObject} ---\textsf{GObjectClass}--- se crea la primera vez que se ejecuta la función
   \texttt{g\_object\_new}. Sólo puede existir una clase que represente a \textsf{GObject}.
-  Por eso solo se crea la primera vez que se ejecuta la función.
+  Por ello se crea la primera vez que se ejecuta la función.
+  La clase se materializa en una estructura en lenguaje C, que la representa, pero es compleja y no es
+  conveniente mostrarla aquí. Solo decir que la primera vez que se llama a \texttt{g\_object\_new} se reserva
+  espacio para esa estructura \textsf{GObjectClass} y se inicializa.
+
 \item Una instancia de la clase \textsf{GObject} se crea cada vez que se ejecuta la función
   \texttt{g\_object\_new}. Puede haber una o más instancias de la clase \textsf{GObject}.
-\end{itemize}
-
-% OBSERVACIÓN:
-% Una función se puede escribir así, utilizando el paquete 'listings':
-% \passthrough{\lstinline!g\_object\_new!}
-% El tamaño de la fuente es algo menor que el que se obtiene mediante
-% \texttt{g\_object\_new}
-
-
-En sentido amplio, \textsf{GObject} es un objeto, que incluye su clase e instancias. En sentido estricto,
-es la definición de una estructura en C.
+  A continuación se muetra la estructura que las representa,tomada de '\textsf{gobject.h}':
 \begin{lstlisting}[language=C]
   typedef struct _GObject GObject;
   struct _GObject {
@@ -114,15 +114,10 @@ es la definición de una estructura en C.
     GData *qdata;
   };
 \end{lstlisting}
-
-La función \texttt{g\_object\_new} reserva espacio para la estructura \textsf{GObject},
-inicializa la memoria y devuelve el puntero a esa estructura. La memoria representada por este puntero
+La función \passthrough{\lstinline!g\_object\_new!} reserva espacio para la estructura, inicializa la
+memoria y devuelve el puntero a esa estructura. La memoria representada por este puntero
 es una instancia de \textsf{GObject}.
-
-\item De a misma forma, la primera vez que se llama a \texttt{g\_object\_new} se reserva
-espacio para la estructura \textsf{GObjectClass}, que representa la clase de \text{GObject}. A continuación
-se muestra la definición de la estructura tomada de '\texsf{gobject.h}', aunque no se
-necesita entrar en detalle en su definición, pues es más compleja que la estructura anterior.
+\end{itemize}
 
 \subsubsection{Ejemplo 1}
 En este ejemplo se crean dos instancias diferentes de la clase \textsf{GObject}, comprobándose que

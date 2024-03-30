@@ -1,0 +1,125 @@
+% tipos.tex
+%
+% Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
+% 1) Código LuaLatex:
+%    Licencia GPL-2.
+% 2) Producto en pdf, postscript, etc.:
+%    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
+
+\section{Sistema de tipos}
+%\subsection{Sistema de tipos} \label{subsec:sistematipos}
+\subsection{Introducción}
+\textsf{GObject} es un objeto básico. Es muy simple y no se puede hacer mucho con él, excepto crear
+clases derivadas e instanciar nuevos tipos de objetos.
+En realidad esta es la característica más importante de \textsf{GObject}.
+Aquí se describe como definir clases derivadas de \textsf{GObject}.
+
+En esta sección se creará una clase de objeto  que representa un número real.
+Este ejemplo no será muy útil, porque el lenguaje C ya tiene un tipo \emph{double} que representa números
+en coma flotante. Sin embargo, será útil para conocer la técnica para definir clases y objetos derivados de
+\textsf{GObject}.
+
+\subsection{Convenio de nombres}
+Primero se debe conocer el convenio de nombres que usa el sistema. El nombre de un objeto tiene dos partes:
+\begin{enumerate}
+  \tightlist
+\item Un \href{https://es.wikipedia.org/wiki/Espacio_de_nombres}{espacio de nombres}
+  (\href{https://en.wikipedia.org/wiki/Namespace}{\textit{namespace}}).
+\item Un nombre propiamente dicho, que pertenece al espacio de nombres.
+\end{enumerate}
+
+Por ejemplo, \textsf{GObject} consiste en un espacio de nombres ``\textsf{G}'' y un nombre ``\textsf{Object}''.
+\textsf{GtkWidget} tiene un espacio de nombres ``\textsf{Gtk}'' y el nombre ``\textsf{Widget}''.
+Para el objeto de números reales que pondremos como ejemplo, se decide poner ``\textsf{T}'' como espacio
+de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble}.
+Además serán objetos que derivan de \textsf{GObject}, representan números reales y el tipo del número en
+lenguaje C será \textit{double}. Diremos que \textsf{TDoble} contiene un parámetro, que llamaremos
+\texttt{valor} y se define como \texttt{double valor} en lenguaje C.
+
+\begin{figure}[ht]
+  \centering
+  \def\scl{1.4}
+  \begin{tikzpicture}[%
+    scale=\scl,
+    every node/.style={font=\LARGE\sffamily, minimum size= 8ex},
+     background/.style={
+      line width=\bgborderwidth,
+      draw=\bgbordercolor,
+      fill=\bgcolor,
+    },
+   ]
+   % COORDENADAS
+   % - 
+   % DIBUJO
+   % Convenio de nombres de objetos
+   \node[draw] (namespace)
+   {\begin{tabular}{c} \textcolor{gray}{Espacio de nombres} \\ T \end{tabular}};
+   \node [draw, right=1em of namespace] (name)
+   {\begin{tabular}{c} \textcolor{gray}{Nombre} \\ Doble \end{tabular}};
+   \node [right=1em of name] (tdoble) {$\equiv$ TDoble}; 
+   % Fondo amarillo
+   \def\margensup{18}
+   \def\margeninf{12}
+   \def\margenlateralizdo{18}
+   \def\margenlateraldcho{12}
+   \coordinate (limsupdcha) at ($(tdoble.north east)+(\margenlateraldcho pt, \margensup pt)$);
+   \coordinate (liminfizda) at ($(namespace.south west)-(\margenlateralizdo pt, \margeninf pt)$);
+   \begin{scope}[on background layer]
+     \node [background, fit= (liminfizda) (limsupdcha)] {};
+   \end{scope}
+\end{tikzpicture}
+\caption{Nombre del objeto \textsf{TDoble}.}
+\label{fig:nombre-objetos}
+\end{figure}
+
+\subsection{Tipo}
+Cuando decimos ``tipo'', nos podemos referir a dos conceptos diferentes, aunque relacionados.
+Por un lado, el tipo del sistema de objetos de \textsf{GObject} (que es un subtipo de \texttt{GType}) y,
+por otro, el tipo del lenguaje C. Por ejemplo, \textsf{GObject} es un tipo del sistema de tipos \texttt{GType}.
+Pero, ``char'', o `double'', por otro lado son tipos del lenguaje C.
+Cuando el significado de ``tipo'' quede claro por el contexto, diremos sencillamente ``tipo''; en caso contrario
+diremos ``tipo de C'' o ``tipo del sistema''.
+
+\subsubsection{Definición de \textsf{TDobleClass} y de \textsf{TDoble}}
+Empezaremos definiendo las estructuras de clase e instancia de nuestro objeto.
+Una instancia \textsf{TDoble} pertenecerá a la clase \textsf{TDobleClass}. La estructura en C de esta última es:
+\begin{lstlisting}[language=C]
+  typedef struct _TDobleClass TDobleClass;
+  struct _TDobleClass {
+    GObjectClass parent_class;
+  };
+\end{lstlisting}
+
+\texttt{\_TDobleClass} es el nombre de una estructura en C y \texttt{TDobleClass} es el tipo C que equivale
+a \texttt{struct \_TDobleClass}. De esta manera, hemos definido el tipo C, \texttt{TDobleClass}.
+En el código anterior, se usa \texttt{typedef} para definir el tipo C de la clase. El primer miembro de la estructura
+debe ser la estructura de la clase padre. \textsf{TDobleClass} no necesita más información porque no es una
+clase abstracta.
+
+\newpage
+El tipo C de una instancia de \textsf{TDoble} es \texttt{TDoble}:
+\begin{lstlisting}[language=C]
+  typedef struct _TDoble TDoble;
+  struct _TDoble {
+    GObject parent;
+    double valor;
+  };
+\end{lstlisting}
+  
+El código es similar a la estructura de la clase. Primero se usa \texttt{typedef} para definir el tipo en C de una
+instancia de la clase. El primer miembro de la estructura debe ser la estructura de la instancia padre.
+\textsf{TDoble} tiene su propio miembro o parámetro, ``\texttt{valor}'', que es el número en coma flotante
+de las instancias de \textsf{TDoble}.
+La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
+
+
+
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-master: "../GObject_tutorial_es.tex"
+%%% End:
+
+% LaTeX-command: "lualatex --shell-escape"

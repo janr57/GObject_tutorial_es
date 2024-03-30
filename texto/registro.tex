@@ -6,112 +6,14 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Sistema de tipos}
-%\subsection{Sistema de tipos} \label{subsec:sistematipos}
-\subsection{Introducción}
-\textsf{GObject} es un objeto básico. Es muy simple y no se puede hacer mucho con él, excepto crear
-clases derivadas e instanciar nuevos tipos de objetos.
-En realidad esta es la característica más importante de \textsf{GObject}.
-Aquí se describe como definir clases derivadas de \textsf{GObject}.
-
-En esta sección se crearán objetos que representan números reales. Este ejemplo no será muy útil, porque
-el lenguaje C ya tiene un tipo \emph{double} que representa números reales. Sin embargo, será útil para
-conocer la técnica para definir clases y objetos derivados de \textsf{GObject}.
-
-\subsection{Convenio de nombres}
-Primero se debe conocer el convenio de nombres que se usará. El nombre de un objeto tiene dos partes:
-\begin{enumerate}
-  \tightlist
-\item Un \href{https://es.wikipedia.org/wiki/Espacio_de_nombres}{espacio de nombres}
-  (\href{https://en.wikipedia.org/wiki/Namespace}{\textit{namespace}}).
-\item Un nombre propiamente dicho, que se considera incluido en el espacio de nombres.
-\end{enumerate}
-
-Por ejemplo, \textsf{GObject} consiste en un espacio de nombres ``\textsf{G}'' y un nombre ``\textsf{Object}''.
-\textsf{GtkWidget} tiene un espacio de nombres ``\textsf{Gtk}'' y el nombre ``\textsf{Widget}''.
-Para el objeto de números reales que pondremos como ejemplo, se decide poner ``\textsf{T}'' como espacio
-de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble}.
-Además serán objetos que derivan de \textsf{GObject}, representan números reales y el tipo del número
-será \textit{double}.
-
-\begin{figure}[ht]
-  \centering
-  \def\scl{1}
-  \begin{tikzpicture}[%
-    scale=\scl,
-    every node/.style={font=\LARGE\sffamily, minimum size= 8ex},
-     background/.style={
-      line width=\bgborderwidth,
-      draw=\bgbordercolor,
-      fill=\bgcolor,
-    },
-   ]
-   % COORDENADAS
-   % - 
-   % DIBUJO
-   % Convenio de nombres de objetos
-   \node[draw] (namespace)
-   {\begin{tabular}{c} \textcolor{gray}{Espacio de nombres} \\ T \end{tabular}};
-   \node [draw, right=1em of namespace] (name)
-   {\begin{tabular}{c} \textcolor{gray}{Nombre} \\ Doble \end{tabular}};
-   \node [right=1em of name] (tdoble) {$\equiv$ TDoble}; 
-   % Fondo amarillo
-   \def\margensup{18}
-   \def\margeninf{12}
-   \def\margenlateralizdo{18}
-   \def\margenlateraldcho{12}
-   \coordinate (limsupdcha) at ($(tdoble.north east)+(\margenlateraldcho pt, \margensup pt)$);
-   \coordinate (liminfizda) at ($(namespace.south west)-(\margenlateralizdo pt, \margeninf pt)$);
-   \begin{scope}[on background layer]
-     \node [background, fit= (liminfizda) (limsupdcha)] {};
-   \end{scope}
-\end{tikzpicture}
-\caption{Nombre del objeto \textsf{TDoble}.}
-\label{fig:nombre-objetos}
-\end{figure}
-
-\subsection{Tipo}
-Cuando decimos ``tipo'', nos podemos referir a dos conceptos diferentes, aunque relacionados.
-Por un lado, el tipo del sistema de objetos y, por otro, el tipo del lenguaje C. Por ejemplo, \textsf{GObject} es
-un tipo del sistema de tipos. Pero, ``char'', o `double'', por otro lado son tipos del lenguaje C.
-Cuando el significado de ``tipo'' quede claro por el contexto, diremos sencillamente ``tipo''; en caso contrario
-diremos ``tipo de C'' o ``tipo del sistema''.
-
-\subsubsection{Definición de \textsf{TDobleClass} y de \textsf{TDoble}}
-  Nuestro objeto \textsf{TDoble} pertenecerá a la clase \textsf{TDobleClass}. La estructura en C de esta última es
-  \begin{lstlisting}[language=C]
-    typedef struct _TDobleClass TDobleClass;
-    struct _TDobleClass {
-      GObjectClass parent_class;
-    };
-  \end{lstlisting}
-
-  \texttt{\_TDobleClass} es el nombre de una estructura en C y \texttt{TDobleClass} es \texttt{struct \_TDobleClass}.
-  Así, \textsf{TDobleClass} es un tipo de C recién definido.
-  En el código anterior, se usa \texttt{typedef} para definir un tipo de clase. El primer miembro de la estructura
-  debe ser la estructura de la clase padre. \textsf{TDobleClass} no necesita más información. El tipo C de una
-  instancia de \textsf{TDoble} es \texttt{TDoble}.
-  \begin{lstlisting}[language=C]
-    typedef struct _TDoble TDoble;
-    struct _TDoble {
-      GObject parent;
-      double valor;
-    };
-  \end{lstlisting}
-  
-  Esto es similar a la estructura de la clase. Primero se usa \texttt{typedef} para definir el tipo en C de una
-  instancia de la clase. El primer miembro de la estructura debe ser la estructura de la instancia padre.
-  \textsf{TDoble} tiene su propio miembro ``\texttt{valor}'', que es el valor de las instancias de \textsf{TDoble}.
-  La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
-
-  \section{Proceso de registro}
+  \section{Proceso de registro de un objeto derivado}
   \subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
-  Para crear un tipo del sistema, a partir de un tipo creado como una estructura en C,
-  como \text{TDoble}, se llevan a cabo los siguientes pasos:
+  Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
+  ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
   \begin{enumerate}
     \tightlist
   \item Registro del tipo en C \texttt{TDoble} en el sistema de tipos.
-  \item El sistema de tipos asigna memoria para \textsf{TDobleClass} y \textsf{TDoble}.
+  \item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble}, por parte del sistema de tipos.
   \item Inicialización de \textsf{TDobleClass}.
   \item Inicialización de \textsf{TDoble}.
   \end{enumerate}
