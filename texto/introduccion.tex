@@ -140,7 +140,7 @@ Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
   (típicamente 'build'):
 \begin{lstlisting}[language=bash]
   $ cd prog/meson/ej0105
-  $ meson setup build
+  $ meson setup build [--buildtype=release|debug|debugoptimized]
   $ ninja -C build
 \end{lstlisting}
 Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
@@ -350,7 +350,7 @@ Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
   (típicamente 'build'):
 \begin{lstlisting}[language=bash]
   $ cd prog/meson/ej0105
-  $ meson setup build
+  $ meson setup build [--buildtype=release|debug|debugoptimized]
   $ ninja -C build
 \end{lstlisting}
 Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
