@@ -122,46 +122,7 @@ es una instancia de \textsf{GObject}.
 \subsubsection{Ejemplo 1}
 En este ejemplo se crean dos instancias diferentes de la clase \textsf{GObject}, comprobándose que
 estas pertenecen a la misma clase. En el directorio '\textsf{prog}' se encuentran los programas de ejemplo.
-Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
-\begin{itemize}
-  \tightlist
-\item Utilizando 'make':
-\begin{lstlisting}[language=bash]
-  $ cd prog/make/ej0105
-  $ make
-\end{lstlisting}
-Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
-\begin{lstlisting}[language=bash]
-  $ cd prog/make/ej0105
-  $ make clean
-\end{lstlisting}
-\item Utilizando 'meson'.
-  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
-  (típicamente 'build'):
-\begin{lstlisting}[language=bash]
-  $ cd prog/meson/ej0105
-  $ meson setup build [--buildtype=release|debug|debugoptimized]
-  $ ninja -C build
-\end{lstlisting}
-Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
-\begin{lstlisting}[language=bash]
-  $ cd prog/meson/ej0105
-  $ rm -rf build
-\end{lstlisting}
-\item Utilizando 'cmake'.
-  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
-  (típicamente 'build'):
-\begin{lstlisting}[language=bash]
-  $ cd prog/cmake/ej0105
-  $ cmake -B build -G Ninja
-  $ ninja -C build
-\end{lstlisting}
-Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
-\begin{lstlisting}[language=bash]
-  $ cd prog/cmake/ej0105
-  $ rm -rf build
-\end{lstlisting}
-\end{itemize}
+Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
@@ -332,46 +293,7 @@ Ahora pueden ocurrir diversas circunstancias, entre otras:
 \subsubsection{Ejemplo 2}
 En el siguiente ejemplo se una instancia de la clase \textsf{GObject}, después se referencia una vez.
 Finalmente se desreferencia dos veces hasta que el sistema destruye la instancia y libera la memoria.
-Se proporcionan tres métodos para compilar los ejemplos 1, 2, 3, 4 y 5, simultáneamente.
-\begin{itemize}
-  \tightlist
-\item Utilizando 'make':
-\begin{lstlisting}[language=bash]
-  $ cd prog/make/ej0105
-  $ make
-\end{lstlisting}
-Si se quieren borrar los ejecutables y fichero auxiliares, hay que teclear:
-\begin{lstlisting}[language=bash]
-  $ cd prog/make/ej0105
-  $ make clean
-\end{lstlisting}
-\item Utilizando 'meson'.
-  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
-  (típicamente 'build'):
-\begin{lstlisting}[language=bash]
-  $ cd prog/meson/ej0105
-  $ meson setup build [--buildtype=release|debug|debugoptimized]
-  $ ninja -C build
-\end{lstlisting}
-Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
-\begin{lstlisting}[language=bash]
-  $ cd prog/meson/ej0105
-  $ rm -rf build
-\end{lstlisting}
-\item Utilizando 'cmake'.
-  Se crean los ejecutables y ficheros auxiliares en un directorio separado del código fuente
-  (típicamente 'build'):
-\begin{lstlisting}[language=bash]
-  $ cd prog/cmake/ej0105
-  $ cmake -B build -G Ninja
-  $ ninja -C build
-\end{lstlisting}
-Para eliminar los ejecutables y ficheros auxiliares, se borra el directorio elegido, 'build', en este caso.
-\begin{lstlisting}[language=bash]
-  $ cd prog/cmake/ej0105
-  $ rm -rf build
-\end{lstlisting}
-\end{itemize}
+Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
