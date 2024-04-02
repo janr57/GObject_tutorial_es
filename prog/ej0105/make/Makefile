@@ -8,8 +8,8 @@ EJEMPLOS=ejemplo01 ejemplo02 ejemplo03 ejemplo04 ejemplo05
 
 ALL: $(EJEMPLOS)
 
-%: %.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+%: ../src/%.c
+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS)
 
 .PHONY: clean run
 
