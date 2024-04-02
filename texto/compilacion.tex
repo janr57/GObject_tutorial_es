@@ -1,0 +1,84 @@
+% compilacion.tex
+%
+% Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
+% 1) Código LuaLatex:
+%    Licencia GPL-2.
+% 2) Producto en pdf, postscript, etc.:
+%    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
+
+\section{Compilación de programas}\label{sec:compilacion}
+
+\begin{enumerate}
+  \item Para compilar los programas que nos interesan, primero hay que entrar en el directorio correspondiente:
+\begin{itemize}
+  \tightlist
+\item '\textbf{\texttt{\$ cd prog/ej0105}}':
+  para compilar '\textsf{ejemplo01}', '\textsf{ejemplo02}', '\textsf{ejemplo03}', '\textsf{ejemplo04}'
+  y '\textsf{ejemplo05}'.
+\item '\textbf{\texttt{\$ cd prog/ej06}}': para compilar '\texttt{ejemplo06}'.
+\end{itemize}
+
+\item A continuación, se elige el sistema que se prefiere para construir el/los ejecutables:
+  \begin{itemize}
+    \tightlist
+  \item Para utilizar \textbf{cmake}, se ejecutan los siguientes comandos:
+    \begin{lstlisting}[language=bash]
+      $ cd cmake
+      $ cmake -B build -G Ninja
+      $ ninja -C build
+    \end{lstlisting}
+    Los ejecutables se encuentran en el directorio elegido (en este caso 'build').
+    El comando \texttt{cmake ...} da la orden de compilar con códigos de depuración (\textsf{Debug}).
+
+    Se podría elegir otra forma de compilación, añadiendo al final de '\texttt{cmake ...}'
+    el argumento \texttt{-DCMAKE\_BUILD\_TYPE=} con los posibles valores a la derecha del signo 'igual que':
+    \begin{itemize}
+      \tightlist
+    \item '\texttt{-DCMAKE\_BUILD\_TYPE=Release}': Sin códigos de depuración.
+    \item '\texttt{-DCMAKE\_BUILD\_TYPE=Debug}': Con códigos de depuración.
+    \item '\texttt{-DCMAKE\_BUILD\_TYPE=RelWithDebInfo}': Release con códigos de depuración.
+    \item '\texttt{-DCMAKE\_BUILD\_TYPE=MinSizeRel}': Release de tamaño mínimo (\texttt{strip}).
+    \end{itemize}
+  \item Para utilizar \textbf{make}, se teclea
+    Ahora se ejecutan los siguientes comandos:
+    \begin{lstlisting}[language=bash]
+      $ cd make
+      $ make
+    \end{lstlisting}
+    Los ejecutables se encuentran en el directorio actual.
+  \item Para utilizar \textbf{meson}, se teclea:
+    \begin{lstlisting}[language=bash]
+    $ cd meson
+    $ meson setup build
+    $ ninja -C build
+  \end{lstlisting}
+  Los ejecutables se encuentran en el directorio elegido (en este caso 'build').
+  El comando \texttt{meson ...} da la orden de compilar con códigos de depuración (\textsf{Debug}).
+
+  Se podría elegir otra forma de compilación, añadiendo al final del comando '\texttt{meson ...}'
+  el argumento \texttt{--buildtype=} con los posibles valores a la derecha del signo 'igual que':
+  \begin{itemize}
+    \tightlist
+  \item '\texttt{--buildtype=release}': Sin códigos de depuración.
+  \item '\texttt{--buildtype=debug}': Con códigos de depuración.
+  \end{itemize}
+
+\item Para borrar los ficheros que se han creado, se teclea (en cualquiera de los tres tipos de compilación):
+  \begin{lstlisting}[language=bash]
+    $ make clean
+  \end{lstlisting}
+  \end{itemize}
+\end{enumerate}
+
+
+
+
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-master: "../GObject_tutorial_es.tex"
+%%% End:
+
+% LaTeX-command: "lualatex --shell-escape"

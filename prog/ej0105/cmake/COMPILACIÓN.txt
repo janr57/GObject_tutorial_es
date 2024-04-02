@@ -11,8 +11,8 @@ $ cmake -B build -G Ninja [-DCMAKE_BUILD_TYPE=Release|Debug|RelWithDebInfo|MinSi
 $ ninja -C build
 
 El fichero ejecutable se encontrará en el directorio elegido, 'build'.
-Si no se añade -DCMAKE_BUILD_TYPE=... el ejecutable se construye como 'Release', esto es,
-no contiene códigos de depuración.
+Si no se añade el argumento -DCMAKE_BUILD_TYPE=..., el ejecutable se construye como 'Release', esto es,
+sin códigos de depuración.
 
 NOTA:
 ----------

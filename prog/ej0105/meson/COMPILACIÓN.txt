@@ -1,15 +1,16 @@
 COMPILACIÓN
------------
+----------------------
 
 Se utilizan 'meson' y 'ninja':
------------------------------
+----------------------------------------
 Se van a generar los cinco ejecutables:
 ejemplo01, ejemplo02, ejemplo03, ejemplo04, ejemplo05 y ficheros auxiliares
 en un directorio separado del código fuente, típicamente 'build'. 
 Para ello, se teclea:
 
-$ meson setup build
+$ meson setup build [--buildtype=release|debug]
 $ ninja -C build
 
+Si no se utiliza --buildtype=..., la versión por defecto es 'debug'.
 Los cinco ficheros ejecutables se encontrarán en el directorio elegido, 'build'.
 
