@@ -15,22 +15,21 @@
 \section{Introducción a \textsf{GObject}}
 
 \subsection{Motivación} \label{subsec:motivacion}
-Tuve, desde hace muchos años, interés en programar aplicaciones con la API de \textsf{GTK}.
+Desde hace mucho, tuve interés en programar aplicaciones con la API de \textsf{GTK}.
 Según la Wikipedia, \textsf{GTK} es una biblioteca de componentes gráficos multiplataforma para desarrollar
 interfaces gráficas de usuario, que está licenciada bajo los términos de la GNU LGPL, por lo que
 permite la creación de software libre e incluso privativo.
-Pero, tenía otras tareas que no me permitían estudiar con profundidad dicha API, y por otra, cuando
+Pero, tenía otras tareas que no me permitían estudiar con profundidad dicha API, y además, cuando
 encontraba información, me parecía un galimatías que no llegaba a entender, si acaso un poco.
 Como mucho, podía programar algo, pero copiando el código que encontraba en los textos, aunque no
 terminaba de tener una imagen global.
 
 Una parte del problema tenía que ver con el sistema de objetos \textsf{GObject} en el que se basa \textsf{GTK}.
-Ahora dispongo de más tiempo que dedicar al sistema, por lo que escribo este tutorial  para consolidar
-lo que voy aprendiendo.
+Ahora dispongo de más tiempo, no todo el que quisiera,  para dedicar al sistema, por lo que escribo este tutorial  para consolidar lo que voy aprendiendo.
 
 Debo reconocer la ayuda que he encontrado en los textos y tutoriales que me han ayudado mucho y
-a los que hago referencia al final del texto. Hay uno en particular [CTLP] que me ha servido para estructurar
-este tutorial, al menos el principio. No obstante, aquí y allá he añadido o eliminado algo, para adaptarme a mi manera de entender la materia.
+a los que hago referencia al final del libro. Hay uno en particular [CTLP] que me ha servido para estructurar
+el tutorial, al menos el principio. No obstante, aquí y allá he añadido o eliminado algo, para adaptarme a mi manera de entender la materia.
 \subsection{Objetivos} \label{subsec:objetivos}
 \begin{enumerate}
   \tightlist
@@ -44,8 +43,8 @@ este tutorial, al menos el principio. No obstante, aquí y allá he añadido o e
 
 \subsection{¿Qué es {\sffamily GObject}?} \label{subsec:introduccion_gobject}
 \textsf{GObject} es el sistema de objetos en el que descansa \textsf{GTK}.
-Además es el objeto, a partir del que se construye el resto que forman los elementos de \textsf{GTK}.
-Por ejemplo, el objeto \textsf{GtkApplicationWindow}, que representa la ventana principal de una
+Además proporciona la clase base, a partir de la que se construye el resto de los elementos de \textsf{GTK}.
+Por ejemplo,  \textsf{GtkApplicationWindow}, que representa la ventana principal de una
 aplicación \textsf{GTK}, deriva en última instancia de \textsf{GObject}, como se puede apreciar en la
 figura~\ref{fig:jerarquia-gtkappwindow}.
 \begin{figure}[ht]
@@ -90,14 +89,14 @@ elementos de GTK y que sea completamente independiente de ellos.
 \subsection{Clase e instancias de \textsf{GObject}} \label{subsec:clase_instancias_gobject}
 
 \subsubsection{Teoría}
-En sentido amplio, \textsf{GObject} es un objeto, que proporciona dos entidades relacionadas:
-instancias y clases. La función \texttt{g\_object\_new} se encarga de crearlas:
+En sentido amplio, \textsf{GObject} es un sistema de objetos que proporciona dos entidades relacionadas:
+instancias y clases. La función \texttt{g\_object\_new} se encarga de crear instancias de clases:
 \begin{itemize}
   \tightlist
 \item Una clase \textsf{GObject} ---\textsf{GObjectClass}--- se crea la primera vez que se ejecuta la función
-  \texttt{g\_object\_new}. Sólo puede existir una clase que represente a \textsf{GObject}.
-  Por ello se crea la primera vez que se ejecuta la función.
-  La clase se materializa en una estructura en lenguaje C, que la representa, pero es compleja y no es
+  \texttt{g\_object\_new}. Sólo puede existir una clase que represente a \textsf{GObject}, por ello se crea la
+  primera vez que se ejecuta la función.
+  La clase se materializa como una estructura en lenguaje C que la representa, pero como es compleja no es
   conveniente mostrarla aquí. Solo decir que la primera vez que se llama a \texttt{g\_object\_new} se reserva
   espacio para esa estructura \textsf{GObjectClass} y se inicializa.
 
