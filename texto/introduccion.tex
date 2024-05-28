@@ -15,7 +15,7 @@
 \section{Introducción a \textsf{GObject}}
 
 \subsection{Motivación} \label{subsec:motivacion}
-Desde hace mucho, tuve interés en programar aplicaciones con la API de \textsf{GTK}.
+Desde hace mucho, he tenido  interés en programar aplicaciones con la API de \textsf{GTK}.
 Según la Wikipedia, \textsf{GTK} es una biblioteca de componentes gráficos multiplataforma para desarrollar
 interfaces gráficas de usuario, que está licenciada bajo los términos de la GNU LGPL, por lo que
 permite la creación de software libre e incluso privativo.
@@ -98,10 +98,10 @@ instancias y clases. La función \texttt{g\_object\_new} se encarga de crear ins
   primera vez que se ejecuta la función.
   La clase se materializa como una estructura en lenguaje C que la representa, pero como es compleja no es
   conveniente mostrarla aquí. Solo decir que la primera vez que se llama a \texttt{g\_object\_new} se reserva
-  espacio para esa estructura \textsf{GObjectClass} y se inicializa.
+  espacio para la estructura \textsf{GObjectClass} y se inicializa.
 
-\item Una instancia de la clase \textsf{GObject} se crea cada vez que se ejecuta la función
-  \texttt{g\_object\_new}. Puede haber una o más instancias de la clase \textsf{GObject}.
+\item Una instancia de \textsf{GObject} se crea cada vez que se ejecuta la función
+  \texttt{g\_object\_new}. Puede haber una o más instancias de \textsf{GObject}.
   A continuación se muetra la estructura que las representa,tomada de '\textsf{gobject.h}':
 \begin{lstlisting}[language=C]
   typedef struct _GObject GObject;
@@ -120,14 +120,14 @@ es una instancia de \textsf{GObject}.
 
 \subsubsection{Ejemplo 1}
 En este ejemplo se crean dos instancias diferentes de la clase \textsf{GObject}, comprobándose que
-estas pertenecen a la misma clase. En el directorio '\textsf{prog}' se encuentran los programas de ejemplo.
-Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
+estas pertenecen a la misma clase. En el directorio '\textsf{prog}' se encuentran este y otros programas
+de ejemplo. Puede consultar las instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
 /*
-  * ejemplo01.c
-* Ejemplo de creación y destrucción de instancias de 'GObjectClass'.
+ * ejemplo01.c
+ * Ejemplo de creación y destrucción de instancias de 'GObjectClass'.
  * https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec2.md
  * https://github.com/ToshioCP/Gobject-tutorial/tree/main
  */
@@ -198,7 +198,7 @@ El listado es:
 \item Líneas 34 -- 35:\par
   Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa. Nos podríamos
   preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
-  esta duda se aclarará en la siguiente sección.
+  se aclarará en la siguiente sección.
 \end{itemize}
 
 \begin{figure}[ht]
