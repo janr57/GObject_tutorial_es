@@ -267,23 +267,22 @@ Esto se resuelve mediante el
 \href{https://es.wikipedia.org/wiki/Conteo_de_referencias}{conteo de referencias}
 (\href{https://en.wikipedia.org/wiki/Reference_counting}{\textit{reference counting}}).
 Cuando se crea una instancia (mediante la función \passthrough{\lstinline!g\_object\_new!}), se dice que
-la instancia está \emph{referida}, y se le asigna una cuenta de referencia (\textit{reference count} o \texttt{ref\_count}) igual a 1, indicando que hay un módulo, función
-u objeto que está utilizándola. Llamemos \textbf{A} a este.
+la instancia está referida (\emph{referred}), y se le asigna una cuenta de referencia (\textit{reference count}), haciendo la variable \texttt{ref\_count}) igual a 1, indicando que hay un módulo, función u objeto que la esta utilizando. Llamemos \textbf{A} a este elemento.
 Ahora pueden ocurrir diversas circunstancias, entre otras:
 \begin{itemize}
   \tightlist
-\item Si \textbf{A} no necesita utilizar más la instancia, la desreferencia mediante \passthrough{\lstinline!g\_object\_unref!}, utilizando la instancia (un puntero) como argumento de la función.
+\item Si \textbf{A} no necesita utilizar más la instancia, la desreferencia mediante \passthrough{\lstinline!g\_object\_unref!}, utilizando un puntero a la instancia como argumento de la función.
   Entonces, el sistema decrementa la cuenta de referencia en una unidad, de manera que ahora valdría cero.
-  En este caso el sistema detecta que ya no se utiliza la instancia y la elimina, liberando su memoria asociada.
+  En este supuesto, el sistema detecta que ya no se utiliza la instancia y la elimina, liberando su memoria asociada.
   \item Pero imaginemos que se pasa la instancia (su puntero) a otro módulo, función u objeto del programa,
     que llamaremos \textbf{B}. Este debe referenciar la instancia para evitar la posibilidad de que \textbf{A} la
     elimine antes de \textbf{B} termine de utilizarla, y para ello debe llamar a la función
-    \passthrough{\lstinline!g\_object\_ref!}, utilizando la instancia como argumento.
+    \passthrough{\lstinline!g\_object\_ref!}, utilizando la el puntero a la instancia como argumento.
     Ahora la cuenta de referencia de la instancia se incrementaría en una unidad pasando a valer 2.
 
     Si \textbf{A}, decidiera que ya no necesita más la instancia, llamaría a
     \passthrough{\lstinline!g\_object\_unref!} y la cuenta de referencia bajaría a 1. Este valor indicaría al sistema
-    que todavía queda otro módulo, función u objeto que está utilizándola (en este caso \textbf{B}). Así,
+    que todavía queda otro elemento que la esta utilizando (en este caso \textbf{B}). Así,
     la memoria asociada no se liberaría, hasta que \textbf{B} decidiera prescindir de la instania, en cuyo caso,
     la cuenta de referencia bajaría a cero y, solo entonces, se liberaría la memoria asociada y la instancia dejaría de
     existir en el sistema.
@@ -305,13 +304,13 @@ El listado es:
 #include <glib-object.h>
 
 static void
-show_ref_count  (GObject *instancia)
+show_ref_count  (GObject *inst)
 {
-  if  (G_IS_OBJECT (instancia)) {
+  if  (G_IS_OBJECT (inst)) {
     /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
        pues interferirían de una forma impredecible con GObject */
     /* Aquí se utiliza solo como demostración */
-    g_print ("  La cuenta de referencia de la instancia es %d.\n", instancia->ref_count);
+    g_print ("  Cuenta de referencia de la instancia: %d.\n", inst->ref_count);
   }
   else {
     g_print ("  La instancia recibida no es un objeto de 'GObjectClass'.\n");
@@ -374,6 +373,11 @@ main (int argc, char **argv)
 
 \subsubsection{Comentarios}
 \begin{itemize}
+\item Línea 9:\par
+  Se declara la función \passthrough{\lstinline!show\_ref\_count!} como \texttt{static void}.
+  El identificador \texttt{static} especifica que el alcance (\textit{scope}) de la función es
+  este fichero. Si hubiera algún otro fichero, no podría utilizar la función que se define aquí,
+  pero podría llamar a otra definida en otro lugar que se llamara igual.
 \item Línea 26:\par
   Se declara un puntero a objeto de \textsf{GObject}, lo que no permitirá crear una instancia.
 \item Línea 30:\par
@@ -397,15 +401,6 @@ main (int argc, char **argv)
   Por ello, se ha comentado la línea 54 que produciría ese error.
   El lector puede descomentar la citada línea y comprobar el error de segmentación que se produciría.
   \end{itemize}
-
-
-
-
-
-
-
-
-
 
 
 %%% Local Variables:

@@ -7,13 +7,13 @@
 #include <glib-object.h>
 
 static void
-show_ref_count  (GObject *instancia)
+show_ref_count  (GObject *inst)
 {
-  if  (G_IS_OBJECT (instancia)) {
+  if  (G_IS_OBJECT (inst)) {
     /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
        pues interferirían de una forma impredecible con GObject */
     /* Aquí se utiliza solo como demostración */
-    g_print ("  La cuenta de referencia de la instancia es %d.\n", instancia->ref_count);
+    g_print ("  Cuenta de referencia de la instancia: %d.\n", inst->ref_count);
   }
   else {
     g_print ("  La instancia recibida no es un objeto de 'GObjectClass'.\n");
