@@ -6,14 +6,14 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Proceso de registro de un objeto derivado}
+\section{Registro de un objeto derivado}
 \subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
 Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
 ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
 \begin{enumerate}
   \tightlist
 \item Registro del tipo en C \texttt{TDoble} en el sistema de tipos.
-\item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble}, por parte del sistema de tipos.
+\item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble} del sistema de tipos.
 \item Inicialización de \textsf{TDobleClass}.
 \item Inicialización de \textsf{TDoble}.
 \end{enumerate}
@@ -94,7 +94,7 @@ ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
 Generalmente, el proceso de registro se lleva a cabo mediante unas macros, como
 \texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, de manera que no
 necesitamos preocuparnos por los detalles. Pero aquí es importante entender el
-sistema de tipos de \textsf{GObject}, por lo que empezaremos analizando el proceso
+sistema de tipos de \textsf{GObject}, de manera que empezaremos analizando el proceso
 de registro sin ayuda de macros.
 
 Hay dos clases de tipos de \textsf{GObject}, estáticos y dinámicos.
