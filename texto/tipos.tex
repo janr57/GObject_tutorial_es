@@ -15,8 +15,8 @@ En realidad esta es la característica más importante de \textsf{GObject}.
 Aquí se describe como definir clases derivadas de \textsf{GObject}.
 
 En esta sección se creará una clase de objeto  que representa un número real.
-Este ejemplo no será muy útil, porque el lenguaje C ya tiene un tipo \emph{double} que representa números
-en coma flotante. Sin embargo, será útil para conocer la técnica para definir clases y objetos derivados de
+Este ejemplo no es muy útil porque el lenguaje C ya tiene un tipo \texttt{double} que representa números
+en coma flotante. Sin embargo, servirá para conocer la técnica para definir clases y objetos derivados de
 \textsf{GObject}.
 
 \subsection{Convenio de nombres}
@@ -30,11 +30,12 @@ Primero se debe conocer el convenio de nombres que usa el sistema. El nombre de 
 
 Por ejemplo, \textsf{GObject} consiste en un espacio de nombres ``\textsf{G}'' y un nombre ``\textsf{Object}''.
 \textsf{GtkWidget} tiene un espacio de nombres ``\textsf{Gtk}'' y el nombre ``\textsf{Widget}''.
-Para el objeto de números reales que pondremos como ejemplo, se decide poner ``\textsf{T}'' como espacio
-de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble}.
-Además serán objetos que derivan de \textsf{GObject}, representan números reales y el tipo del número en
-lenguaje C será \textit{double}. Diremos que \textsf{TDoble} contiene un parámetro, que llamaremos
-\texttt{valor} y se define como \texttt{double valor} en lenguaje C.
+
+Para el objeto de números reales de nuestro ejemplo, se decide poner ``\textsf{T}'' como espacio
+de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble},
+derivarán de \textsf{GObject}, representan números reales y el tipo del número en
+lenguaje C será \texttt{double}. Diremos que \textsf{TDoble} contiene un parámetro, que llamaremos
+\texttt{valor} que se  define como \texttt{double valor} en lenguaje C.
 
 \begin{figure}[ht]
   \centering
@@ -76,7 +77,7 @@ lenguaje C será \textit{double}. Diremos que \textsf{TDoble} contiene un parám
 Cuando decimos ``tipo'', nos podemos referir a dos conceptos diferentes, aunque relacionados.
 Por un lado, el tipo del sistema de objetos de \textsf{GObject} (que es un subtipo de \texttt{GType}) y,
 por otro, el tipo del lenguaje C. Por ejemplo, \textsf{GObject} es un tipo del sistema de tipos \texttt{GType}.
-Pero, ``char'', o `double'', por otro lado son tipos del lenguaje C.
+Pero \texttt{char}, o \texttt{double}, por otro lado, son tipos del lenguaje C.
 Cuando el significado de ``tipo'' quede claro por el contexto, diremos sencillamente ``tipo''; en caso contrario
 diremos ``tipo de C'' o ``tipo del sistema''.
 
@@ -108,7 +109,7 @@ El tipo C de una instancia de \textsf{TDoble} es \texttt{TDoble}:
   
 El código es similar a la estructura de la clase. Primero se usa \texttt{typedef} para definir el tipo en C de una
 instancia de la clase. El primer miembro de la estructura debe ser la estructura de la instancia padre.
-\textsf{TDoble} tiene su propio miembro o parámetro, ``\texttt{valor}'', que es el número en coma flotante
+\textsf{TDoble} tiene su propio miembro o parámetro, \texttt{valor}, que es el número en coma flotante
 de las instancias de \textsf{TDoble}.
 La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
 
