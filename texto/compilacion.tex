@@ -18,15 +18,27 @@
 \item '\textbf{\texttt{\$ cd prog/ej06}}': para compilar '\texttt{ejemplo06}'.
 \end{itemize}
 
-\item A continuación, se elige el sistema que se prefiere para construir el/los ejecutables:
+\item A continuación, se elige el sistema que se prefiere para construir el/los ejecutables.
+  En este tutorial consideramos los siguientes:
   \begin{itemize}
     \tightlist
-  \item Para utilizar \textbf{cmake}, se ejecutan los siguientes comandos:
-    \begin{lstlisting}[language=bash]
-      $ cd cmake
-      $ cmake -B build -G Ninja
-      $ ninja -C build
-    \end{lstlisting}
+  \item Para utilizar \textbf{cmake}, se puede utilizar \emph{ninja} o \emph{make} como las herramientas
+    que llevarán a cabo la compilación.
+    \begin{itemize}
+      \item Si queremos compilar con \emph{ninja}:
+        \begin{lstlisting}[language=bash]
+          $ cd cmake
+          $ cmake -B build -G Ninja
+          $ ninja -C build
+        \end{lstlisting}
+      \item Si queremos compilar con \emph{make}:
+        \begin{lstlisting}[language=bash]
+          $ cd cmake
+          $ cmake -B build -G "Unix Makefiles"
+          $ cd build
+          $ make
+        \end{lstlisting}
+    \end{itemize}
     Los ejecutables se encuentran en el directorio elegido (en este caso 'build').
     El comando \texttt{cmake ...} da la orden de compilar con códigos de depuración (\textsf{Debug}).
 
