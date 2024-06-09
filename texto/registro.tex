@@ -6,13 +6,13 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Registro de un objeto derivado}
+\section{Registro de objetos derivados}
 \subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
 Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
 ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
 \begin{enumerate}
   \tightlist
-\item Registro del tipo en C \texttt{TDoble} en el sistema de tipos.
+\item Registro del tipo C, \texttt{TDoble}, en el sistema de tipos.
 \item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble} del sistema de tipos.
 \item Inicialización de \textsf{TDobleClass}.
 \item Inicialización de \textsf{TDoble}.
@@ -93,11 +93,12 @@ ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
 \subsection{Registro realizado sin macros}
 Generalmente, el proceso de registro se lleva a cabo mediante unas macros, como
 \texttt{G\_DECLARE\_FINAL\_TYPE} y \texttt{G\_DEFINE\_FINAL\_TYPE}, de manera que no
-necesitamos preocuparnos por los detalles. Pero aquí es importante entender el
+necesitamos preocuparnos por los detalles. Pero ahora es importante entender el
 sistema de tipos de \textsf{GObject}, de manera que empezaremos analizando el proceso
 de registro sin ayuda de macros.
 
-Hay dos clases de tipos de \textsf{GObject}, estáticos y dinámicos.
+Hay tres clases de tipos de \textsf{GObject}: fundamentales, estáticos y dinámicos.
+Un tipo fundamental no deriva de ninguno más básico.
 La clase de los tipos estáticos no se destruye cuando lo hacen todas sus instancias.
 En cambio, la clase de los tipos dinámicos sí se destruye cuando se elimina la última instancia.
 
@@ -117,7 +118,7 @@ g_type_register_static (GType           parent_type,
 Descripción de los parámetros implicados en el registro:
 \begin{itemize}
   \tightlist
-\item \texttt{parent\_type}: Es el nombre del tipo padre.
+\item \texttt{parent\_type}: Es el tipo del padre.
 \item \texttt{*type\_name}: Es el nombre del tipo que se va a registrar,
   por ejemplo, "\textsf{TDoble}".
 \item \texttt{*info}: Es una estructura \texttt{GTypeInfo} que contiene información acerca
@@ -159,7 +160,7 @@ Esta estructura se debe crear antes del registro.
   \tightlist
 \item \texttt{class\_size}: Tamaño de la clase. Por ejemplo, el tamaño de la clase
   \textsf{TDoble} es "\texttt{sizeof (TDobleClass)}''.
-\item \texttt{base\_init}, \text{base\_finalize}: Estas funciones inicializan/finalizan
+\item \texttt{base\_init}, \texttt{base\_finalize}: Estas funciones inicializan/finalizan
   los miembros dinámicos de la clase. En la mayoría de los casos no son necesarias y
   su valor es \texttt{NULL}.
   Para más información ver:
@@ -174,7 +175,6 @@ Esta estructura se debe crear antes del registro.
 \item \texttt{class\_finalize}: Esta función finaliza la clase. Pero, como el tipo de los objetos derivados de
   \textsf{GObject} es estático, no se les asigna ninguna función de finalización. Por tanto a \textsf{TDoble}
   se le asigna \texttt{NULL} aquí.
-  Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}.
 \item \texttt{class\_data}: Datos que el usuario le pasa a las funciones de los dos métodos anteriores
   de inicialización y finalización de la clase. Normalmente se asigna \texttt{NULL}.
 \item \texttt{instance\_size}: El tamaño de cada objeto que se instancia. Por ejemplo, el de una instancia
@@ -194,7 +194,7 @@ la clase y la instancia, también respectivamente.
 
 \subsubsection{Ejemplo 3}
 El siguiente ejemplo muestra cómo utilizar la función \texttt{g\_type\_register\_static}.
-En la práctica se utilizará una macro que realiza esta tarea automáticamente. Pero aquí se realiza sin
+En la práctica se utilizará una macro que realiza esta tarea automáticamente, pero aquí se realiza sin
 la macro con fines didácticos.
 Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
@@ -292,7 +292,10 @@ El listado es:
 \begin{itemize}
 \item Línea 9:\par
   Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
-  \texttt{t\_doble\_get\_type}, Esta función se definirá más adelante porque vamos a registrar la clase \textsf{T\_Doble\_Class} y  el objeto \textsf{T\_Doble} manualmente, con fines didácticos.
+  \texttt{t\_doble\_get\_type ()}. Esta función la definiremos más adelante porque vamos a llevar a cabo
+  el proceso de registro de la clase \textsf{T\_Doble\_Class} y del objeto \textsf{T\_Doble} manualmente
+  con fines didácticos,  pero esta definición normalmente se lleva a cabo automáticamente mediante macros.
+  
   La primera vez que se llama a esta función, se ejecuta \texttt{g\_type\_register\_static}, que realiza el
   proceso de registro. En las siguientes llamadas a \texttt{t\_doble\_get\_type} solo se devuelve el tipo de objeto.
   Todo esto se hará en las líneas 32--50.
@@ -308,7 +311,8 @@ El listado es:
   Como se aprecia, no contienen ningún código ---en este caso---, pero son necesarias para el registro.
 \item Líneas 32--53:\par
   Se define la función \texttt{t\_doble\_get\_type}, a la que se hacía referencia en la línea 9.
-  Esta función sustituye a la macro \texttt{T\_TYPE\_DOBLE} y retorna el tipo del objeto \textsf{TDoble}.
+  Esta función sustituye a la macro \texttt{T\_TYPE\_DOBLE} y retorna el tipo del objeto \textsf{TDoble}
+  que se registra mediante la función \texttt{g\_type\_register\_static}.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta función reemplaza
   a la macro \textsf{\small <ESPACIO-DE-NOMBRES>\_TYPE\_<NOMBRE>} (todos los caracteres en mayúsculas).
   En su código se define una variable estática, \texttt{type}, para mantener el tipo del objeto que se define.
@@ -324,7 +328,7 @@ El listado es:
   del tipo \text{TDoble}.
 \item Líneas 58--59:\par
   Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOBLE}, y de la
-  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 66.
+  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 65.
 \item Línea 63:\par
   Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
   \texttt{g\_print} no cambie el el sistema de caracteres del texto que imprimirá.
