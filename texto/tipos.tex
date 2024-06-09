@@ -34,8 +34,8 @@ Por ejemplo, \textsf{GObject} consiste en un espacio de nombres ``\textsf{G}'' y
 Para el objeto de números reales de nuestro ejemplo, se decide poner ``\textsf{T}'' como espacio
 de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble},
 derivarán de \textsf{GObject}, representan números reales y el tipo del número en
-lenguaje C será \texttt{double}. Diremos que \textsf{TDoble} contiene un parámetro, que llamaremos
-\texttt{valor} que se  define como \texttt{double valor} en lenguaje C.
+lenguaje C será \texttt{double}. \textsf{TDoble} tendrá un parámetro, que llamaremos
+\texttt{value} que se  define como \texttt{double value} en lenguaje C.
 
 \begin{figure}[ht]
   \centering
@@ -103,13 +103,13 @@ El tipo C de una instancia de \textsf{TDoble} es \texttt{TDoble}:
   typedef struct _TDoble TDoble;
   struct _TDoble {
     GObject parent;
-    double valor;
+    double value;
   };
 \end{lstlisting}
   
 El código es similar a la estructura de la clase. Primero se usa \texttt{typedef} para definir el tipo en C de una
 instancia de la clase. El primer miembro de la estructura debe ser la estructura de la instancia padre.
-\textsf{TDoble} tiene su propio miembro o parámetro, \texttt{valor}, que es el número en coma flotante
+\textsf{TDoble} tiene su propio miembro o parámetro, \texttt{value}, que es el número en coma flotante
 de las instancias de \textsf{TDoble}.
 La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
 

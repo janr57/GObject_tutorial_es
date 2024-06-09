@@ -7,7 +7,7 @@
 
 struct _TDoble {
   GObject parent;
-  double valor;
+  double value;
 };
 
 G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
@@ -23,30 +23,30 @@ t_doble_init (TDoble *self)
 }
 
 gboolean
-t_doble_get_value (TDoble *self, double *valor)
+t_doble_get_value (TDoble *self, double *value)
 {
   g_return_val_if_fail (T_IS_DOBLE (self), FALSE);
 
-  *valor = self->valor;
+  *value = self->value;
   
   return TRUE;
 }
 
 void
-t_doble_set_value (TDoble *self, double valor)
+t_doble_set_value (TDoble *self, double value)
 {
   g_return_if_fail (T_IS_DOBLE (self));
 
-  self->valor = valor;
+  self->value = value;
 }
 
 TDoble *
-t_doble_new (double valor)
+t_doble_new (double value)
 {
   TDoble *d;
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
-  d->valor = valor;
+  d->value = value;
   
   return d;
 }

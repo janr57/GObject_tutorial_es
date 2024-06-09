@@ -7,7 +7,7 @@
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
 \section{Registro de objetos derivados}
-\subsection{Procedimiento para crear un objeto derivado de \textsf{GObject}}
+\subsection{Procedimiento para crear objetos derivados de \textsf{GObject}}
 Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
 ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
 \begin{enumerate}
@@ -352,8 +352,8 @@ El listado es:
 \end{itemize}
 
 \subsection{Registro mediante la macro \texttt{G\_DEFINE\_TYPE}}
-El proceso de registro realizado anteriormente se lleva a cabo siempre con el mismo algoritmo, por tanto,
-el sistema puede definir una macro, como \texttt{G\_DEFINE\_TYPE}  que lo lleve a cabo automáticamente
+El proceso de registro descrito anteriormente se lleva a cabo siempre con el mismo algoritmo, por tanto,
+el sistema define una macro, como \texttt{G\_DEFINE\_TYPE},  que lo lleva a cabo automáticamente
 con solo invocarla.
 
 \texttt{G\_DEFINE\_TYPE} hace lo siguiente:
@@ -368,7 +368,7 @@ con solo invocarla.
   Esto es una declaración, no una definición, por lo que necesitamos definirla más adelante.
 
   Por ejemplo, para el objeto \textsf{TDoble}, la función sería \texttt{t\_doble\_class\_init}.
-\item Define una variable estática que apunte a la clase de la que deriva. Su nombre es
+\item Define una variable estática que apunta a la clase de la que deriva. Su nombre es
   \textsf{<espacio-de-nombres>\_<nombre>\_parent\_class}.
   
   Por ejemplo, para el objeto \textsf{TDoble}, la variable es \texttt{t\_doble\_parent\_class}.
@@ -383,7 +383,7 @@ Al usar esta macro se reduce en número de líneas de programa. Ver el ejemplo 4
 \subsubsection{Ejemplo 4}
 Este ejemplo realiza lo mismo que el ejemplo 3, pero con menos líneas de código.
 Gracias a \texttt{G\_DEFINE\_TYPE} no tenemos que escribir código como la variable \texttt{GTypeInfo info}
-o definir la función  \passthrough{\lstinline!g\_type\_register\_static!}.
+o utilizar expresamente la función  \passthrough{\lstinline!g\_type\_register\_static!}.
 Es importante seguir las convención en el nombre de las funciones de inicialización.
 A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} en lugar de
 \texttt{G\_DEFINE\_TYPE}, para clases finales.
@@ -670,13 +670,13 @@ Ver instrucciones para compilar los programas en la sección \ref{sec:compilacio
 G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
  
 gboolean
-t_doble_get_value (TDoble *self, double *valor);
+t_doble_get_value (TDoble *self, double *value);
  
 void
-t_doble_set_value (TDoble *self, double valor);
+t_doble_set_value (TDoble *self, double value);
  
 TDoble *
-t_doble_new (double valor);
+t_doble_new (double value);
 
 #endif /* T_DOBLE_H */
 \end{lstlisting}
@@ -710,7 +710,7 @@ t_doble_new (double valor);
 
 struct _TDoble {
   GObject parent;
-  double valor;
+  double value;
 };
 
 G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
@@ -726,30 +726,30 @@ t_doble_init (TDoble *self)
 }
 
 gboolean
-t_doble_get_value (TDoble *self, double *valor)
+t_doble_get_value (TDoble *self, double *value)
 {
   g_return_val_if_fail (T_IS_DOBLE (self), FALSE);
 
-  *valor = self->valor;
+  *valor = self->value;
   
   return TRUE;
 }
 
 void
-t_doble_set_value (TDoble *self, double valor)
+t_doble_set_value (TDoble *self, double value)
 {
   g_return_if_fail (T_IS_DOBLE (self));
 
-  self->valor = valor;
+  self->valor = value;
 }
 
 TDoble *
-t_doble_new (double valor)
+t_doble_new (double value)
 {
   TDoble *d;
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
-  d->valor = valor;
+  d->valor = value;
   
   return d;
 }
@@ -766,8 +766,8 @@ t_doble_new (double valor)
 \item Líneas 15--23:\par
   Se definen las funciones de inicialización de la clase y de las instancias. No hacen nada, por ahora.
 \item Líneas 25--33:\par
-  Definición de la función \textit{getter}. El argumento \texttt{valor} es un puntero a una variable de tipo C
-  \texttt{double}. Asigna el valor del objeto \texttt{self->valor} a la variable. Si no hay error retorna \texttt{TRUE}.
+  Definición de la función \textit{getter}. El argumento \texttt{value} es un puntero a una variable de tipo C
+  \texttt{double}. Asigna el valor del objeto \texttt{self->value} a la variable. Si no hay error retorna \texttt{TRUE}.
   La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} se utiliza para comprobar el tipo de objeto que
   se le pasa como argumento. Si no es de tipo \textsf{TDoble}, envía un mensaje de error al fichero
   de registro de errores, advertencias y mensajes (fichero \textit{log}), e inmediatamente retorna \texttt{FALSE}.
@@ -808,15 +808,15 @@ int
 main (int argc, char **argv)
 {
   TDoble *d;
-  double valor;
+  double value;
 
   // Para que g_print no transforme la codificación de caracteres
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
 
   d = t_doble_new (10.0);
-  if (t_doble_get_value (d, &valor)) {
-    g_print ("t_double_get_value succesfully assigned %lf to value.\n", valor);
+  if (t_doble_get_value (d, &value)) {
+    g_print ("t_double_get_value succesfully assigned %lf to value.\n", value);
   } else {
     g_print ("t_double_get_value failed.\n");
   }
@@ -824,8 +824,8 @@ main (int argc, char **argv)
   t_doble_set_value (d, -20.0);
   g_print ("Now, set d (tDouble object) with %lf.\n", -20.0);
   
-  if (t_doble_get_value (d, &valor)) {
-    g_print ("t_double_get_value succesfully assigned %lf to value.\n", valor);
+  if (t_doble_get_value (d, &value)) {
+    g_print ("t_double_get_value succesfully assigned %lf to value.\n", value);
   } else {
     g_print ("t_double_get_value failed.\n");
   }
@@ -841,7 +841,7 @@ main (int argc, char **argv)
 \item Línea 7:\par
   Es necesaria para acceder a \textsf{TDoble}.
 \item Líneas 12--13:\par
-  Se declara un puntero \texttt{d} al tipo de objeto \texttt{TDoble} y una variable \texttt{valor} de tipo C,
+  Se declara un puntero \texttt{d} al tipo de objeto \texttt{TDoble} y una variable \texttt{value} de tipo C,
   \texttt{double}.
 \item Línea 17:\par
   Se utiliza para que la función \texttt{g\_print} no modifique la codificación de caracteres. Esto se hace
