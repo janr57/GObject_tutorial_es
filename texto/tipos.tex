@@ -12,15 +12,15 @@
 \textsf{GObject} es un objeto básico. Es muy simple y no se puede hacer mucho con él, excepto crear
 clases derivadas e instanciar nuevos tipos de objetos.
 En realidad esta es la característica más importante de \textsf{GObject}.
-Aquí se describe como definir clases derivadas de \textsf{GObject}.
 
-En esta sección se creará una clase de objeto  que representa un número real.
-Este ejemplo no es muy útil porque el lenguaje C ya tiene un tipo \texttt{double} que representa números
-en coma flotante. Sin embargo, servirá para conocer la técnica para definir clases y objetos derivados de
-\textsf{GObject}.
+Más adelante se describirá como definir clases derivadas de \textsf{GObject}.
+En particular se creará una clase de objeto  que representa un número real.
+Este ejemplo no es muy útil porque el lenguaje C ya tiene un tipo \texttt{double} que representa
+números en coma flotante, pero servirá para conocer la técnica para definir clases y objetos derivados de \textsf{GObject}.
 
 \subsection{Convenio de nombres}
-Primero se debe conocer el convenio de nombres que usa el sistema. El nombre de un objeto tiene dos partes:
+Primero se debe conocer el convenio de nombres que usa el sistema de tipos.
+El nombre de un objeto tiene dos partes:
 \begin{enumerate}
   \tightlist
 \item Un \href{https://es.wikipedia.org/wiki/Espacio_de_nombres}{espacio de nombres}
