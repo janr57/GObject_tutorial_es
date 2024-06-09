@@ -257,17 +257,17 @@ El listado es:
 
 \subsection{Referencias a instancias de \textsf{GObject}} \label{subsec:ref_instancias_gobject}
 \subsubsection{Teoría}
-Toda instancia de \textsf{GObject} contiene un bloque de memoria que el sistema asigna e inicializa cuando
-esta se crea.
+Toda instancia de \textsf{GObject} contiene un bloque de memoria asociado que el sistema asigna e inicializa
+cuando esta se crea.
 Cuando la instancia deja de ser necesaria, se debe eliminar liberando la memoria que tiene asignada.
 % \href{run:./sample.txt}{here}
 
-¿Pero cómo sabe el sistema \textsf{GObject}  que no se utiliza una instancia?
-Esto se resuelve mediante el
+¿Pero cómo sabe el sistema \textsf{GObject}  que no se utiliza una instancia determinada?
+Lo resuelve mediante el
 \href{https://es.wikipedia.org/wiki/Conteo_de_referencias}{conteo de referencias}
 (\href{https://en.wikipedia.org/wiki/Reference_counting}{\textit{reference counting}}).
 Cuando se crea una instancia (mediante la función \passthrough{\lstinline!g\_object\_new!}), se dice que
-la instancia está referida (\emph{referred}), y se le asigna una cuenta de referencia (\textit{reference count}), haciendo la variable \texttt{ref\_count}) igual a 1, indicando que hay un módulo, función u objeto que la esta utilizando. Llamemos \textbf{A} a este elemento.
+la instancia está referida (\emph{referred}), y se le asigna una cuenta de referencia (\textit{reference count}), haciendo la variable \texttt{ref\_count} igual a 1, indicando que hay un módulo, función u objeto que la está utilizando. Llamemos \textbf{A} a este elemento.
 Ahora pueden ocurrir diversas circunstancias, entre otras:
 \begin{itemize}
   \tightlist
