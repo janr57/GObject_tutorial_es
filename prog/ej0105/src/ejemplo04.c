@@ -19,7 +19,7 @@ struct _TDobleClass {
   GObjectClass parent_class;
 };
 
-G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT) /* o G_DEFINE_FINAL_TYPE (...) */
 
 static void
 t_doble_class_init (TDobleClass *class)
@@ -41,19 +41,19 @@ main (int argc, char **argv)
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
   
-  dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
+  dtype = T_TYPE_DOBLE; /* o dtype = t_doble_get_type (); */
   if (dtype) {
-    g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
+    g_print ("Registro correcto. El tipo de objeto 'TDoble' es %lx.\n", dtype);
   } else {
-    g_print ("Registro incorrecto.\n");
+    g_print ("Registro de 'TDoble' incorrecto.\n");
   }
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
   if (d) {
-    g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
+    g_print ("Instancia de 'TDoble' creada correctamente, su dirección es %p.\n", d);
   } else {
-    g_print ("Error en la creación de la instancia.\n");
-}
+    g_print ("Error en la creación de la instancia 'TDoble'.\n");
+  }
 
   g_object_unref (d); /* Elimina el objeto 'd'. */
 

@@ -354,9 +354,10 @@ El listado es:
 \subsection{Registro mediante la macro \texttt{G\_DEFINE\_TYPE}}
 El proceso de registro descrito anteriormente se lleva a cabo siempre con el mismo algoritmo, por tanto,
 el sistema define una macro, como \texttt{G\_DEFINE\_TYPE},  que lo lleva a cabo automáticamente
-con solo invocarla.
+con solo invocarla.  Así, nos ahorramos definir manualmente la función \texttt{t\_doble\_get\_type},
+que es la que realizaba el registro llamando, a su vez,  a la función \texttt{g\_type\_register\_static}.
 
-\texttt{G\_DEFINE\_TYPE} hace lo siguiente:
+La macro \texttt{G\_DEFINE\_TYPE} hace lo siguiente:
 \begin{itemize}
   \tightlist
 \item Declara una función de inicialización de la clase. Su nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}. Esto es una declaración, no una definición,
@@ -378,12 +379,24 @@ con solo invocarla.
   El registro se lleva a cabo como se hizo anteriormente.
 \end{itemize}
 
-Al usar esta macro se reduce en número de líneas de programa. Ver el ejemplo 4.
+Al usar esta macro se reduce el número de líneas de programa. En nuestro ejemplo, se sustituirían
+las 22 líneas que van desde la 32 hasta la 53 del ejemplo 3, por una línea, que sería
+\texttt{G\_DEFINE\_TYPE (TDoble, t\_doble, G\_TYPE\_OBJECT)}.
+El primer parámetro de la macro \texttt{G\_DEFINE\_TYPE} es el objeto que se define: en nuestro
+caso \texttt{TDoble}. El segundo parámetro es el prefijo de las funciones que se utilizan para el
+objeto: en nuestro caso \texttt{t\_doble}. Por último, el nombre del objeto del que deriva:
+\texttt{G\_TYPE\_OBJECT}.
+
+En resumen, evitamos la definición de la función \texttt{t\_doble\_get\_type}, pero seguimos
+teniendo que definir la macro \texttt{T\_TYPE\_DOBLE}, las estructuras \texttt{\_TDobleClass} y
+\texttt{\_TDoble} y los tipos de C asociados a las estructuras anteriores: \texttt{TDobleClass}
+y \texttt{TDoble}.
+Todo esto se muestra, a continuación, en el ejemplo 4.
 
 \subsubsection{Ejemplo 4}
-Este ejemplo realiza lo mismo que el ejemplo 3, pero con menos líneas de código.
+Este ejemplo realiza lo mismo que el anterior, pero con menos líneas de código.
 Gracias a \texttt{G\_DEFINE\_TYPE} no tenemos que escribir código como la variable \texttt{GTypeInfo info}
-o utilizar expresamente la función  \passthrough{\lstinline!g\_type\_register\_static!}.
+que  ejecutaba  expresamente la función  \passthrough{\lstinline!g\_type\_register\_static!}.
 Es importante seguir las convención en el nombre de las funciones de inicialización.
 A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} en lugar de
 \texttt{G\_DEFINE\_TYPE}, para clases finales.
@@ -412,7 +425,7 @@ struct _TDobleClass {
   GObjectClass parent_class;
 };
 
-G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT) /* o G_DEFINE_FINAL_TYPE (...) */
 
 static void
 t_doble_class_init (TDobleClass *class)
@@ -434,18 +447,18 @@ main (int argc, char **argv)
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
   
-  dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
+  dtype = T_TYPE_DOBLE; /* o dtype = t_doble_get_type (); */
   if (dtype) {
-    g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
+    g_print ("Registro correcto. El tipo de objeto 'TDoble' es %lx.\n", dtype);
   } else {
-    g_print ("Registro incorrecto.\n");
+    g_print ("Registro de 'TDoble' incorrecto.\n");
   }
 
   d = g_object_new (T_TYPE_DOBLE, NULL);
   if (d) {
-    g_print ("La instancia se ha creado correctamente. Su dirección ess %p.\n", d);
+    g_print ("Instancia de 'TDoble' creada correctamente, su dirección es %p.\n", d);
   } else {
-    g_print ("Error en la creación de la instancia.\n");
+    g_print ("Error en la creación de la instancia 'TDoble'.\n");
   }
 
   g_object_unref (d); /* Elimina el objeto 'd'. */
@@ -462,8 +475,8 @@ main (int argc, char **argv)
 \begin{itemize}
 \item Línea 9:\par
   Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
-  \passthrough{\lstinline!t\_doble\_get\_type!}, se define automaticamente por el sistema y se ejecuta cuando
-  se llama a la macro. Cuando se ejecuta, se registra la nueva clase y se crean las instancias que se pidan.
+  \passthrough{\lstinline!t\_doble\_get\_type!}, y se definirá automáticamente por el sistema cuando
+  se llame a la macro en la línea 22, y registrará el nuevo tipo del sistema.
 \item Líneas 11--15:\par
   Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
 \item Líneas 17--20:\par
@@ -491,7 +504,7 @@ main (int argc, char **argv)
 \item Líneas 44-49:\par
   Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
   También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
-  "\texttt{dtype = T\_TYPE\_DOBLE}".
+  "\texttt{dtype = t\_doble\_get\_type ();}".
 \item Líneas 51--56:\par
   Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
