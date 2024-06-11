@@ -1,6 +1,6 @@
 /*
  * ejemplo05.c
- * Prueba la macro G_DEFINE_FINAL_TYPE
+ * Prueba las macros G_DECLARE_FINAL_TYPE y G_DEFINE_FINAL_TYPE
  */
 
 #include <locale.h>

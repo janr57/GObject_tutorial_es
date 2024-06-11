@@ -521,11 +521,9 @@ main (int argc, char **argv)
 \subsection{La macro \texttt{G\_DECLARE\_FINAL\_TYPE}}
 Otra macro útil es \texttt{G\_DECLARE\_FINAL\_TYPE}, que se puede usar para objetos de tipo final.
 Los tipos finales no tienen hijos, esto es, no se pueden derivar objetos a partir de ellos.
-En cambio, los tipos derivables permiten definir objetos hijos. Si quieres definir un objeto de tipo
-derivable debes usar \texttt{G\_DECLARE\_DERIVABLE\_TYPE} en su lugar. Sin embargo, en la mayoría de
-las ocasiones utilizarás objetos finales.
+Los tipos derivables permiten definir objetos hijos y se declaran mediante \texttt{G\_DECLARE\_DERIVABLE\_TYPE}. En todo caso, muy a menudo se declararán  objetos finales.
 
-\texttt{G\_DECLARE\_FINAL\_TYPE} hace lo siguiente:
+La macro \texttt{G\_DECLARE\_FINAL\_TYPE} hace lo siguiente:
 \begin{itemize}
   \tightlist
 \item Declara la función \texttt{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta es solo una declaración,
@@ -547,20 +545,43 @@ las ocasiones utilizarás objetos finales.
   con excepción de la clase padre. La definición es como la de las líneas 17 a 20 del código de  ejemplo04.c.
 \end{itemize}
 
+El primer parámetro de la macro \texttt{G\_DECLARE\_TYPE} es el objeto que se define: en nuestro
+caso \texttt{TDoble}. El segundo es el prefijo de las funciones que se utilizan para el objeto: en nuestro
+caso \texttt{t\_doble}. El tercero es el espacio de nombres de el tipo que se declara, en este caso es
+\texttt{T}. El cuarto es el nombre del tipo: \texttt{DOBLE}, y por último el objeto padre: \texttt{GObject}.
+
 Se debe escribir la macro que define el tipo de objeto, antes de que se llame a
 \texttt{G\_DECLARE\_FINAL\_TYPE}. Por ejemplo, para el objeto \textsf{TDoble}, hay que escribir
 \texttt{\#define T\_TYPE\_DOBLE (t\_doble\_get\_type ())} antes que \texttt{G\_DECLARE\_FINAL\_TYPE}.
 
 \subsubsection{Ejemplo 5}
-En este ejemplo se prueban las macros que ayudan a crear e identificar los objetos finales que derivan
-de \textsf{GObject}. En particular, la macro \texttt{G\_DEFINE\_FINAL\_TYPE}.
+En este ejemplo se utilizan las macros \texttt{G\_DECLARE\_FINAL\_TYPE} y
+\texttt{G\_DEFINE\_FINAL\_TYPE}, que ayudan a declarar, definir e identificar los objetos finales que
+derivan de \textsf{GObject}. La segunda la analizamos en el ejemplo anterior.
+La macro \texttt{G\_DECLARE\_FINAL\_TYPE}, ejecutada justo después de definir \texttt{T\_TYPE\_DOBLE},
+permite ahorrarnos la definición de la estructura \texttt{\_TDobleClass} y las definiciones de los
+tipos C \texttt{TDobleClass} y \texttt{TDoble}. Aún así, se tiene que definir la estructura \texttt{\_TDoble},
+para incluir los parámetros que tendrán los nuevos objetos. Además, define la macro \texttt{T\_IS\_DOBLE}
+para poder comprobar que el tipo de un objeto es \textsf{TDoble}.
+
+En este ejemplo tendremos  que seguir este orden para registrar el nuevo tipo del sistema \textsf{TDoble}:
+\begin{itemize}
+  \tightlist
+\item definir la macro \texttt{T\_TYPE\_DOBLE}.
+\item ejecutar la macro \texttt{G\_DECLARE\_FINAL\_TYPE}.
+\item definir la estructura \texttt{TDoble}, con los parámetros que necesiten los nuevos objetos.
+\item ejecutar la macro \texttt{G\_DEFINE\_FINAL\_TYPE}.
+\item definir las funciones de inicialización \texttt{t\_doble\_class\_init} y \texttt{t\_doble\_init}.
+\end{itemize}
+Por ahora, no necesitaremos más, aunque poco a poco iremos completando toda la funcionalidad
+de los nuevos tipos de objetos.
 Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
 /*
  * ejemplo05.c
- * Prueba la macro G_DEFINE_FINAL_TYPE
+ * Prueba las macros G_DECLARE_FINAL_TYPE y G_DEFINE_FINAL_TYPE
  */
 
 #include <locale.h>
@@ -596,7 +617,7 @@ main (int argc, char **argv)
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
   
-  dtype = t_doble_get_type (); /* or dtype = T_TYPE_DOBLE */
+  dtype = T_TYPE_DOBLE; /* o dtype = t_doble_get_type (); */
   if (dtype) {
     g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
   } else {
