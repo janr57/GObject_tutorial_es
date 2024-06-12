@@ -9,13 +9,13 @@
 \section{Registro de objetos derivados}
 \subsection{Procedimiento para crear objetos derivados de \textsf{GObject}}
 Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
-ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
+ejemplo \texttt{TDouble}---, se llevan a cabo los siguientes pasos:
 \begin{enumerate}
   \tightlist
-\item Registro del tipo C, \texttt{TDoble}, en el sistema de tipos.
-\item Asignación de memoria para \textsf{TDobleClass} y \textsf{TDoble} del sistema de tipos.
-\item Inicialización de \textsf{TDobleClass}.
-\item Inicialización de \textsf{TDoble}.
+\item Registro del tipo C, \texttt{TDouble}, en el sistema de tipos.
+\item Asignación de memoria para \textsf{TDoubleClass} y \textsf{TDouble} del sistema de tipos.
+\item Inicialización de \textsf{TDoubleClass}.
+\item Inicialización de \textsf{TDouble}.
 \end{enumerate}
 
 \begin{figure}[ht]
@@ -45,18 +45,18 @@ ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
     {\begin{tabular}{c} Sistema de Tipos \\ (\texttt{GType}) \end{tabular}};
     % Memoria
     \node[nubeMemoria, cloud, draw, aspect=2, right=12em of typesystem] (memory)
-    {\begin{tabular}{c} Memoria \\ (TDobleClass y TDoble) \end{tabular}};
-    % TDoble (Tipo C)
+    {\begin{tabular}{c} Memoria \\ (TDoubleClass y TDouble) \end{tabular}};
+    % TDouble (Tipo C)
     \node[tipoC, draw, above=8ex of typesystem] (tdobleCtype)
-    {\begin{tabular}{c}TDoble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
-    % Objeto TDoble
+    {\begin{tabular}{c}TDouble\\\textcolor{black!70}{(Tipo C)}\end{tabular}};
+    % Objeto TDouble
     \node[tipoSistema, draw, below=8ex of memory] (tdobleobject)
-    {\begin{tabular}{c} Objeto TDoble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
-    % Clase TDobleClass
+    {\begin{tabular}{c} Objeto TDouble \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+    % Clase TDoubleClass
     \node[tipoSistema, draw, left=12em of tdobleobject] (tdobleclass)
-    {\begin{tabular}{c} Clase TDobleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
+    {\begin{tabular}{c} Clase TDoubleClass \\ \textcolor{black!70}{(Tipo sistema)} \end{tabular}};
     % Flechas
-    % TDoble (Tipo C) -> Sistema Tipos
+    % TDouble (Tipo C) -> Sistema Tipos
     \draw[flecha] (tdobleCtype.south) --
     node[left] {\small $\mbfone$} node[right]  {\small Registro}
     (typesystem.north);
@@ -65,12 +65,12 @@ ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
     node[below]{\small Asignación de memoria}
     node[above]{\small $\mbftwo$}
     (memory.west);
-    % Memoria -> Clase TDobleClass (Tipo sistema)
+    % Memoria -> Clase TDoubleClass (Tipo sistema)
     \draw[flecha] (memory.225) --
     node[above right, sloped]{\small $\mbfthree$}
     node[below right=0.2ex and -4ex, sloped]{\small Inicialización}
     (tdobleclass.north);
-    % Memoria -> Objeto TDoble (Tipo sistema)
+    % Memoria -> Objeto TDouble (Tipo sistema)
     \draw[flecha] (memory.south) --
     node[left] {\small $\mbffour$}
     node[right] {\small Inicialización}
@@ -86,7 +86,7 @@ ejemplo \texttt{TDoble}---, se llevan a cabo los siguientes pasos:
      \node [background, fit= (liminf) (limsup) (limizda) (limdcha)] {};
    \end{scope}
  \end{tikzpicture}
- \caption{Proceso de registro del objeto \textsf{TDoble}.}
+ \caption{Proceso de registro del objeto \textsf{TDouble}.}
  \label{fig:proceso-registro}
 \end{figure}
 
@@ -120,7 +120,7 @@ Descripción de los parámetros implicados en el registro:
   \tightlist
 \item \texttt{parent\_type}: Es el tipo del padre.
 \item \texttt{*type\_name}: Es el nombre del tipo que se va a registrar,
-  por ejemplo, "\textsf{TDoble}".
+  por ejemplo, "\textsf{TDouble}".
 \item \texttt{*info}: Es una estructura \texttt{GTypeInfo} que contiene información acerca
   del tipo que se va a registrar. Esta estructura se explica al terminar esta descripción.
 \item \texttt{flags}: Si el tipo que se registra es abstracto o es un valor de tipo
@@ -159,7 +159,7 @@ Esta estructura se debe crear antes del registro.
 \begin{itemize}
   \tightlist
 \item \texttt{class\_size}: Tamaño de la clase. Por ejemplo, el tamaño de la clase
-  \textsf{TDoble} es "\texttt{sizeof (TDobleClass)}''.
+  \textsf{TDouble} es "\texttt{sizeof (TDoubleClass)}''.
 \item \texttt{base\_init}, \texttt{base\_finalize}: Estas funciones inicializan/finalizan
   los miembros dinámicos de la clase. En la mayoría de los casos no son necesarias y
   su valor es \texttt{NULL}.
@@ -173,12 +173,12 @@ Esta estructura se debe crear antes del registro.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}.
   Esta función hay que definirla y asignarla a este campo aunque no tenga código.
 \item \texttt{class\_finalize}: Esta función finaliza la clase. Pero, como el tipo de los objetos derivados de
-  \textsf{GObject} es estático, no se les asigna ninguna función de finalización. Por tanto a \textsf{TDoble}
+  \textsf{GObject} es estático, no se les asigna ninguna función de finalización. Por tanto a \textsf{TDouble}
   se le asigna \texttt{NULL} aquí.
 \item \texttt{class\_data}: Datos que el usuario le pasa a las funciones de los dos métodos anteriores
   de inicialización y finalización de la clase. Normalmente se asigna \texttt{NULL}.
 \item \texttt{instance\_size}: El tamaño de cada objeto que se instancia. Por ejemplo, el de una instancia
-  de \textsf{TDoble} es "\texttt{sizeof (TDoble)}".
+  de \textsf{TDouble} es "\texttt{sizeof (TDouble)}".
 \item \texttt{n\_preallocs}: Este campo se debe ignorar porque se usaba en la antigua versión de \textsf{GLib}.
 \item \texttt{instance\_init}: Inicializa los miembros de la instancia. Asigna tu función de inicialización a este
   método. Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_init}. En nuestro caso, con
@@ -208,47 +208,47 @@ El listado es:
 #include <locale.h>
 #include <glib-object.h>
  
- #define T_TYPE_DOBLE  (t_doble_get_type ())
+ #define T_TYPE_DOUBLE  (t_double_get_type ())
  
- typedef struct _TDoble TDoble;
- struct _TDoble {
+ typedef struct _TDouble TDouble;
+ struct _TDouble {
    GObject parent;
    double value;
  };
  
- typedef struct _TDobleClass TDobleClass;
- struct _TDobleClass {
+ typedef struct _TDoubleClass TDoubleClass;
+ struct _TDoubleClass {
    GObjectClass parent_class;
  };
  
  static void
- t_doble_class_init (TDobleClass *class)
+ t_double_class_init (TDoubleClass *class)
  {
  }
  
  static void
- t_doble_init (TDoble *self)
+ t_double_init (TDouble *self)
  {
  }
  
  GType
- t_doble_get_type (void)
+ t_double_get_type (void)
  {
    static GType type = 0;
    GTypeInfo info;
  
    if (type == 0) {
-     info.class_size = sizeof (TDobleClass);
+     info.class_size = sizeof (TDoubleClass);
      info.base_init = NULL;
      info.base_finalize = NULL;
-     info.class_init = (GClassInitFunc)  t_doble_class_init;
+     info.class_init = (GClassInitFunc)  t_double_class_init;
      info.class_finalize = NULL;
      info.class_data = NULL;
-     info.instance_size = sizeof (TDoble);
+     info.instance_size = sizeof (TDouble);
      info.n_preallocs = 0;
-     info.instance_init = (GInstanceInitFunc)  t_doble_init;
+     info.instance_init = (GInstanceInitFunc)  t_double_init;
      info.value_table = NULL;
-     type = g_type_register_static (G_TYPE_OBJECT, "TDoble", &info, 0);
+     type = g_type_register_static (G_TYPE_OBJECT, "TDouble", &info, 0);
    }
    
    return type;
@@ -258,20 +258,20 @@ El listado es:
  main (int argc, char **argv)
  {
    GType dtype;
-   TDoble *d;
+   TDouble *d;
 
   // Para que g_print no transforme la codificación de caracteres
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
    
-  dtype = t_doble_get_type (); /* equivale a  'dtype = T_TYPE_DOBLE' */
+  dtype = t_double_get_type (); /* equivale a  'dtype = T_TYPE_DOUBLE' */
   if (dtype) {
     g_print ("Registro correcto. El tipo es %lx.\n", dtype);
     } else {
       g_print ("Registro incorrecto.\n");
     }
  
-  d = g_object_new (T_TYPE_DOBLE, NULL);
+  d = g_object_new (T_TYPE_DOUBLE, NULL);
   if (d) {
     g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
   } else {
@@ -291,7 +291,7 @@ El listado es:
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Línea 9:\par
-  Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
+  Se define la macro \texttt{T\_TYPE\_DOUBLE}, que se sustituye por la función
   \texttt{t\_doble\_get\_type ()}. Esta función la definiremos más adelante porque vamos a llevar a cabo
   el proceso de registro de la clase \textsf{T\_Doble\_Class} y del objeto \textsf{T\_Doble} manualmente
   con fines didácticos,  pero esta definición normalmente se lleva a cabo automáticamente mediante macros.
@@ -302,16 +302,16 @@ El listado es:
   Ten en cuenta que normalmente, el sistema de tipos generará unas macros automáticamente que se encargarán
   de esta tarea. Estas macros serán las que debemos escribir en nuestro código.
 \item Líneas 11--15:\par
-  Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
+  Se define el tipo C del objeto \textsf{TDouble} y la estructura que lo define \texttt{struct \_TDouble}.
 \item Líneas 17--20:\par
-  Se define el tipo C de la clase \textsf{TDobleClass} y la estructura que lo define \texttt{struct \_TDobleClass}.
+  Se define el tipo C de la clase \textsf{TDoubleClass} y la estructura que lo define \texttt{struct \_TDoubleClass}.
 \item Líneas 22--30:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a
   la estructura de la clase y \texttt{self} apunta a la estructura de la instancia.
   Como se aprecia, no contienen ningún código ---en este caso---, pero son necesarias para el registro.
 \item Líneas 32--53:\par
   Se define la función \texttt{t\_doble\_get\_type}, a la que se hacía referencia en la línea 9.
-  Esta función sustituye a la macro \texttt{T\_TYPE\_DOBLE} y retorna el tipo del objeto \textsf{TDoble}
+  Esta función sustituye a la macro \texttt{T\_TYPE\_DOUBLE} y retorna el tipo del objeto \textsf{TDouble}
   que se registra mediante la función \texttt{g\_type\_register\_static}.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_get\_type}. Esta función reemplaza
   a la macro \textsf{\small <ESPACIO-DE-NOMBRES>\_TYPE\_<NOMBRE>} (todos los caracteres en mayúsculas).
@@ -324,29 +324,29 @@ El listado es:
 \item Líneas 39--49:\par
   Establece campos de la estructura \texttt{info} y llama a \texttt{g\_type\_register\_static}.
 \item Líneas 55--82:\par
-  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
-  del tipo \text{TDoble}.
+  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDouble} y escribe el valor
+  del tipo \text{TDouble}.
 \item Líneas 58--59:\par
-  Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOBLE}, y de la
-  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 65.
+  Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOUBLE}, y de la
+  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOUBLE}, que se creará en la línea 65.
 \item Línea 63:\par
   Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
   \texttt{g\_print} no cambie el el sistema de caracteres del texto que imprimirá.
   Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
   que las cadenas (en este caso utilizamos UTF-8).
 \item Líneas 65--70:\par
-  Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
+  Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOUBLE} y se muestra en la consola.
   También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
-  "\texttt{dtype = T\_TYPE\_DOBLE}".
+  "\texttt{dtype = T\_TYPE\_DOUBLE}".
 \item Líneas 72--77:\par
-  Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
+  Se crea una instancia \textsf{T\_DOUBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
   \texttt{g\_object\_new} returna un puntero a \textsf{GObject}, pero en realidad retorna un
   \texttt{gpointer}, que es lo mismo que \texttt{void *}, que puede asignarse a cualquier puntero, sea cual sea
-  su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDoble}, por lo que la línea
-  "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
+  su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDouble}, por lo que la línea
+  "\texttt{d = g\_object\_new (T\_TYPE\_DOUBLE, NULL)}" es correcta. Nótese que si la función
   \texttt{g\_object\_new} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
-  "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
+  "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOUBLE, NULL)}".
 \item Línea 79:\par
   Se elimina la instancia llamando a la función \texttt{g\_object\_unref}.
 \end{itemize}
@@ -363,34 +363,34 @@ La macro \texttt{G\_DEFINE\_TYPE} hace lo siguiente:
 \item Declara una función de inicialización de la clase. Su nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}. Esto es una declaración, no una definición,
   por lo que necesitamos definirla más adelante.
 
-  Por ejemplo, para el objeto \textsf{TDoble}, la función sería \texttt{t\_doble\_class\_init}.
+  Por ejemplo, para el objeto \textsf{TDouble}, la función sería \texttt{t\_doble\_class\_init}.
 \item Declara una función de inicialización para las instancias. Su nombre es
   \textsf{<espacio-de-nombres>\_<nombre>\_init}.
   Esto es una declaración, no una definición, por lo que necesitamos definirla más adelante.
 
-  Por ejemplo, para el objeto \textsf{TDoble}, la función sería \texttt{t\_doble\_class\_init}.
+  Por ejemplo, para el objeto \textsf{TDouble}, la función sería \texttt{t\_doble\_class\_init}.
 \item Define una variable estática que apunta a la clase de la que deriva. Su nombre es
   \textsf{<espacio-de-nombres>\_<nombre>\_parent\_class}.
   
-  Por ejemplo, para el objeto \textsf{TDoble}, la variable es \texttt{t\_doble\_parent\_class}.
+  Por ejemplo, para el objeto \textsf{TDouble}, la variable es \texttt{t\_doble\_parent\_class}.
 \item Define una función \textsf{<espacio-de-nombres>\_<nombre>\_get\_type ()}.
   
-  Por ejemplo para el objeto \textsf{TDoble}, la función es \texttt{t\_doble\_get\_type}.
+  Por ejemplo para el objeto \textsf{TDouble}, la función es \texttt{t\_doble\_get\_type}.
   El registro se lleva a cabo como se hizo anteriormente.
 \end{itemize}
 
 Al usar esta macro se reduce el número de líneas de programa. En nuestro ejemplo, se sustituirían
 las 22 líneas que van desde la 32 hasta la 53 del ejemplo 3, por una línea, que sería
-\texttt{G\_DEFINE\_TYPE (TDoble, t\_doble, G\_TYPE\_OBJECT)}.
+\texttt{G\_DEFINE\_TYPE (TDouble, t\_doble, G\_TYPE\_OBJECT)}.
 El primer parámetro de la macro \texttt{G\_DEFINE\_TYPE} es el objeto que se define: en nuestro
-caso \texttt{TDoble}. El segundo parámetro es el prefijo de las funciones que se utilizan para el
+caso \texttt{TDouble}. El segundo parámetro es el prefijo de las funciones que se utilizan para el
 objeto: en nuestro caso \texttt{t\_doble}. Por último, el nombre del objeto del que deriva:
 \texttt{G\_TYPE\_OBJECT}.
 
 En resumen, evitamos la definición de la función \texttt{t\_doble\_get\_type}, pero seguimos
-teniendo que definir la macro \texttt{T\_TYPE\_DOBLE}, las estructuras \texttt{\_TDobleClass} y
-\texttt{\_TDoble} y los tipos de C asociados a las estructuras anteriores: \texttt{TDobleClass}
-y \texttt{TDoble}.
+teniendo que definir la macro \texttt{T\_TYPE\_DOUBLE}, las estructuras \texttt{\_TDoubleClass} y
+\texttt{\_TDouble} y los tipos de C asociados a las estructuras anteriores: \texttt{TDoubleClass}
+y \texttt{TDouble}.
 Todo esto se muestra, a continuación, en el ejemplo 4.
 
 \subsubsection{Ejemplo 4}
@@ -412,28 +412,28 @@ El listado es:
 #include <locale.h>
 #include <glib-object.h>
 
-#define T_TYPE_DOBLE  (t_doble_get_type ())
+#define T_TYPE_DOUBLE  (t_double_get_type ())
 
-typedef struct _TDoble TDoble;
-struct _TDoble {
+typedef struct _TDouble TDouble;
+struct _TDouble {
   GObject parent;
   double value;
 };
 
-typedef struct _TDobleClass TDobleClass;
-struct _TDobleClass {
+typedef struct _TDoubleClass TDoubleClass;
+struct _TDoubleClass {
   GObjectClass parent_class;
 };
 
-G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT) /* o G_DEFINE_FINAL_TYPE (...) */
+G_DEFINE_TYPE (TDouble, t_double, G_TYPE_OBJECT) /* o G_DEFINE_FINAL_TYPE (...) */
 
 static void
-t_doble_class_init (TDobleClass *class)
+t_double_class_init (TDoubleClass *class)
 {
 }
 
 static void
-t_doble_init (TDoble *self)
+t_double_init (TDouble *self)
 {
 }
 
@@ -441,24 +441,24 @@ int
 main (int argc, char **argv)
 {
   GType dtype;
-  TDoble *d;
+  TDouble *d;
 
   // Para que g_print no transforme la codificación de caracteres
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
   
-  dtype = T_TYPE_DOBLE; /* o dtype = t_doble_get_type (); */
+  dtype = T_TYPE_DOUBLE; /* o dtype = t_double_get_type (); */
   if (dtype) {
-    g_print ("Registro correcto. El tipo de objeto 'TDoble' es %lx.\n", dtype);
+    g_print ("Registro correcto. El tipo de objeto 'TDouble' es %lx.\n", dtype);
   } else {
-    g_print ("Registro de 'TDoble' incorrecto.\n");
+    g_print ("Registro de 'TDouble' incorrecto.\n");
   }
 
-  d = g_object_new (T_TYPE_DOBLE, NULL);
+  d = g_object_new (T_TYPE_DOUBLE, NULL);
   if (d) {
-    g_print ("Instancia de 'TDoble' creada correctamente, su dirección es %p.\n", d);
+    g_print ("Instancia de 'TDouble' creada correctamente, su dirección es %p.\n", d);
   } else {
-    g_print ("Error en la creación de la instancia 'TDoble'.\n");
+    g_print ("Error en la creación de la instancia 'TDouble'.\n");
   }
 
   g_object_unref (d); /* Elimina el objeto 'd'. */
@@ -474,46 +474,46 @@ main (int argc, char **argv)
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Línea 9:\par
-  Se define la macro \texttt{T\_TYPE\_DOBLE}, que se sustituye por la función
+  Se define la macro \texttt{T\_TYPE\_DOUBLE}, que se sustituye por la función
   \passthrough{\lstinline!t\_doble\_get\_type!}, y se definirá automáticamente por el sistema cuando
   se llame a la macro en la línea 22, y registrará el nuevo tipo del sistema.
 \item Líneas 11--15:\par
-  Se define el tipo C del objeto \textsf{TDoble} y la estructura que lo define \texttt{struct \_TDoble}.
+  Se define el tipo C del objeto \textsf{TDouble} y la estructura que lo define \texttt{struct \_TDouble}.
 \item Líneas 17--20:\par
-  Se define el tipo C de la clase \textsf{TDobleClass} y la estructura que lo define \texttt{struct \_TDobleClass}.
+  Se define el tipo C de la clase \textsf{TDoubleClass} y la estructura que lo define \texttt{struct \_TDoubleClass}.
 \item Línea 22:\par
   Se ejecuta la macro \texttt{G\_DEFINE\_TYPE}. El primer argumento es el nombre del objeto que se define,
   el segundo es \textsf{<espacio-de-nombres>\_<nombre>} en minúsculas, y el último es el objeto padre.
-  En este ejemplo, los argumentos son: \texttt{TDoble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
+  En este ejemplo, los argumentos son: \texttt{TDouble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
   A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} para clases finales.
 \item Líneas 24--32:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
   estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
   necesitan ningún código en este caso, pero son necesarias para el registro.
 \item Líneas 34--60:\par
-  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
-  del tipo \text{TDoble}.
+  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDouble} y escribe el valor
+  del tipo \text{TDouble}.
 \item Líneas 37--38:\par
-  Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOBLE}, y de la
-  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOBLE}, que se creará en la línea 47.
+  Se define la variable \texttt{dtype}, que guardará el tipo del sistema de objeto \textsf{T\_DOUBLE}, y de la
+  variable \texttt{d}, que es un puntero a la instancia de \textsf{T\_DOUBLE}, que se creará en la línea 47.
 \item Línea 42:\par
   Se le asigna la cadena vacía a la variable de estado \texttt{LC\_CTYPE} para que la función
   \passthrough{\lstinline!g\_print!} no cambie el el sistema de caracteres del texto que imprimirá.
   Esto funcionará si la consola que se utiliza para ejecutar el programa utiliza el mismo sistema de caracteres
   que las cadenas (en este caso utilizamos UTF-8).
 \item Líneas 44-49:\par
-  Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOBLE} y se muestra en la consola.
+  Se guarda en la variable \texttt{dtype} el valor del tipo de objeto \textsf{T\_DOUBLE} y se muestra en la consola.
   También se podría haber sustituido esta línea por la equivalente, utilizando la macro de la línea 9:
   "\texttt{dtype = t\_doble\_get\_type ();}".
 \item Líneas 51--56:\par
-  Se crea una instancia \textsf{T\_DOBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
+  Se crea una instancia \textsf{T\_DOUBLE} y se almacena en el puntero \texttt{d}. Se muestra en la consola su
   dirección. En la referencia de la API de \textsf{GObject} se dice que la función
   \passthrough{\lstinline!g\_object\_new!} returna un puntero a \textsf{GObject}, pero en realidad retorna un
   \texttt{gpointer}, que es lo mismo que \texttt{void *}, que puede asignarse a cualquier puntero, sea cual sea
-  su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDoble}, por lo que la línea
-  "\texttt{d = g\_object\_new (T\_TYPE\_DOBLE, NULL)}" es correcta. Nótese que si la función
+  su tipo; en este caso, \texttt{d} se declaró como un puntero a \texttt{TDouble}, por lo que la línea
+  "\texttt{d = g\_object\_new (T\_TYPE\_DOUBLE, NULL)}" es correcta. Nótese que si la función
   \passthrough{\lstinline!g\_object\_new!} retornara un puntero a \textsf{GObject}, sería necesario indicarlo:
-  "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOBLE, NULL)}".
+  "\texttt{d = (gpointer) g\_object\_new (T\_TYPE\_DOUBLE, NULL)}".
 \item Línea 58:\par
   Se elimina la instancia llamando a la función \passthrough{\lstinline!g\_object\_unref!}.
 \end{itemize}
@@ -530,51 +530,51 @@ La macro \texttt{G\_DECLARE\_FINAL\_TYPE} hace lo siguiente:
   Nosotros deberíamos definirla, pero usando la macro \texttt{G\_DEFINE\_TYPE}, se define la función
   automáticamente. Así, en realidad, no necesitamos escribir la definición de la función.
 \item El tipo C del objeto se define aplicando \texttt{typedef} a una estructura. Por ejemplo, para el objeto
-  \textsf{TDoble}, entonces se define el tipo C \texttt{TDoble}, mediante el comando
-  \texttt{typedef struct \_TDoble TDoble}, aunque tendremos que definir la estructura \texttt{struct \_TDoble}
+  \textsf{TDouble}, entonces se define el tipo C \texttt{TDouble}, mediante el comando
+  \texttt{typedef struct \_TDouble TDouble}, aunque tendremos que definir la estructura \texttt{struct \_TDouble}
   antes de utilizar \texttt{G\_DEFINE\_...\_TYPE}.
 \item Se define la macro \texttt{<ESPACIO-DE-NOMBRES>\_<NOMBRE>}. Por ejemplo, para el objeto
-  \textsf{TDoble}, la macro será \texttt{T\_DOBLE}, que se expandirá a una función que ajusta el argumento
-  a un puntero al objeto. Por ejemplo, \texttt{T\_DOBLE(obj)} ajusta el tipo de puntero a objeto a
-  \texttt{TDoble *}.
+  \textsf{TDouble}, la macro será \texttt{T\_DOUBLE}, que se expandirá a una función que ajusta el argumento
+  a un puntero al objeto. Por ejemplo, \texttt{T\_DOUBLE(obj)} ajusta el tipo de puntero a objeto a
+  \texttt{TDouble *}.
 \item Se define la macro \texttt{<ESPACIO-DE-NOMBRES>\_IS\_<NOMBRE>}. Por ejemplo, para el objeto
-  \textsf{TDoble}, la macro será \texttt{T\_IS\_DOBLE}. Cuando se ejecuta, se expande a una función que
-  comprueba si el argumento es un puntero a una instancia de \textsf{TDoble}. Retorna 'true' si el argumento
-  apunta a un objeto que deriva de \textsf{TDoble}.
+  \textsf{TDouble}, la macro será \texttt{T\_IS\_DOUBLE}. Cuando se ejecuta, se expande a una función que
+  comprueba si el argumento es un puntero a una instancia de \textsf{TDouble}. Retorna 'true' si el argumento
+  apunta a un objeto que deriva de \textsf{TDouble}.
 \item Se define la estructura de la clase. Una clase final no necesita tener miembros en la estructura de la clase,
   con excepción de la clase padre. La definición es como la de las líneas 17 a 20 del código de  ejemplo04.c.
 \end{itemize}
 
 El primer parámetro de la macro \texttt{G\_DECLARE\_TYPE} es el objeto que se define: en nuestro
-caso \texttt{TDoble}. El segundo es el prefijo de las funciones que se utilizan para el objeto: en nuestro
+caso \texttt{TDouble}. El segundo es el prefijo de las funciones que se utilizan para el objeto: en nuestro
 caso \texttt{t\_doble}. El tercero es el espacio de nombres de el tipo que se declara, en este caso es
-\texttt{T}. El cuarto es el nombre del tipo: \texttt{DOBLE}, y por último el objeto padre: \texttt{GObject}.
+\texttt{T}. El cuarto es el nombre del tipo: \texttt{DOUBLE}, y por último el objeto padre: \texttt{GObject}.
 
 Se debe escribir la macro que define el tipo de objeto, antes de que se llame a
-\texttt{G\_DECLARE\_FINAL\_TYPE}. Por ejemplo, para el objeto \textsf{TDoble}, hay que escribir
-\texttt{\#define T\_TYPE\_DOBLE (t\_doble\_get\_type ())} antes que \texttt{G\_DECLARE\_FINAL\_TYPE}.
+\texttt{G\_DECLARE\_FINAL\_TYPE}. Por ejemplo, para el objeto \textsf{TDouble}, hay que escribir
+\texttt{\#define T\_TYPE\_DOUBLE (t\_doble\_get\_type ())} antes que \texttt{G\_DECLARE\_FINAL\_TYPE}.
 
 \subsubsection{Ejemplo 5}
 En este ejemplo se utilizan las macros \texttt{G\_DECLARE\_FINAL\_TYPE} y
 \texttt{G\_DEFINE\_FINAL\_TYPE}, que ayudan a declarar, definir e identificar los objetos finales que
 derivan de \textsf{GObject}. La segunda la analizamos en el ejemplo anterior.
-La macro \texttt{G\_DECLARE\_FINAL\_TYPE}, ejecutada justo después de definir \texttt{T\_TYPE\_DOBLE},
-permite ahorrarnos la definición de la estructura \texttt{\_TDobleClass} y las definiciones de los
-tipos C \texttt{TDobleClass} y \texttt{TDoble}. Aún así, se tiene que definir la estructura \texttt{\_TDoble},
-para incluir los parámetros que tendrán los nuevos objetos. Además, define la macro \texttt{T\_IS\_DOBLE}
-para poder comprobar que el tipo de un objeto es \textsf{TDoble}.
+La macro \texttt{G\_DECLARE\_FINAL\_TYPE}, ejecutada justo después de definir \texttt{T\_TYPE\_DOUBLE},
+permite ahorrarnos la definición de la estructura \texttt{\_TDoubleClass} y las definiciones de los
+tipos C \texttt{TDoubleClass} y \texttt{TDouble}. Aún así, se tiene que definir la estructura \texttt{\_TDouble},
+para incluir los parámetros que tendrán los nuevos objetos. Además, define la macro \texttt{T\_IS\_DOUBLE}
+para poder comprobar que el tipo de un objeto es \textsf{TDouble}.
 
-En este ejemplo tendremos  que seguir este orden para registrar el nuevo tipo del sistema \textsf{TDoble}:
+En este ejemplo tendremos  que seguir este orden para registrar el nuevo tipo del sistema \textsf{TDouble}:
 \begin{itemize}
   \tightlist
-\item definir la macro \texttt{T\_TYPE\_DOBLE}.
+\item definir la macro \texttt{T\_TYPE\_DOUBLE}.
 \item ejecutar la macro \texttt{G\_DECLARE\_FINAL\_TYPE}.
-\item definir la estructura \texttt{TDoble}, con los parámetros que necesiten los nuevos objetos.
+\item definir la estructura \texttt{TDouble}, con los parámetros que necesiten los nuevos objetos.
 \item ejecutar la macro \texttt{G\_DEFINE\_FINAL\_TYPE}.
 \item definir las funciones de inicialización \texttt{t\_doble\_class\_init} y \texttt{t\_doble\_init}.
 \end{itemize}
 Por ahora, no necesitamos más, aunque poco a poco iremos completando la funcionalidad
-de este tipo 'TDoble', en particular, y de los nuevos tipos de objetos, en general.
+de este tipo 'TDouble', en particular, y de los nuevos tipos de objetos, en general.
 Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
@@ -587,23 +587,23 @@ El listado es:
 #include <locale.h>
 #include <glib-object.h>
  
-#define T_TYPE_DOBLE  (t_doble_get_type ())
-G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+#define T_TYPE_DOUBLE  (t_double_get_type ())
+G_DECLARE_FINAL_TYPE (TDouble, t_double, T, DOUBLE, GObject)
  
-struct _TDoble {
+struct _TDouble {
   GObject parent;
   double value;
 };
  
-G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+G_DEFINE_TYPE (TDouble, t_double, G_TYPE_OBJECT)
  
 static void
-t_doble_class_init (TDobleClass *class)
+t_double_class_init (TDoubleClass *class)
 {
 }
  
  static void
- t_doble_init (TDoble *self)
+ t_double_init (TDouble *self)
  {
  }
  
@@ -611,30 +611,30 @@ int
 main (int argc, char **argv)
 {
   GType dtype;
-  TDoble *d;
+  TDouble *d;
 
   // Para que g_print no transforme la codificación de caracteres
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
   
-  dtype = T_TYPE_DOBLE; /* o dtype = t_doble_get_type (); */
+  dtype = T_TYPE_DOUBLE; /* o dtype = t_double_get_type (); */
   if (dtype) {
     g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
   } else {
     g_print ("Registro incorrecto.\n");
   }
  
-  d = g_object_new (T_TYPE_DOBLE, NULL);
+  d = g_object_new (T_TYPE_DOUBLE, NULL);
   if (d) {
     g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
   } else {
     g_print ("Error en la creación de la instancia.\n");
   }
  
-  if (T_IS_DOBLE (d)) {
-    g_print ("La variable 'd' es una instancia de TDoble.\n");
+  if (T_IS_DOUBLE (d)) {
+    g_print ("La variable 'd' es una instancia de TDouble.\n");
   } else {
-    g_print ("La variable 'd' no es una instancia de TDoble.\n");
+    g_print ("La variable 'd' no es una instancia de TDouble.\n");
   }
  
   if (G_IS_OBJECT (d)) {
@@ -652,73 +652,73 @@ main (int argc, char **argv)
  \subsubsection{Salida del programa 'ejemplo05'}
 \textsf{Registro correcto. El tipo de objeto es 0x559b2af2c4f0.}\par
 \textsf{La instancia se ha creado correctamente Su dirección es 0x559b2af2d000.}\par
-\textsf{La variable 'd' es una instancia de TDoble.}\par
+\textsf{La variable 'd' es una instancia de TDouble.}\par
 \textsf{La variable 'd' es una instancia de GObject.}\par
 
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Líneas 9--10:\par
-  Se define la macro \texttt{T\_TYPE\_DOBLE}, que se expandirá a la función
-  \passthrough{\lstinline!t\_doble\_get\_type!} y, después se declara el tipo \textsf{TDoble} por medio
+  Se define la macro \texttt{T\_TYPE\_DOUBLE}, que se expandirá a la función
+  \passthrough{\lstinline!t\_doble\_get\_type!} y, después se declara el tipo \textsf{TDouble} por medio
   de la macro \texttt{G\_DECLARE\_FINAL\_TYPE}, en ese orden.
 \item Líneas 12--15:\par
-  Se define la estructura \texttt{struct \_TDoble}. Ya no es necesario definir el tipo C \texttt{TDoble} mediante
+  Se define la estructura \texttt{struct \_TDouble}. Ya no es necesario definir el tipo C \texttt{TDouble} mediante
   \texttt{typedef}; se realiza automáticamente en la línea 17.
 \item Línea 17:\par
   Se expande la macro \texttt{G\_DEFINE\_TYPE} que realiza la definición del tipo C de la clase
-  \textsf{TDobleClass} y del objeto \textsf{TDoble}.
+  \textsf{TDoubleClass} y del objeto \textsf{TDouble}.
   El primer argumento es el nombre del objeto que se define,   el segundo es \textsf{<espacio-de-nombres>\_<nombre>} en minúsculas, que será el prefijo de las funciones de esa clase,
   y el último es el objeto padre.
-  En este ejemplo, los argumentos son: \texttt{TDoble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
+  En este ejemplo, los argumentos son: \texttt{TDouble}, \texttt{t\_doble} y \texttt{G\_TYPE\_OBJECT}.
   A partir de \textsf{GLib 2.70} se puede utilizar la macro \texttt{G\_DEFINE\_FINAL\_TYPE} para clases finales.
 \item Líneas 19--27:\par
   Se definen las funciones que inicializan la clase y la instancia. El argumento \texttt{class} es un puntero a la
   estructura de la clase y \texttt{self} apunta a la estructura de la instancia. Como se aprecia, no
   necesitan ningún código en este caso, pero son necesarias para el registro.
 \item Líneas 29--68:\par
-  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDoble} y escribe el valor
-  del tipo \text{TDoble}. Además, comprueba que la instancia creada es un objeto que deriva, tanto de
-  \textsf{TDoble}, como de \textsf{GObject}.
+  La función principal. Asigna a la variable \texttt{dtype} el tipo de objeto \textsf{TDouble} y escribe el valor
+  del tipo \text{TDouble}. Además, comprueba que la instancia creada es un objeto que deriva, tanto de
+  \textsf{TDouble}, como de \textsf{GObject}.
 \end{itemize}
 
 \section{Uso básico de parámetros de un objeto}
 En esta sección veremos cómo asignar valores  a los parámetros de un objeto cómo acceder a los mismos,
-posteriormente. Para ello, definiremos un método para crear la instancia de un objeto \texttt{TDoble}
+posteriormente. Para ello, definiremos un método para crear la instancia de un objeto \texttt{TDouble}
 con un valor concreto, y métodos para recuperar (\emph{getter}) y asignar (\emph{setter}, que se
 encargarán de estas tareas.
 Además, se crearán dos ficheros extra, uno de cabecera y otro de definiciones, para el objeto.
 \subsection{Ejemplo 6}
-Se estructura un programa que usa objetos \textsf{TDoble}, en ficheros individuales \textsf{tdoble.h},
+Se estructura un programa que usa objetos \textsf{TDouble}, en ficheros individuales \textsf{tdoble.h},
 \textsf{tdoble.c} y \textsf{main.c}.
-El objeto \textsf{TDoble} se declara y define en los dos primeros ficheros, respectivamente.
+El objeto \textsf{TDouble} se declara y define en los dos primeros ficheros, respectivamente.
 Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
-\subsubsection{Declaración del objeto \textsf{TDoble}: fichero de cabecera \textsf{tdoble.h}}
+\subsubsection{Declaración del objeto \textsf{TDouble}: fichero de cabecera \textsf{tdoble.h}}
 
 \begin{lstlisting}[language=C, numbers=left]
 /*
  * tdoble.h
- * Declaración del objeto TDoble.
+ * Declaración del objeto TDouble.
  */
 
-#ifndef T_DOBLE_H
-#define T_DOBLE_H
+#ifndef T_DOUBLE_H
+#define T_DOUBLE_H
  
 #include <glib-object.h>
  
-#define T_TYPE_DOBLE  (t_doble_get_type ())
-G_DECLARE_FINAL_TYPE (TDoble, t_doble, T, DOBLE, GObject)
+#define T_TYPE_DOUBLE  (t_double_get_type ())
+G_DECLARE_FINAL_TYPE (TDouble, t_double, T, DOUBLE, GObject)
  
 gboolean
-t_doble_get_value (TDoble *self, double *value);
+t_double_get_value (TDouble *self, double *value);
  
 void
-t_doble_set_value (TDoble *self, double value);
+t_double_set_value (TDouble *self, double value);
  
-TDoble *
-t_doble_new (double value);
+TDouble *
+t_double_new (double value);
 
-#endif /* T_DOBLE_H */
+#endif /* T_DOUBLE_H */
 \end{lstlisting}
 
 \subsubsection{Comentarios}
@@ -728,43 +728,43 @@ t_doble_new (double value);
 \item Línea 6--7, 23:\par
   Se añaden estas líneas para garantizar que este fichero solo se lee una vez.
 \item Líneas 11--12:\par
-  Se declara la macro \texttt{T\_TYPE\_DOBLE} que se expandirá a \texttt{t\_doble\_get\_type ()}.
+  Se declara la macro \texttt{T\_TYPE\_DOUBLE} que se expandirá a \texttt{t\_doble\_get\_type ()}.
   Se declara el tipo de objeto \textsf{TObject}, mediante la macro\texttt{G\_DECLARE\_FINAL\_TYPE}
-  a la que se añaden los argumentos: \texttt{TDoble}, \texttt{t\_doble} y \texttt{GObject}.
+  a la que se añaden los argumentos: \texttt{TDouble}, \texttt{t\_doble} y \texttt{GObject}.
 \item Líneas 14--18:\par
-  Se declaran las funciones públicas. La primera retorna el valor del objeto \textsf{TDoble} y la
+  Se declaran las funciones públicas. La primera retorna el valor del objeto \textsf{TDouble} y la
   segunda lo cambia.
 \item Líneas 20--21:\par
-  Se declara la función que crea instancias de \textsf{TDoble}.
+  Se declara la función que crea instancias de \textsf{TDouble}.
 \end{itemize}
 
-\subsubsection{Definición del objeto \textsf{TDoble}: fichero \textsf{tdoble.c}}
+\subsubsection{Definición del objeto \textsf{TDouble}: fichero \textsf{tdoble.c}}
 
 \begin{lstlisting}[language=C, numbers=left]
 /*
  * tdoble.c
- * Definición del objeto TDoble.
+ * Definición del objeto TDouble.
  */
  
 #include "tdoble.h"
 
-struct _TDoble {
+struct _TDouble {
   GObject parent;
   double value;
 };
 
-G_DEFINE_TYPE (TDoble, t_doble, G_TYPE_OBJECT)
+G_DEFINE_TYPE (TDouble, t_double, G_TYPE_OBJECT)
 
 static void
-t_doble_class_init (TDobleClass *class) {}
+t_double_class_init (TDoubleClass *class) {}
 
 static void
-t_doble_init (TDoble *self) {}
+t_double_init (TDouble *self) {}
 
 gboolean
-t_doble_get_value (TDoble *self, double *value)
+t_double_get_value (TDouble *self, double *value)
 {
-  g_return_val_if_fail (T_IS_DOBLE (self), FALSE);
+  g_return_val_if_fail (T_IS_DOUBLE (self), FALSE);
 
   *value = self->value;
   
@@ -772,19 +772,19 @@ t_doble_get_value (TDoble *self, double *value)
 }
 
 void
-t_doble_set_value (TDoble *self, double value)
+t_double_set_value (TDouble *self, double value)
 {
-  g_return_if_fail (T_IS_DOBLE (self));
+  g_return_if_fail (T_IS_DOUBLE (self));
 
   self->value = value;
 }
 
-TDoble *
-t_doble_new (double value)
+TDouble *
+t_double_new (double value)
 {
-  TDoble *d;
+  TDouble *d;
 
-  d = g_object_new (T_TYPE_DOBLE, NULL);
+  d = g_object_new (T_TYPE_DOUBLE, NULL);
   d->value = value;
   
   return d;
@@ -794,18 +794,18 @@ t_doble_new (double value)
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Líneas 8--11:\par
-  Estructura de los objetos \textsf{TDoble}. Su nombre debe ser \texttt{\_TDoble} porque la macro
+  Estructura de los objetos \textsf{TDouble}. Su nombre debe ser \texttt{\_TDouble} porque la macro
   \texttt{G\_DECLARE\_FINAL\_TYPE} en el fichero de cabecera, en su expansión define el tipo en C
-  \texttt{TDoble} (\texttt{typedef struct \_TDoble}), necesita ese nombre.
+  \texttt{TDouble} (\texttt{typedef struct \_TDouble}), necesita ese nombre.
 \item Línea 13:\par
-  Se expande la macro que define y  el objeto \textsf{TDoble} y su registro.
+  Se expande la macro que define y  el objeto \textsf{TDouble} y su registro.
 \item Líneas 15--23:\par
   Se definen las funciones de inicialización de la clase y de las instancias. No hacen nada, por ahora.
 \item Líneas 25--33:\par
   Definición de la función \textit{getter}. El argumento \texttt{value} es un puntero a una variable de tipo C
   \texttt{double}. Asigna el valor del objeto \texttt{self->value} a la variable. Si no hay error retorna \texttt{TRUE}.
   La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} se utiliza para comprobar el tipo de objeto que
-  se le pasa como argumento. Si no es de tipo \textsf{TDoble}, envía un mensaje de error al fichero
+  se le pasa como argumento. Si no es de tipo \textsf{TDouble}, envía un mensaje de error al fichero
   de registro de errores, advertencias y mensajes (fichero \textit{log}), e inmediatamente retorna \texttt{FALSE}.
   Este registro sirve para informar al programador del error, pero no se debe utilizar para informar del
   mismo al usuario. Para más información, ver \href{https://docs.gtk.org/glib/error-reporting.html}
@@ -825,16 +825,16 @@ t_doble_new (double value)
   Definición de la función que instancia objetos. Tiene un parámetro, que es el valor del objeto.
 \item Línea 48:\par
   Esta función usa \passthrough{\lstinline!g\_object\_new!} para instanciar un objeto. El argumento
-  \texttt{T\_TYPE\_DOBLE} se expande a la función \passthrough{\lstinline!t\_doble\_get\_type ()!}.
+  \texttt{T\_TYPE\_DOUBLE} se expande a la función \passthrough{\lstinline!t\_doble\_get\_type ()!}.
   Cuando esta función se llama por primera vez, se lleva a cabo el proceso de registro de \textsf{TObject}.
 \end{itemize}
 
-\subsubsection{Prueba de \textsf{TDoble}: fichero \textsf{main.c}}
+\subsubsection{Prueba de \textsf{TDouble}: fichero \textsf{main.c}}
 
 \begin{lstlisting}[language=C, numbers=left]
 /*
  * main.c
- * Se prueba el objeto TDoble.
+ * Se prueba el objeto TDouble.
  */
 
 #include <locale.h>
@@ -843,24 +843,24 @@ t_doble_new (double value)
 int
 main (int argc, char **argv)
 {
-  TDoble *d;
+  TDouble *d;
   double value;
 
   // Para que g_print no transforme la codificación de caracteres
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
 
-  d = t_doble_new (10.0);
-  if (t_doble_get_value (d, &value)) {
+  d = t_double_new (10.0);
+  if (t_double_get_value (d, &value)) {
     g_print ("t_double_get_value succesfully assigned %lf to value.\n", value);
   } else {
     g_print ("t_double_get_value failed.\n");
   }
 
-  t_doble_set_value (d, -20.0);
+  t_double_set_value (d, -20.0);
   g_print ("Now, set d (tDouble object) with %lf.\n", -20.0);
   
-  if (t_doble_get_value (d, &value)) {
+  if (t_double_get_value (d, &value)) {
     g_print ("t_double_get_value succesfully assigned %lf to value.\n", value);
   } else {
     g_print ("t_double_get_value failed.\n");
@@ -875,15 +875,15 @@ main (int argc, char **argv)
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Línea 7:\par
-  Es necesaria para acceder a \textsf{TDoble}.
+  Es necesaria para acceder a \textsf{TDouble}.
 \item Líneas 12--13:\par
-  Se declara un puntero \texttt{d} al tipo de objeto \texttt{TDoble} y una variable \texttt{value} de tipo C,
+  Se declara un puntero \texttt{d} al tipo de objeto \texttt{TDouble} y una variable \texttt{value} de tipo C,
   \texttt{double}.
 \item Línea 17:\par
   Se utiliza para que la función \texttt{g\_print} no modifique la codificación de caracteres. Esto se hace
   para que se puedan ver las tildes que imprime.
 \item Línea 19:\par
-  Se instancia un objeto \textsf{TDoble} y se hace que \texttt{d} apunte al objeto.
+  Se instancia un objeto \textsf{TDouble} y se hace que \texttt{d} apunte al objeto.
 \item Líneas 20--24:\par
   Se prueba la función \textit{getter} del objeto.
 \item Línea 26:\par
@@ -893,6 +893,30 @@ main (int argc, char **argv)
 \item Línea 35:\par
   Se libera la instancia \texttt{d}.
 \end{itemize}
+
+\section{Funciones}
+Las funciones de objetos están abiertas a otros objetos. Son como los métodos públicos en los lenguajes
+orientados a objetos.
+En realidad se llaman métodos de instancia (\emph{instance methods}) en la Referencia de la API de GObject.
+
+Es natural añadir operadores de cálculo a los objetos \textsf{TDouble} porque representan números reales.
+%Functions of objects are open to other objects. They are like public methods in object oriented languages. They are actually called "instance method" in the GObject API Reference.
+
+%It is natural to add calculation operators to TDouble objects because they represent real numbers. For example, t_double_add adds the value of the instance and another instance. Then it creates a new TDouble instance which has a value of the sum of them.
+
+%TDouble *
+%t_double_add (TDouble *self, TDouble *other) {
+%  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+%  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+%  double value;
+
+%  if (! t_double_get_value (other, &value))
+%    return NULL;
+%  return t_double_new (self->value + value);
+%}
+%The first argument self is the instance the function belongs to. The second argument other is another TDouble instance.
+
+%The value of self can be accessed by self->value, but don't use other->value to get the value of other. Use a function t_double_get_value instead. Because self is an instance out of other. Generally, the structure of an object isn't open to other objects. When an object A access to another object B, A must use a public function provided by B.
 
 
 

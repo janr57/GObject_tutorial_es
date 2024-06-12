@@ -6,7 +6,7 @@ LDFLAGS=`pkg-config --libs glib-2.0 gobject-2.0`
 
 PROG = ejemplo06
 FILE1 = main
-FILE2 = tdoble
+FILE2 = tdouble
 
 ALL: $(PROG)
 

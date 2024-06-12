@@ -6,47 +6,47 @@
 #include <locale.h>
 #include <glib-object.h>
  
- #define T_TYPE_DOBLE  (t_doble_get_type ())
+ #define T_TYPE_DOUBLE  (t_double_get_type ())
  
- typedef struct _TDoble TDoble;
- struct _TDoble {
+ typedef struct _TDouble TDouble;
+ struct _TDouble {
    GObject parent;
    double value;
  };
  
- typedef struct _TDobleClass TDobleClass;
- struct _TDobleClass {
+ typedef struct _TDoubleClass TDoubleClass;
+ struct _TDoubleClass {
    GObjectClass parent_class;
  };
  
  static void
- t_doble_class_init (TDobleClass *class)
+ t_double_class_init (TDoubleClass *class)
  {
  }
  
  static void
- t_doble_init (TDoble *self)
+ t_double_init (TDouble *self)
  {
  }
  
  GType
- t_doble_get_type (void)
+ t_double_get_type (void)
  {
    static GType type = 0;
    GTypeInfo info;
  
    if (type == 0) {
-     info.class_size = sizeof (TDobleClass);
+     info.class_size = sizeof (TDoubleClass);
      info.base_init = NULL;
      info.base_finalize = NULL;
-     info.class_init = (GClassInitFunc)  t_doble_class_init;
+     info.class_init = (GClassInitFunc)  t_double_class_init;
      info.class_finalize = NULL;
      info.class_data = NULL;
-     info.instance_size = sizeof (TDoble);
+     info.instance_size = sizeof (TDouble);
      info.n_preallocs = 0;
-     info.instance_init = (GInstanceInitFunc)  t_doble_init;
+     info.instance_init = (GInstanceInitFunc)  t_double_init;
      info.value_table = NULL;
-     type = g_type_register_static (G_TYPE_OBJECT, "TDoble", &info, 0);
+     type = g_type_register_static (G_TYPE_OBJECT, "TDouble", &info, 0);
    }
    
    return type;
@@ -56,20 +56,20 @@
  main (int argc, char **argv)
  {
    GType dtype;
-   TDoble *d;
+   TDouble *d;
 
   // Para que g_print no transforme la codificación de caracteres
   // por su cuenta y no se vean los acentos.
   setlocale(LC_CTYPE, "");
    
-  dtype = t_doble_get_type (); /* equivale a  'dtype = T_TYPE_DOBLE' */
+  dtype = t_double_get_type (); /* equivale a  'dtype = T_TYPE_DOUBLE' */
   if (dtype) {
     g_print ("Registro correcto. El tipo de objeto es %lx.\n", dtype);
   } else {
     g_print ("Registro incorrecto.\n");
   }
  
-  d = g_object_new (T_TYPE_DOBLE, NULL);
+  d = g_object_new (T_TYPE_DOUBLE, NULL);
   if (d) {
     g_print ("La instancia se ha creado correctamente. Su dirección es %p.\n", d);
   } else {

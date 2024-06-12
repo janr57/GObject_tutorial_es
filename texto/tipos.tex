@@ -32,9 +32,9 @@ Por ejemplo, \textsf{GObject} consiste en un espacio de nombres ``\textsf{G}'' y
 \textsf{GtkWidget} tiene un espacio de nombres ``\textsf{Gtk}'' y el nombre ``\textsf{Widget}''.
 
 Para el objeto de números reales de nuestro ejemplo, se decide poner ``\textsf{T}'' como espacio
-de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDoble},
+de nombres y ``\textsf{Doble}'' como nombre. Así, estos objetos se identificarán como \textsf{TDouble},
 derivarán de \textsf{GObject}, representan números reales y el tipo del número en
-lenguaje C será \texttt{double}. \textsf{TDoble} tendrá un parámetro, que llamaremos
+lenguaje C será \texttt{double}. \textsf{TDouble} tendrá un parámetro, que llamaremos
 \texttt{value} que se  define como \texttt{double value} en lenguaje C.
 
 \begin{figure}[ht]
@@ -57,7 +57,7 @@ lenguaje C será \texttt{double}. \textsf{TDoble} tendrá un parámetro, que lla
    {\begin{tabular}{c} \textcolor{gray}{Espacio de nombres} \\ T \end{tabular}};
    \node [draw, right=1em of namespace] (name)
    {\begin{tabular}{c} \textcolor{gray}{Nombre} \\ Doble \end{tabular}};
-   \node [right=1em of name] (tdoble) {$\equiv$ TDoble}; 
+   \node [right=1em of name] (tdoble) {$\equiv$ TDouble}; 
    % Fondo amarillo
    \def\margensup{18}
    \def\margeninf{12}
@@ -69,7 +69,7 @@ lenguaje C será \texttt{double}. \textsf{TDoble} tendrá un parámetro, que lla
      \node [background, fit= (liminfizda) (limsupdcha)] {};
    \end{scope}
 \end{tikzpicture}
-\caption{Nombre del objeto \textsf{TDoble}.}
+\caption{Nombre del objeto \textsf{TDouble}.}
 \label{fig:nombre-objetos}
 \end{figure}
 
@@ -81,27 +81,27 @@ Pero \texttt{char}, o \texttt{double}, por otro lado, son tipos del lenguaje C.
 Cuando el significado de ``tipo'' quede claro por el contexto, diremos sencillamente ``tipo''; en caso contrario
 diremos ``tipo de C'' o ``tipo del sistema''.
 
-\subsubsection{Definición de \textsf{TDobleClass} y de \textsf{TDoble}}
+\subsubsection{Definición de \textsf{TDoubleClass} y de \textsf{TDouble}}
 Empezaremos definiendo las estructuras de clase e instancia de nuestro objeto.
-Una instancia \textsf{TDoble} pertenecerá a la clase \textsf{TDobleClass}. La estructura en C de esta última es:
+Una instancia \textsf{TDouble} pertenecerá a la clase \textsf{TDoubleClass}. La estructura en C de esta última es:
 \begin{lstlisting}[language=C]
-  typedef struct _TDobleClass TDobleClass;
-  struct _TDobleClass {
+  typedef struct _TDoubleClass TDoubleClass;
+  struct _TDoubleClass {
     GObjectClass parent_class;
   };
 \end{lstlisting}
 
-\texttt{\_TDobleClass} es el nombre de una estructura en C y \texttt{TDobleClass} es el tipo C que equivale
-a \texttt{struct \_TDobleClass}. De esta manera, hemos definido el tipo C, \texttt{TDobleClass}.
+\texttt{\_TDoubleClass} es el nombre de una estructura en C y \texttt{TDoubleClass} es el tipo C que equivale
+a \texttt{struct \_TDoubleClass}. De esta manera, hemos definido el tipo C, \texttt{TDoubleClass}.
 En el código anterior, se usa \texttt{typedef} para definir el tipo C de la clase. El primer miembro de la estructura
-debe ser la estructura de la clase padre. \textsf{TDobleClass} no necesita más información porque no es una
+debe ser la estructura de la clase padre. \textsf{TDoubleClass} no necesita más información porque no es una
 clase abstracta.
 
 \newpage
-El tipo C de una instancia de \textsf{TDoble} es \texttt{TDoble}:
+El tipo C de una instancia de \textsf{TDouble} es \texttt{TDouble}:
 \begin{lstlisting}[language=C]
-  typedef struct _TDoble TDoble;
-  struct _TDoble {
+  typedef struct _TDouble TDouble;
+  struct _TDouble {
     GObject parent;
     double value;
   };
@@ -109,8 +109,8 @@ El tipo C de una instancia de \textsf{TDoble} es \texttt{TDoble}:
   
 El código es similar a la estructura de la clase. Primero se usa \texttt{typedef} para definir el tipo en C de una
 instancia de la clase. El primer miembro de la estructura debe ser la estructura de la instancia padre.
-\textsf{TDoble} tiene su propio miembro o parámetro, \texttt{value}, que es el número en coma flotante
-de las instancias de \textsf{TDoble}.
+\textsf{TDouble} tiene su propio miembro o parámetro, \texttt{value}, que es el número en coma flotante
+de las instancias de \textsf{TDouble}.
 La convención de código mostrada en los dos listados anteriores debe respetarse siempre.
 
 
