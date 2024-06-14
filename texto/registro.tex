@@ -797,6 +797,18 @@ t_double_new (double value)
   Estructura de los objetos \textsf{TDouble}. Su nombre debe ser \texttt{\_TDouble} porque la macro
   \texttt{G\_DECLARE\_FINAL\_TYPE} en el fichero de cabecera, en su expansión define el tipo en C
   \texttt{TDouble} (\texttt{typedef struct \_TDouble}), necesita ese nombre.
+  \par
+  Al declarar la estructura en este fichero, se impide asignar el valor del parámetro \texttt{value}
+  de la misma mediante el código \texttt{obj->value = 10.0}, por ejemplo, o leer su valor mediante un
+  código del estilo de \texttt{double var = obj->value}. En su lugar, para asignar valores, se hará mediante
+  el constructor \texttt{t\_double\_new (10.0)}, por ejemplo, o mediante la función \emph{setter},
+  \texttt{t\_doble\_set\_value (obj, 10.0)}, y para leer valores, se utilizará la función \emph{getter}
+  \texttt{t\_doble\_get\_value (obj, \&var)}, donde \texttt{var} es una variable de tipo \texttt{double}.
+  Estas funciones comprueban que \texttt{obj} sea una instancia de \textsf{TDoble}.
+  \par
+  Si hubiéramos querido utilizar \texttt{obj->value}, deberíamos haber definido la estructura en el
+  fichero de cabecera \textsf{tdouble.h}. Pero si este hubiera sido nuestro interés, nos debería
+  haber bastado definir la estructura, sin necesidad de introducir un nuevo tipo de objetos.
 \item Línea 13:\par
   Se expande la macro que define y  el objeto \textsf{TDouble} y su registro.
 \item Líneas 15--23:\par
@@ -815,7 +827,8 @@ t_double_new (double value)
   privadas, porque las funciones estáticas se ejecutan solo desde funciones que están en el mismo fichero y estas
   conocen el tipo de los parámetros\footnotemark{}.}
   \footnotetext{Debo esforzarme en traducir mejor esta última oración y entenderla (las dos cosas).
-  Me está queriendo informar de algo que no capto.}
+    Me está queriendo informar de algo que no termino de captar: Sé lo que es una función estática, pero
+  se ve que me estoy perdiendo algún detalle.}
 \item Líneas 35--41:\par
   Definición de la función \textit{setter}. La función \passthrough{\lstinline!g\_return\_if\_fail!} se usa
   para comprobar el objeto que se pasa como argumento. Esta función no retorna ningún valor, porque
@@ -898,6 +911,24 @@ main (int argc, char **argv)
 Las funciones de objetos están abiertas a otros objetos. Son como los métodos públicos en los lenguajes
 orientados a objetos.
 En realidad se llaman métodos de instancia (\emph{instance methods}) en la Referencia de la API de GObject.
+
+Es natural añadir operadores de cálculo a los objetos \textsf{TDouble} porque estos representan números
+reales. Por ejemplo, \texttt{t\_double\_add} puede sumar el valor de dos instancias de \textsf{TDouble}
+pasadas como argumentos y, como resultado, crea otra instancia del mismo tipo que tiene el valor de la
+suma de ambas.
+
+\begin{lstlisting}[language=C, numbers=left]
+TDouble *
+t_double_add (TDouble *self, TDouble *other) {
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  double value;
+
+  if (! t_double_get_value (other, &value))
+    return NULL;
+  return t_double_new (self->value + value);
+}
+\end{lstlisting}
 
 Es natural añadir operadores de cálculo a los objetos \textsf{TDouble} porque representan números reales.
 %Functions of objects are open to other objects. They are like public methods in object oriented languages. They are actually called "instance method" in the GObject API Reference.
