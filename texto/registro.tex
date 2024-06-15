@@ -6,7 +6,7 @@
 % 2) Producto en pdf, postscript, etc.:
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
-\section{Registro de objetos derivados}
+\section{Registro de objetos derivados, parámetros y métodos}
 \subsection{Procedimiento para crear objetos derivados de \textsf{GObject}}
 Para crear un tipo del sistema, a partir de un tipo en C, definido como una estructura ---en nuestro
 ejemplo \texttt{TDouble}---, se llevan a cabo los siguientes pasos:
@@ -908,7 +908,7 @@ main (int argc, char **argv)
   Se libera la instancia \texttt{d}.
 \end{itemize}
 
-\section{Funciones}
+\section{Uso básico de métodos de instancias}
 Las funciones de objetos están abiertas a otros objetos. Son como los métodos públicos en los lenguajes
 orientados a objetos.
 En realidad se llaman métodos de instancia (\emph{instance methods}) en la Referencia de la API de GObject.
@@ -940,7 +940,240 @@ pero para acceder al parámetro de otra instancia, necesita utilizar la función
 instancia \texttt{t\_double\_get\_value}. Así, cuando un objeto A accede a otro B, A debe utilizar una
 función pública de B.
 
+\subsection{Aplicación de métodos de instancia con instancias \textsf{TDouble}}
+Aquí se va a presentar un ejemplo en el que se utilizan métodos de instancia para realizar
+operaciones aritméticas básicas con los valores de los parámetros de instancias de \textsf{TDouble}.
 
+La aplicación se estructura en tres ficheros, \textsf{tdouble.h}, \textsf{tdouble.c} y \textsf{main.c}.
+
+\subsubsection{Declaración del tipo \textsf{TDouble}: fichero de cabecera \textsf{tdouble.h}}
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * tdouble.h
+ * Declaración del tipo TDouble.
+ */
+
+ #ifndef TDOUBLE_H
+#define TDOUBLE_H
+
+#include <glib-object.h>
+
+#define T_TYPE_DOUBLE (t_double_get_type ())
+G_DECLARE_FINAL_TYPE (TDouble, t_double, T, DOUBLE, GObject);
+
+gboolean
+t_double_get_value (TDouble *self, double *value);
+
+void
+t_double_set_value (TDouble *self, double value);
+
+TDouble * t_double_new (double value);
+
+TDouble *t_double_add (TDouble *self, TDouble *other);
+TDouble *t_double_sub (TDouble *self, TDouble *other);
+TDouble *t_double_mul (TDouble *self, TDouble *other);
+TDouble *t_double_div (TDouble *self, TDouble *other);
+TDouble *t_double_uminus (TDouble *self);
+
+#endif /* T_DOUBLE_H */
+\end{lstlisting}
+
+\subsubsection{Definición del tipo \textsf{TDouble}: fichero \textsf{tdouble.c}}
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * tdouble.c
+ * Definición del tipo TDouble.
+ */
+
+#include "tdouble.h"
+
+struct _TDouble {
+  GObject parent;
+  double value;
+};
+
+G_DEFINE_FINAL_TYPE (TDouble, t_double, G_TYPE_OBJECT);
+
+static void
+t_double_class_init (TDoubleClass *class) {};
+
+static void
+t_double_init (TDouble *self) {};
+
+gboolean
+t_double_get_value (TDouble *self, double *value)
+{
+  g_return_val_if_fail (T_IS_DOUBLE (self), FALSE);
+  *value = self->value;
+  return TRUE;
+}
+
+void
+t_double_set_value (TDouble *self, double value)
+{
+  g_return_if_fail (T_IS_DOUBLE (self));
+  self->value = value;
+}
+
+TDouble *
+t_double_new (double value)
+{
+  TDouble *obj;
+  obj = g_object_new (T_TYPE_DOUBLE, NULL);
+  obj->value = value;
+  return obj;
+}
+
+TDouble *
+t_double_add (TDouble *self, TDouble *other)
+{
+  double value;
+  
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  }
+
+  return t_double_new (self->value + value);
+}
+
+TDouble *
+t_double_sub (TDouble *self, TDouble *other)
+{
+  double value;
+  
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  }
+  return t_double_new (self->value - value);
+}
+
+TDouble *
+t_double_mul (TDouble *self, TDouble *other)
+{
+  double value;
+  
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  }
+  return t_double_new (self->value * value);
+}
+
+TDouble *
+t_double_div (TDouble *self, TDouble *other)
+{
+  double value;
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  if ((! t_double_get_value (other, &value)) || value == 0.0) {
+    return NULL;
+  }
+  return t_double_new (self->value / value);
+}
+
+TDouble *
+t_double_uminus (TDouble *self)
+{
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  return t_double_new (-self->value);
+}
+\end{lstlisting}
+
+\subsubsection{Aplicación utlilizando el tipo \textsf{TDouble}: fichero \textsf{main.c}}
+
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * main.c
+ * Prueba de operaciones aritméticas con el valor de instancias TDouble.
+ */
+
+#include <stdlib.h>
+#include <locale.h>
+
+#include "tdouble.h"
+
+void print_val (TDouble *obj, char *str)
+{
+  double value;
+  
+  if (t_double_get_value(obj, &value)) {
+    g_print ("'%s': %3.6f\n", str, value);
+  } else {
+    g_print ("Error, la instancia '%s' no tiene valor.\n", str);
+    exit (1);
+  }
+}
+
+int
+main (void)
+{
+  TDouble *obj1, *obj2, *obj3;
+  double value;
+  const double val1 = 24.0;
+  const double val2 = 14.0;
+  double val3;
+
+  setlocale (LC_CTYPE, "");
+
+  g_print(" ------------------------\n");
+  
+    /* Se crea la instancia de TDouble, 'obj1' */
+  obj1 = t_double_new (val1);
+  if (!t_double_get_value(obj1, &value)) {
+    g_print ("Error, no se ha podido crear la instancia 'obj1'.\n");
+    exit (1);
+  }
+  print_val (obj1, "obj1");
+  
+  /* Se crea la instancia de TDouble, 'obj2' */
+  obj2 = t_double_new (val2);
+  if (!t_double_get_value(obj2, &value)) {
+    g_print ("Error, no se ha podido crear la instancia 'obj2'.\n");
+    exit (1);
+  }
+  print_val (obj2, "obj2");
+
+  g_print(" ------------------------\n");
+    
+  /* Suma */
+  obj3 = t_double_add (obj1, obj2);
+  print_val (obj3, "obj1 + obj2");
+
+    /* Resta */
+    obj3 = t_double_sub (obj1, obj2);
+  print_val (obj3, "obj1 - obj2");
+
+  /* Multiplicación */
+    obj3 = t_double_mul (obj1, obj2);
+    print_val (obj3, "obj1 * obj2");
+
+  /* División */
+  obj3 = t_double_div (obj1, obj2);
+  print_val (obj3, "obj1 / obj2");
+
+  /* Cambio de signo */
+    obj3 = t_double_uminus (obj1);
+    print_val (obj3, "-obj1");    
+
+  g_object_unref (obj1);
+  g_object_unref(obj2);
+  g_object_unref(obj3);
+
+  g_print(" ------------------------\n");
+    
+  g_print ("OK!\n");
+
+  return EXIT_SUCCESS;
+}\end{lstlisting}
+
+  
 %%% Local Variables:
 %%% coding: utf-8
 %%% mode: latex

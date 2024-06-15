@@ -1,0 +1,6 @@
+# ninja log v5
+99	132	1718438349021848833	operaciones	9fa50b71ba040cdf
+1	178	1718430529512578470	CMakeFiles/operaciones.dir/home/janr/tex/janr/lualatex/GObject_tutorial_es/prog/operaciones/src/tdouble.c.o	b9e30551d159478b
+8	99	1718438348989848769	CMakeFiles/operaciones.dir/home/janr/tex/janr/lualatex/GObject_tutorial_es/prog/operaciones/src/main.c.o	975e598f4f757da2
+2	100	1718438382905916085	CMakeFiles/operaciones.dir/home/janr/tex/janr/lualatex/GObject_tutorial_es/prog/operaciones/src/main.c.o	975e598f4f757da2
+100	133	1718438382937916149	operaciones	9fa50b71ba040cdf

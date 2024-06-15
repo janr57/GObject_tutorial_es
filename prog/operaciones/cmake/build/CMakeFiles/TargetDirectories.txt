@@ -1,0 +1,3 @@
+/home/janr/tex/janr/lualatex/GObject_tutorial_es/prog/operaciones/cmake/build/CMakeFiles/operaciones.dir
+/home/janr/tex/janr/lualatex/GObject_tutorial_es/prog/operaciones/cmake/build/CMakeFiles/edit_cache.dir
+/home/janr/tex/janr/lualatex/GObject_tutorial_es/prog/operaciones/cmake/build/CMakeFiles/rebuild_cache.dir
