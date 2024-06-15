@@ -27,11 +27,10 @@ main (void)
   double value;
   const double val1 = 24.0;
   const double val2 = 14.0;
-  double val3;
 
   setlocale (LC_CTYPE, "");
 
-  g_print(" ------------------------\n");
+  g_print("-------------------------\n");
   
     /* Se crea la instancia de TDouble, 'obj1' */
   obj1 = t_double_new (val1);
@@ -49,7 +48,7 @@ main (void)
   }
   print_val (obj2, "obj2");
 
-  g_print(" ------------------------\n");
+  g_print("-------------------------\n");
     
   /* Suma */
   obj3 = t_double_add (obj1, obj2);
@@ -75,7 +74,7 @@ main (void)
   g_object_unref(obj2);
   g_object_unref(obj3);
 
-  g_print(" ------------------------\n");
+  g_print("-------------------------\n");
     
   g_print ("OK!\n");
 
