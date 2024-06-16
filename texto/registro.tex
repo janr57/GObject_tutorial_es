@@ -165,9 +165,9 @@ Esta estructura se debe crear antes del registro.
   su valor es \texttt{NULL}.
   Para más información ver:
   \href{https://docs.gtk.org/gobject/callback.BaseInitFunc.html}
-  {\textit{GObject API Reference -- BaseInitFunc}} y
+  {\emph{\textsf{GObject API Reference -- BaseInitFunc}}} y
   \href{https://docs.gtk.org/gobject/callback.ClassInitFunc.html}
-  {\textit{GObject API Reference -- ClassInitFunc}}.
+  {\emph{\textsf{GObject API Reference -- ClassInitFunc}}}.
 \item \texttt{class\_init}: Esta función inicializa los miembros estáticos de la clase. Asigna tu función de
   inicialización de la clase a esta función.
   Por convenio, el nombre es \textsf{<espacio-de-nombres>\_<nombre>\_class\_init}.
@@ -822,7 +822,7 @@ t_double_new (double value)
   de registro de errores, advertencias y mensajes (fichero \textit{log}), e inmediatamente retorna \texttt{FALSE}.
   Este registro sirve para informar al programador del error, pero no se debe utilizar para informar del
   mismo al usuario. Para más información, ver \href{https://docs.gtk.org/glib/error-reporting.html}
-  {\textit{error reporting}} en la API de referencia de Glib.
+  {\emph{\textsf{error reporting}}} en la API de referencia de Glib.
   {\color{red}
   La función \passthrough{\lstinline!g\_return\_val\_if\_fail!} no se usa en funciones de clase estáticas, que son
   privadas, porque las funciones estáticas se ejecutan solo desde funciones que están en el mismo fichero y estas
@@ -917,7 +917,7 @@ Es natural añadir operadores de cálculo a los objetos \textsf{TDouble} porque 
 reales. Por ejemplo, \texttt{t\_double\_add} puede sumar el valor de dos instancias de \textsf{TDouble}
 pasadas como argumentos y, como resultado, crea otra instancia del mismo tipo que tiene el valor de la
 suma de ambas. Véase  el siguiente código
-\begin{lstlisting}[language=C, numbers=left]
+\begin{lstlisting}[language=C, numbers=none]
 TDouble *
 t_double_add (TDouble *self, TDouble *other) {
   g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
