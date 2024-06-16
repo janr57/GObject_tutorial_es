@@ -1,0 +1,207 @@
+% señales.tex
+%
+% Copyright (C) 2024 José A. Navarro Ramón <janr.devel@gmail.com>
+% 1) Código LuaLatex:
+%    Licencia GPL-2.
+% 2) Producto en pdf, postscript, etc.:
+%    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
+
+\section{Señales}
+Las señales son un medio de comunicación entre objetos, y se emiten cuando ocurre o se completa algo.
+
+Pasos para programar una señal:
+\begin{enumerate}
+  \tightlist
+\item Registrar la señal. Una señal pertenece a un objeto, por lo que el registro se lleva a cabo en la
+  función de inicialización de la clase del objeto.
+\item Escribir un manejador de señal (\emph{signal handler}). Un manejador de señal es una función
+  que se invoca cuando se emite cierta señal.
+\item Conectar la señal y el manejador. Las señales se conectan a los manejadores mediante
+  \texttt{g\_connect\_signal} u otra perteneciente a la misma familia de funciones.
+  \item Emitir la señal.
+  \end{enumerate}
+
+  Los pasos uno y cuatro se realizan sobre el objeto al que pertenece la señal. El tercero se lleva a cabo
+  generalmente fuera del objeto.
+
+  El uso de las señales es complicado y lleva mucho tiempo explicar todas sus características. El contenido
+  de esta sección se limita al mínimo necesario para escribir una señal sencilla, y por lo tanto no es del todo
+  preciso. Si se necesitara una información más precisa, se puede consultar la guía de referencia de la
+  API de \textsf{GObject}. Hay cuatro partes de la guía que describen las señales:
+  \begin{itemize}
+    \tightlist
+  \item \href{https://docs.gtk.org/gobject/concepts.html#signals}
+    {\emph{\textsf{Type System Concepts - signals}}}.
+  \item \href{https://docs.gtk.org/gobject/#functions}
+    {\textsf{Functions (g\_signal\_xxx  series)}}.
+  \item   \href{https://docs.gtk.org/gobject/#function_macros}
+    {\emph{\textsf{Function Macros (g\_signal\_xxx series)}}}.
+  \item   \href{https://docs.gtk.org/gobject/tutorial.html#how-to-create-and-use-signals}
+    {\emph{\textsf{GObject Tutorial -- How to create and use signals}}}.
+\end{itemize}
+
+\subsection{Registro de señales}
+El ejemplo que veremos aquí es el de una señal que se emite cuando ocurre una división entre cero
+(\emph{division-by-zero}). Primero, debemos asignar un nombre a la señal. El nombre de una señal consta
+de letras, dígitos, guiones (-) y subrayados (\_). El primer carácter del nombre debe ser una letra. Elegiremos
+pues, la cadena \texttt{"div-by-zero"} como nombre de nuestra señal.
+
+Existen cuatro funciones para registrar una señal. Aquí usaremos \texttt{g\_signal\_new} para la nuestra.
+
+\begin{lstlisting}[language=C, numbers=none]
+guint
+g_signal_new (const gchar *signal_name,
+              GType itype,
+              GSignalFlags signal_flags,
+              guint class_offset,
+              GSignalAccumulator accumulator,
+              gpointer accu_data,
+              GSignalCMarshaller c_marshaller,
+              GType return_type,
+              guint n_params,
+              ...);
+\end{lstlisting}
+
+Se necesita mucho tiempo para explicar cada parámetro. Por ahora, se mostrará la función
+\texttt{g\_signal\_new} tal y como se utilizará en nuestro fichero \textsf{tdouble.c}. Los comentarios
+de los códigos que siguen se mantendrán en inglés, para que la traducción no desvirtúe su significado
+correcto:
+\begin{lstlisting}[language=C, numbers=none]
+t_double_signal =
+g_signal_new ("div-by-zero",
+              G_TYPE_FROM_CLASS (class),
+              G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+              0 /* class offset.Subclass cannot override the class handler (default handler). */,
+              NULL /* accumulator */,
+              NULL /* accumulator data */,
+              NULL /* C marshaller. g_cclosure_marshal_generic() will be used */,
+              G_TYPE_NONE /* return_type */,
+              0     /* n_params */
+              );
+\end{lstlisting}
+
+\begin{itemize}
+  \tightlist
+\item \texttt{t\_double\_signal} es una variable estática de tipo \texttt{guint}, que es equivalente a
+  \texttt{unsigned int}. Cuando se define una señal, la función \texttt{g\_signal\_new} retorna este tipo para la
+  variable que almacena la señal.
+\item El segundo parámetro es el tipo \texttt{GType} del objeto a la que pertenece la señal.
+  \texttt{G\_TYPE\_FROM\_CLASS (class)} retorna el tipo que corresponde a la clase (\texttt{class} es un
+  puntero a la clase del objeto).
+\item El tercer parámetro es una bandera (\emph{flag}) de la señal. Se necesitan muchas páginas para
+  explicar este parámetro. Así que por ahora, lo dejaremos tal y como está. Tal y como está este argumento,
+  se puede utilizar en muchos casos. En el enlace:
+  \href{https://docs.gtk.org/gobject/flags.SignalFlags.html}
+  {\emph{\textsf{GObject API Reference  - SignalFlags}}},
+  se pueden consultar los \textsf{SignalFlags}.
+\item El octavo parámetro es el tipo \textsf{GType} de retorno del manejador, que en este caso es
+  \texttt{G\_TYPE\_NONE}, que significa que el manejador no retorna ningún valor cuando se ejecuta.
+\item El noveno parámetro (\texttt{n\_params}) es el número de parámetros de la señal. La que
+  estamos considerando aquí (\texttt{"div-by-zero"}) no tiene parámetros, por tanto ponemos un cero.
+\item Como se afirmó anteriormente, esta función se debe poner en la función de inicialización de la
+  clase (\texttt{t\_double\_class\_init}).
+\item Se pueden utilizar otras funciones, como \texttt{g\_signal\_newv}. Una descripción de esta
+  última se puede ver en
+  \href{https://docs.gtk.org/gobject/func.signal_newv.html}
+  {\emph{\textsf{GObject API Reference - signal\_newv}}}.      
+\end{itemize}
+
+\subsection{Manejador de señal}
+Un manejador de señal es una función que se ejecuta cuando se emite una cierta señal. Los manejadores
+tienen dos parámetros:
+\begin{itemize}
+  \tightlist
+\item La instancia a la que pertenece la señal.
+\item Un puntero a unos datos de usuario (\emph{user data}) que se proporcionan cuando se conecta
+  la señal al manejador. La señal \textsf{"div-by-zero"} no necesita datos de usuario.'
+\end{itemize}
+
+Para nuestro caso, el manejador sería algo así:
+\begin{lstlisting}[language=C, numbers=none]
+  void div_by_zero_cb (TDouble *self, gpointer user_data) { ... ... ...}
+\end{lstlisting}
+El primer argumento \texttt{self} es la instancia sobre la que se emite la señal. El segundo parámetro se
+puede obviar:
+\begin{lstlisting}[language=C, numbers=none]
+  void div_by_zero_cb (TDouble *self) { ... ... ...}
+\end{lstlisting}
+
+Si una señal tiene parámetros, estos se insertan entre la instancia y los datos de usuario. Por ejemplo, el
+manejador de la señal \textsf{"window-added"} en la instancia \textsf{GtkApplication} es:
+\begin{lstlisting}[language=C, numbers=none]
+  void window_added (GtkApplication* self, GtkWindow* window, gpointer user_data);
+\end{lstlisting}
+El segundo argumento \texttt{window} es el parámetro de la señal. La señal \textsf{"window-added"} se
+emite cuando se añade una nueva ventana a la aplicación.
+El parámetro \texttt{window} es un puntero a la ventana añadida. Ver la referencia a la API de GTK
+para más información:
+  \href{https://docs.gtk.org/gtk4/signal.Application.window-added.html}
+  {\emph{\textsf{Gtk API Reference - window-added}}}.      
+
+En nuestro caso, el manejador de \textsf{"div-by-zero"} mostrará un mensaje de error.
+\begin{lstlisting}[language=C, numbers=none]
+  static void
+  div_by_zero_cb (TDouble *self, gpointer user_data) {
+    g_print ("\nError: division by zero.\n\n");
+  }
+\end{lstlisting}
+
+\subsection{Conexión de la señal}
+Una señal y un manejador se conectan mediante la función \texttt{g\_signal\_connect}:
+\begin{lstlisting}[language=C, numbers=none]
+  g_signal_connect (self, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
+\end{lstlisting}
+
+\begin{itemize}
+  \tightlist
+\item El primer argumento, \texttt{self}, es la instancia a la que se conecta la señal.
+\item El segundo argumento es el nombre de la señal.
+\item El tercer argumento es el manejador de la señal, se debe utilizar con la macro
+  \texttt{G\_CALLBACK} que ajusta el tipo de la función.
+\item El último argumento representa los datos de usuario. Como la señal no los necesita,
+  se asigna el valor \texttt{NULL}.
+\end{itemize}
+
+\subsection{Emisión de la señal}
+La señales se emiten hacia el objeto u objetos asociados. El siguiente código se utilizará en
+el próximo ejemplo de aplicación que usa el tipo \textsf{TDouble}:
+\begin{lstlisting}[language=C, numbers=none]
+  TDouble *
+  t_double_div (TDouble *self, TDouble *other) {
+    ... ... ...
+    if ((! t_double_get_value (other, &value)))
+    return NULL;
+    else if (value == 0) {
+      g_signal_emit (self, t_double_signal, 0);
+      return NULL;
+    }
+    return t_double_new (self->value / value);
+  }
+\end{lstlisting}
+
+\begin{itemize}
+  \tightlist
+\item El primer parámetro es la instancia que emite la señal.
+\item El segundo parámetro es el identificador de la señal (\textsf{signal id}), que es el valor que
+  retorna la función \texttt{g\_signal\_new}.
+\item El tercer parámetro es un ``detalle'' (\textsf{detail}). \textsf{"div-by-zero"} no tiene ningún ``detalle'',
+  por lo que el argumento es cero. Los ``detalles'' no se explican en esta sección, aunque generalmente se
+  suele poner un cero como tercer argumento. si quieres saber algo sobre los ``detalles'', ver
+  \href{https://docs.gtk.org/gobject/concepts.html#the-detail-argument}
+  {\emph{\textsf{GObject API Reference - Signal Detail}}}.
+  \item Cuando una señal tiene parámetros, estos se insertan a partir del cuarto argumento.
+\end{itemize}
+
+
+
+
+
+  
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-master: "../GObject_tutorial_es.tex"
+%%% End:
+
+% LaTeX-command: "lualatex --shell-escape"
