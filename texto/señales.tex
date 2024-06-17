@@ -7,27 +7,27 @@
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
 \section{Señales}
-Las señales son un medio de comunicación entre objetos, y se emiten cuando ocurre o se completa algo.
+Las señales son un medio de comunicación entre objetos. Se emiten cuando ocurre o se completa algo.
 
 Pasos para programar una señal:
 \begin{enumerate}
   \tightlist
-\item Registrar la señal. Una señal pertenece a un objeto, por lo que el registro se lleva a cabo en la
+\item Registro de la señal. Una señal pertenece a un objeto, por lo que el registro se lleva a cabo en la
   función de inicialización de la clase del objeto.
-\item Escribir un manejador de señal (\emph{signal handler}). Un manejador de señal es una función
-  que se invoca cuando se emite cierta señal.
-\item Conectar la señal y el manejador. Las señales se conectan a los manejadores mediante
-  \texttt{g\_connect\_signal} u otra perteneciente a la misma familia de funciones.
-  \item Emitir la señal.
+\item Escritura de un manejador de señal (\emph{signal handler}). Un manejador es una función que
+  se invoca cuando se emite cierta señal.
+\item Conexión entre la señal y el manejador. Los manejadores se conectan a las señales mediante
+  \texttt{g\_connect\_signal} u otra función perteneciente a la misma familia.
+  \item Emisión de la señal.
   \end{enumerate}
 
-  Los pasos uno y cuatro se realizan sobre el objeto al que pertenece la señal. El tercero se lleva a cabo
+  Los pasos uno y cuatro se realizan sobre el objeto al que pertenece la señal; el tercero se lleva a cabo
   generalmente fuera del objeto.
 
-  El uso de las señales es complicado y lleva mucho tiempo explicar todas sus características. El contenido
+  El uso de las señales es complicado y llevaría mucho tiempo explicar todas sus características. El contenido
   de esta sección se limita al mínimo necesario para escribir una señal sencilla, y por lo tanto no es del todo
-  preciso. Si se necesitara una información más precisa, se puede consultar la guía de referencia de la
-  API de \textsf{GObject}. Hay cuatro partes de la guía que describen las señales:
+  preciso. Si se necesitara más  información, se podría consultar la guía de referencia de la API de
+  \textsf{GObject}. Hay cuatro partes de la guía que describen las señales:
   \begin{itemize}
     \tightlist
   \item \href{https://docs.gtk.org/gobject/concepts.html#signals}
@@ -41,13 +41,14 @@ Pasos para programar una señal:
 \end{itemize}
 
 \subsection{Registro de señales}
-El ejemplo que veremos aquí es el de una señal que se emite cuando ocurre una división entre cero
-(\emph{division-by-zero}). Primero, debemos asignar un nombre a la señal. El nombre de una señal consta
-de letras, dígitos, guiones (-) y subrayados (\_). El primer carácter del nombre debe ser una letra. Elegiremos
-pues, la cadena \texttt{"div-by-zero"} como nombre de nuestra señal.
+Aquí seguiremos utilizando los objetos \textsf{TDouble}. En particular, crearemos una señal que se emitirá
+cuando ocurra una división entre cero (\emph{division-by-zero}).
+Primero, asignaremos un nombre a la señal, que podrá constar de letras, dígitos, guiones (-) y subrayados (\_).
+El primer carácter del nombre debe ser una letra. Elegiremos pues, la cadena \texttt{"div-by-zero"}
+como nombre de nuestra señal.
 
-Existen cuatro funciones para registrar una señal. Aquí usaremos \texttt{g\_signal\_new} para la nuestra.
-
+Hay cuatro funciones que nos permiten registrar una señal. Aquí usaremos \texttt{g\_signal\_new} para la
+nuestra. Sus parámetros se muestran a continuación:
 \begin{lstlisting}[language=C, numbers=none]
 guint
 g_signal_new (const gchar *signal_name,
@@ -64,8 +65,8 @@ g_signal_new (const gchar *signal_name,
 
 Se necesita mucho tiempo para explicar cada parámetro. Por ahora, se mostrará la función
 \texttt{g\_signal\_new} tal y como se utilizará en nuestro fichero \textsf{tdouble.c}. Los comentarios
-de los códigos que siguen se mantendrán en inglés, para que la traducción no desvirtúe su significado
-correcto:
+en el código fuente se mantendrán en inglés, para que la traducción que no desvirtúe el
+significado correcto:
 \begin{lstlisting}[language=C, numbers=none]
 t_double_signal =
 g_signal_new ("div-by-zero",
@@ -83,14 +84,17 @@ g_signal_new ("div-by-zero",
 \begin{itemize}
   \tightlist
 \item \texttt{t\_double\_signal} es una variable estática de tipo \texttt{guint}, que es equivalente a
-  \texttt{unsigned int}. Cuando se define una señal, la función \texttt{g\_signal\_new} retorna este tipo para la
-  variable que almacena la señal.
-\item El segundo parámetro es el tipo \texttt{GType} del objeto a la que pertenece la señal.
-  \texttt{G\_TYPE\_FROM\_CLASS (class)} retorna el tipo que corresponde a la clase (\texttt{class} es un
-  puntero a la clase del objeto).
+  \texttt{unsigned int}. La función \texttt{g\_signal\_new} retorna este tipo a la variable que almacena la
+  señal. 
+\item El segundo parámetro es el tipo \texttt{GType} del objeto al que pertenece la señal.
+  La macro \texttt{G\_TYPE\_FROM\_CLASS (class)} retorna el tipo que corresponde a la clase (\texttt{class},
+  que es un puntero a la clase del objeto \footnotemark{}).
+  \footnotetext{Recuerda que la función de inicialización de una clase (\texttt{g\_object\_class\_init})
+    tiene un parámetro que, en nuestro ejemplo, se define \texttt{TDoubleClass *class}
+    (ver, por ejemplo,  fichero \textsf{ejemplo05.c}, líneas 19--22.)}
 \item El tercer parámetro es una bandera (\emph{flag}) de la señal. Se necesitan muchas páginas para
-  explicar este parámetro. Así que por ahora, lo dejaremos tal y como está. Tal y como está este argumento,
-  se puede utilizar en muchos casos. En el enlace:
+  explicar este parámetro. Así que por ahora, lo dejaremos tal y como está. Tal y como está este argumento
+  en el ejemplo anterior se puede utilizar en muchas situaciones. En el enlace:
   \href{https://docs.gtk.org/gobject/flags.SignalFlags.html}
   {\emph{\textsf{GObject API Reference  - SignalFlags}}},
   se pueden consultar los \textsf{SignalFlags}.
@@ -98,6 +102,7 @@ g_signal_new ("div-by-zero",
   \texttt{G\_TYPE\_NONE}, que significa que el manejador no retorna ningún valor cuando se ejecuta.
 \item El noveno parámetro (\texttt{n\_params}) es el número de parámetros de la señal. La que
   estamos considerando aquí (\texttt{"div-by-zero"}) no tiene parámetros, por tanto ponemos un cero.
+  Esto significa que no se insertan parámetros extra después de este.
 \item Como se afirmó anteriormente, esta función se debe poner en la función de inicialización de la
   clase (\texttt{t\_double\_class\_init}).
 \item Se pueden utilizar otras funciones, como \texttt{g\_signal\_newv}. Una descripción de esta
