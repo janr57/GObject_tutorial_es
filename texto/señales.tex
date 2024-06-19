@@ -42,7 +42,7 @@ Pasos para programar una señal:
 
 \subsection{Registro de señales}
 Aquí seguiremos utilizando los objetos \textsf{TDouble}. En particular, crearemos una señal que se emitirá
-cuando ocurra una división entre cero (\emph{division-by-zero}).
+cuando ocurra una división por cero (\emph{division-by-zero}).
 Primero, asignaremos un nombre a la señal, que podrá constar de letras, dígitos, guiones (-) y subrayados (\_).
 El primer carácter del nombre debe ser una letra. Elegiremos pues, la cadena \texttt{"div-by-zero"}
 como nombre de nuestra señal.
@@ -98,8 +98,9 @@ g_signal_new ("div-by-zero",
   \href{https://docs.gtk.org/gobject/flags.SignalFlags.html}
   {\emph{\textsf{GObject API Reference  - SignalFlags}}},
   se pueden consultar los \textsf{SignalFlags}.
-\item El octavo parámetro es el tipo \textsf{GType} de retorno del manejador, que en este caso es
-  \texttt{G\_TYPE\_NONE}, que significa que el manejador no retorna ningún valor cuando se ejecuta.
+\item El octavo parámetro es el tipo de sistema (\textsf{GType}) de retorno del manejador, que en este
+  caso es \texttt{G\_TYPE\_NONE}, que significa que el manejador no retorna ningún valor cuando
+  se ejecuta.
 \item El noveno parámetro (\texttt{n\_params}) es el número de parámetros de la señal. La que
   estamos considerando aquí (\texttt{"div-by-zero"}) no tiene parámetros, por tanto ponemos un cero.
   Esto significa que no se insertan parámetros extra después de este.
@@ -195,8 +196,271 @@ el próximo ejemplo de aplicación que usa el tipo \textsf{TDouble}:
   \href{https://docs.gtk.org/gobject/concepts.html#the-detail-argument}
   {\emph{\textsf{GObject API Reference - Signal Detail}}}.
   \item Cuando una señal tiene parámetros, estos se insertan a partir del cuarto argumento.
-\end{itemize}
+  \end{itemize}
 
+\subsection{Ejemplo 8: señal de división por cero}
+\subsubsection{Declaración del tipo \textsf{TDouble}: fichero de cabecera \textsf{tdouble.h}}
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * tdouble.h
+ * Declaración del tipo TDouble.
+ */
+
+#pragma once
+
+#include <glib-object.h>
+
+/* Declaración del tipo TDouble */
+#define T_TYPE_DOUBLE (t_double_get_type ())
+G_DECLARE_FINAL_TYPE(TDouble, t_double, T, DOUBLE, GObject)
+
+/* Constructor de instancias de TDouble */
+TDouble * t_double_new (double value);
+
+/* Getter */
+gboolean t_double_get_value (TDouble *self, double *value);
+
+/* Setter */
+void t_double_set_value (TDouble *self, double value);
+  
+/* Funciones aritméticas */
+TDouble * t_double_add (TDouble *self, TDouble *other);
+TDouble * t_double_sub (TDouble *self, TDouble *other);
+TDouble * t_double_mul (TDouble *self, TDouble *other);
+TDouble * t_double_div (TDouble *self, TDouble *other);
+TDouble * t_double_uminus (TDouble *self);
+\end{lstlisting}
+
+\subsubsection{Definición del tipo \textsf{TDouble}: fichero \textsf{tdouble.c}}
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * tdouble.c
+ * Definición del tipo TDouble.
+ */
+
+#include "tdouble.h"
+
+static guint t_double_signal;
+
+/* Estructura que se declaró en tdouble.h como tipo C TDouble */
+struct _TDouble {
+  GObject parent;
+  double value;
+};
+
+/* Definición del tipo TDouble */
+/* Se lleva a cabo el registro del tipo del sistema TDouble,
+   se define la función t_double_get_type, etc.
+   y se crean algunas macros auxiliares, como T_IS_DOUBLE */
+G_DEFINE_FINAL_TYPE (TDouble, t_double, G_TYPE_OBJECT);
+
+/* Inicialización de la clase */
+static void
+t_double_class_init (TDoubleClass *class)
+{
+  t_double_signal = g_signal_new ("div-by-zero",
+			  G_TYPE_FROM_CLASS (class),
+			  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+			  0 /* Class offset. Una subclase no podría modificar el manejador de señal (manejador por defecto) */,
+			  NULL /* acumulador */,
+			  NULL /* datos del acumulador */,
+			  NULL /* C marshaller. Se usará g_closure_marshal_generic() */,
+			  G_TYPE_NONE /* Tipo de retorno del manejador */,
+			  0 /* número de parámetros */
+			  );
+}
+
+/* Inicialización del objeto */
+static void
+t_double_init (TDouble *self) {}
+
+/* Constructor de objetos */
+TDouble *
+t_double_new (double value)
+{
+  TDouble *obj;
+  
+  obj = g_object_new (T_TYPE_DOUBLE, NULL);
+  obj->value = value;
+  
+  return obj;
+}
+
+/* Getter */
+gboolean
+t_double_get_value (TDouble *self, double *value)
+{
+  g_return_val_if_fail (T_IS_DOUBLE (self), FALSE);
+  *value = self->value;
+  
+  return TRUE;
+}
+
+/* Setter */
+void
+t_double_set_value (TDouble *self, double value)
+{
+  g_return_if_fail (T_IS_DOUBLE (self));
+  self->value = value;
+}
+
+TDouble *
+t_double_add (TDouble *self, TDouble *other)
+{
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    }
+    
+    return t_double_new (self->value + value);
+}
+
+TDouble *
+t_double_sub (TDouble *self, TDouble *other)
+{
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    }
+
+    return t_double_new (self->value - value);
+}
+
+TDouble *
+t_double_mul (TDouble *self, TDouble *other)
+{
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    }
+
+    return t_double_new (self->value * value);
+}
+
+TDouble *
+t_double_div (TDouble *self, TDouble *other)
+{
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    } else if (value == 0) {
+      g_signal_emit (self, t_double_signal, 0);
+      return NULL;
+    }
+    
+    return t_double_new (self->value / value);
+}
+
+TDouble *
+t_double_aminus (TDouble *self)
+{
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+
+    return t_double_new (-self->value);
+}
+\end{lstlisting}
+
+\subsubsection{Aplicación utilizando el tipo \textsf{TDouble}: fichero \textsf{main.c}}
+\begin{lstlisting}[language=C, numbers=left]
+/*
+ * main.c
+ * Comprobación del uso de señales.
+ */
+
+#include <stdlib.h>
+#include <locale.h>
+
+#include "tdouble.h"
+
+static void
+div_by_zero_cb (TDouble *self, gpointer user_data)
+{
+  g_printerr ("\nError: División entre cero.\n\n");
+}
+
+static void
+t_print (char *op, TDouble *obj1, TDouble *obj2, TDouble *obj3)
+{
+  double v1, v2, v3;
+
+  if (! t_double_get_value (obj1, &v1)) {
+    return;
+  }
+  if (! t_double_get_value (obj2, &v2)) {
+    return;
+  }
+  if (! t_double_get_value (obj3, &v3)) {
+    return;
+  }
+
+  g_print ("%lf %s %lf = %lf\n", v1, op, v2, v3);
+}
+
+int
+main (int argc, char **argv)
+{
+  TDouble *obj1, *obj2, *obj3;
+  //double v1, v3;
+
+  setlocale (LC_CTYPE, "");
+
+  obj1 = t_double_new (10.0);
+  obj2 = t_double_new (20.0);
+
+  if ((obj3 = t_double_add (obj1, obj2)) != NULL) {
+    t_print ("+", obj1, obj2, obj3);
+    g_object_unref (obj3);
+  }
+
+  if ((obj3 = t_double_sub (obj1, obj2)) != NULL) {
+    t_print ("-", obj1, obj2, obj3);
+    g_object_unref (obj3);
+  }
+
+  if ((obj3 = t_double_mul (obj1, obj2)) != NULL) {
+    t_print ("*", obj1, obj2, obj3);
+    g_object_unref (obj3);
+  }
+ 
+  if ((obj3 = t_double_div (obj1, obj2)) != NULL) {
+    t_print ("/", obj1, obj2, obj3);
+    g_object_unref (obj3);
+  }
+
+   g_signal_connect (obj1, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
+  t_double_set_value (obj2, 0.0);
+  if ((obj3 = t_double_div (obj1, obj2)) != NULL) {
+    t_print ("/", obj1, obj2, obj3);
+    g_object_unref (obj3);
+  }
+
+  g_print ("Ok!\n");
+
+  return EXIT_SUCCESS;
+}
+\end{lstlisting}
+
+\subsubsection{Salida del ejemplo 7}
+10.000000 + 20.000000 = 30.000000\par
+10.000000 - 20.000000 = -10.000000\par
+10.000000 * 20.000000 = 200.000000\par
+10.000000 / 20.000000 = 0.500000\par
+\vspace{1ex}
+Error: División entre cero.\par
+\vspace{1ex}
+Ok!\par
 
 
 
