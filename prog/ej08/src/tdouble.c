@@ -129,7 +129,7 @@ t_double_div (TDouble *self, TDouble *other)
 }
 
 TDouble *
-t_double_aminus (TDouble *self)
+t_double_uminus (TDouble *self)
 {
     g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
 

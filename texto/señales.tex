@@ -195,70 +195,91 @@ el próximo ejemplo de aplicación que usa el tipo \textsf{TDouble}:
   suele poner un cero como tercer argumento. si quieres saber algo sobre los ``detalles'', ver
   \href{https://docs.gtk.org/gobject/concepts.html#the-detail-argument}
   {\emph{\textsf{GObject API Reference - Signal Detail}}}.
-  \item Cuando una señal tiene parámetros, estos se insertan a partir del cuarto argumento.
-  \end{itemize}
+\item Cuando una señal tiene parámetros, estos se insertan a partir del cuarto argumento.
+\end{itemize}
 
 \subsection{Ejemplo 8: señal de división por cero}
+A continuación se muestra un programa en el que se utiliza una señal que alerta de una división por cero,
+utilizando el tipo \textsf{TDouble}.
+
 \subsubsection{Declaración del tipo \textsf{TDouble}: fichero de cabecera \textsf{tdouble.h}}
 \begin{lstlisting}[language=C, numbers=left]
-/*
- * tdouble.h
- * Declaración del tipo TDouble.
- */
+  /*
+  * tdouble.h
+  * Declaración del tipo TDouble.
+  */
 
-#pragma once
+  #pragma once
 
-#include <glib-object.h>
+  #include <glib-object.h>
 
-/* Declaración del tipo TDouble */
-#define T_TYPE_DOUBLE (t_double_get_type ())
-G_DECLARE_FINAL_TYPE(TDouble, t_double, T, DOUBLE, GObject)
+  #define T_TYPE_DOUBLE (t_double_get_type ())
 
-/* Constructor de instancias de TDouble */
-TDouble * t_double_new (double value);
-
-/* Getter */
-gboolean t_double_get_value (TDouble *self, double *value);
-
-/* Setter */
-void t_double_set_value (TDouble *self, double value);
+  /* Declaración del tipo TDouble */
+  G_DECLARE_FINAL_TYPE (TDouble, t_double, T, DOUBLE, GObject)
   
-/* Funciones aritméticas */
-TDouble * t_double_add (TDouble *self, TDouble *other);
-TDouble * t_double_sub (TDouble *self, TDouble *other);
-TDouble * t_double_mul (TDouble *self, TDouble *other);
-TDouble * t_double_div (TDouble *self, TDouble *other);
-TDouble * t_double_uminus (TDouble *self);
+  /* Constructor de instancias de TDouble */
+  TDouble * t_double_new (double value);
+
+  /* Getter */
+  gboolean t_double_get_value (TDouble *self, double *value);
+
+  /* Setter */
+  void t_double_set_value (TDouble *self, double value);
+  
+  /* Funciones aritméticas */
+  TDouble * t_double_add (TDouble *self, TDouble *other);
+  TDouble * t_double_sub (TDouble *self, TDouble *other);
+  TDouble * t_double_mul (TDouble *self, TDouble *other);
+  TDouble * t_double_div (TDouble *self, TDouble *other);
+  TDouble * t_double_uminus (TDouble *self);
 \end{lstlisting}
+
+\subsubsection{Comentario}
+\begin{itemize}
+\item Línea 6:\par
+  Se utiliza \texttt{\#pragma once}, que es una directiva del preprocesador que aun no siendo estándar,
+  la suportan muchos compiladores. Su función es la misma que la protección de macros en los archivos
+  de cabecera, pero sin tener que definir un identificador como \texttt{TDOUBLE\_H}, que podría
+  ocasionar problemas si en otro módulo se define otro con el mismo nombre.
+
+  Así, \texttt{\#pragma once} al principio del fichero de cabecera equivale, en este caso, a
+  \begin{lstlisting}{language=C, numbers=none}
+    #ifndef T_DOUBLE_H
+    #define T_DOUBLE_H
+    ...
+    #endif /* T_DOUBLE_H */
+  \end{lstlisting}
+\end{itemize}
 
 \subsubsection{Definición del tipo \textsf{TDouble}: fichero \textsf{tdouble.c}}
 \begin{lstlisting}[language=C, numbers=left]
-/*
- * tdouble.c
- * Definición del tipo TDouble.
- */
+  /*
+  * tdouble.c
+  * Definición del tipo TDouble.
+  */
 
-#include "tdouble.h"
+  #include "tdouble.h"
 
-static guint t_double_signal;
+  static guint t_double_signal;
 
-/* Estructura que se declaró en tdouble.h como tipo C TDouble */
-struct _TDouble {
-  GObject parent;
-  double value;
-};
+  /* Estructura que se declaró en tdouble.h como tipo C TDouble */
+  struct _TDouble {
+    GObject parent;
+    double value;
+  };
 
-/* Definición del tipo TDouble */
-/* Se lleva a cabo el registro del tipo del sistema TDouble,
-   se define la función t_double_get_type, etc.
-   y se crean algunas macros auxiliares, como T_IS_DOUBLE */
-G_DEFINE_FINAL_TYPE (TDouble, t_double, G_TYPE_OBJECT);
+  /* Definición del tipo TDouble */
+  /* Se lleva a cabo el registro del tipo del sistema TDouble,
+  se define la función t_double_get_type, etc.
+  y se crean algunas macros auxiliares, como T_IS_DOUBLE */
+  G_DEFINE_FINAL_TYPE (TDouble, t_double, G_TYPE_OBJECT);
 
-/* Inicialización de la clase */
-static void
-t_double_class_init (TDoubleClass *class)
-{
-  t_double_signal = g_signal_new ("div-by-zero",
+  /* Inicialización de la clase */
+  static void
+  t_double_class_init (TDoubleClass *class)
+  {
+    t_double_signal = g_signal_new ("div-by-zero",
 			  G_TYPE_FROM_CLASS (class),
 			  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
 			  0 /* Class offset. Una subclase no podría modificar el manejador de señal (manejador por defecto) */,
@@ -307,70 +328,88 @@ t_double_set_value (TDouble *self, double value)
 TDouble *
 t_double_add (TDouble *self, TDouble *other)
 {
-    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-    double value;
-    if (! t_double_get_value (other, &value)) {
-      return NULL;
-    }
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+  double value;
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  }
     
-    return t_double_new (self->value + value);
+  return t_double_new (self->value + value);
 }
 
 TDouble *
 t_double_sub (TDouble *self, TDouble *other)
 {
-    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-    double value;
-    if (! t_double_get_value (other, &value)) {
-      return NULL;
-    }
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+  double value;
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  }
 
-    return t_double_new (self->value - value);
+  return t_double_new (self->value - value);
 }
 
 TDouble *
 t_double_mul (TDouble *self, TDouble *other)
 {
-    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-    double value;
-    if (! t_double_get_value (other, &value)) {
-      return NULL;
-    }
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+  double value;
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  }
 
-    return t_double_new (self->value * value);
+  return t_double_new (self->value * value);
 }
 
 TDouble *
 t_double_div (TDouble *self, TDouble *other)
 {
-    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-    double value;
-    if (! t_double_get_value (other, &value)) {
-      return NULL;
-    } else if (value == 0) {
-      g_signal_emit (self, t_double_signal, 0);
-      return NULL;
-    }
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+  double value;
+  if (! t_double_get_value (other, &value)) {
+    return NULL;
+  } else if (value == 0) {
+    g_signal_emit (self, t_double_signal, 0);
+    return NULL;
+  }
     
-    return t_double_new (self->value / value);
+  return t_double_new (self->value / value);
 }
 
 TDouble *
 t_double_aminus (TDouble *self)
 {
-    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
 
-    return t_double_new (-self->value);
+  return t_double_new (-self->value);
 }
 \end{lstlisting}
+
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Línea 8:\par
+  Se define la variable estática \texttt{guint t\_double\_signal}, que almacenerá el identificador de la
+  señal que se definirá en la función de inicialización de la clase en la línea 26.
+\item Líneas 22--36:\par
+  Se define la función de inicialización de la clase \textsf{TDoubleClass}. Aquí se define la señal
+  \texttt{"div-by-zero''}.
+\item Líneas 114--129:\par
+  Se define la función \texttt{t\_double\_div}, que actúa sobre dos instancias \textsf{TDouble},
+  creando una nueva instancia, cuyo valor es el cociente de los valores de ambos objetos.
+  En la definición se comprueba si el valor del segundo parámetro es cero, en cuyo caso se
+  emite la señal \texttt{"div-by-zero"} asociada al primer argumento de la función, que se corresponde
+  con el parámetro \texttt{self}. Ahora bien, esta señal necesita de un manejador que
+  realice alguna función cuando se dé esta circunstancia. En este programa, el manejador se
+  definirá en el fichero \textsf{main.c}.
+\end{itemize}
 
 \subsubsection{Aplicación utilizando el tipo \textsf{TDouble}: fichero \textsf{main.c}}
 \begin{lstlisting}[language=C, numbers=left]
@@ -387,7 +426,7 @@ t_double_aminus (TDouble *self)
 static void
 div_by_zero_cb (TDouble *self, gpointer user_data)
 {
-  g_printerr ("\nError: División entre cero.\n\n");
+  g_printerr ("\nError: División por cero.\n\n");
 }
 
 static void
@@ -408,11 +447,26 @@ t_print (char *op, TDouble *obj1, TDouble *obj2, TDouble *obj3)
   g_print ("%lf %s %lf = %lf\n", v1, op, v2, v3);
 }
 
+static void
+uminus_print (TDouble *obj1, TDouble *obj3)
+{
+  double v1, v3;
+  if (! t_double_get_value (obj1, &v1)) {
+    return;
+  }
+  if (!t_double_get_value (obj3, &v3)) {
+    return;
+  }
+  
+  g_print ("- (%lf) = %lf\n", v1, v3); 
+}
+
+
 int
 main (int argc, char **argv)
 {
   TDouble *obj1, *obj2, *obj3;
-  //double v1, v3;
+  double v1, v3;
 
   setlocale (LC_CTYPE, "");
 
@@ -439,11 +493,15 @@ main (int argc, char **argv)
     g_object_unref (obj3);
   }
 
-   g_signal_connect (obj1, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
+  g_signal_connect (obj1, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
   t_double_set_value (obj2, 0.0);
   if ((obj3 = t_double_div (obj1, obj2)) != NULL) {
     t_print ("/", obj1, obj2, obj3);
     g_object_unref (obj3);
+  }
+
+  if ((obj3 = t_double_uminus (obj1)) != NULL) {
+    uminus_print (obj1, obj3);
   }
 
   g_print ("Ok!\n");
@@ -452,18 +510,60 @@ main (int argc, char **argv)
 }
 \end{lstlisting}
 
-\subsubsection{Salida del ejemplo 7}
+\subsubsection{Salida del ejemplo 8}
 10.000000 + 20.000000 = 30.000000\par
 10.000000 - 20.000000 = -10.000000\par
 10.000000 * 20.000000 = 200.000000\par
 10.000000 / 20.000000 = 0.500000\par
 \vspace{1ex}
-Error: División entre cero.\par
+Error: División por cero.\par
 \vspace{1ex}
+- (10.000000) = -10.000000\par
 Ok!\par
 
+\subsubsection{Comentarios}
+\begin{itemize}
+\item Líneas 11--15:\par
+  Se define el manejador de la señal \texttt{"div-by-zero"}, que imprimirá en la salida de error un
+  mensaje apropiado.
+\item Líneas 17--33:\par
+  Función auxiliar que imprime la operación que se realizará con los valores de dos objetos, junto a
+  su resultado.
+\item Líneas 35--47:\par
+  Función auxiliar que imprime el cambio de signo del valor de un objeto, junto a su resultado.
+\end{itemize}
+
+\subsection{Manejador de señal por defecto}
+Parece extraño definir el manejador (en este caso, el mensaje de error de división por cero) en
+el fichero principal de la aplicación (\textsf{main.c}). De hecho, el error se detecta en \textsf{tdouble.c},
+por lo que ese es el lugar donde se debería haber definido. El sistema \textsf{GObject} proporciona
+un manejador de señal por defecto en el propio objeto. Este, se suele denominar ``manejador por defecto''
+(\emph{"default handler"} o \emph{"object method handler"}), y se puede definir mediante la función \texttt{g\_signal\_new\_class\_handler}.
+
+\begin{lstlisting}[language=C, numbers=none]
+guint
+g_signal_new_class_handler (const gchar *signal_name,
+                            GType itype,
+                            GSignalFlags signal_flags,
+                            GCallback class_handler, /*default signal handler */
+                            GSignalAccumulator accumulator,
+                            gpointer accu_data,
+                            GSignalCMarshaller c_marshaller,
+                            GType return_type,
+                            guint n_params,
+                            ...);
+\end{lstlisting}
+
+Esta función se diferencia de \texttt{g\_signal\_new} en el cuarto parámetro.
+La función \texttt{g\_signal\_new} define un manejador de función con el desplazamiento (\emph{offset}) del
+puntero a la función en la estructura de clase. Si un objeto es derivable, tiene su propia área de clase, por
+lo que se puede fijar un manejador por defecto con \texttt{g\_signal\_new}. Pero un tipo final no dispone de
+una área de clase propia, por lo que es imposible utilizar \texttt{g\_signal\_new}. Esta es la razón por la que
+se usa \texttt{g\_signal\_new\_class\_handler}.
 
 
+                          
+                            
 
   
 %%% Local Variables:

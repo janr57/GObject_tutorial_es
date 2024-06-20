@@ -7,9 +7,10 @@
 
 #include <glib-object.h>
 
-/* Declaración del tipo TDouble */
 #define T_TYPE_DOUBLE (t_double_get_type ())
-G_DECLARE_FINAL_TYPE(TDouble, t_double, T, DOUBLE, GObject)
+
+/* Declaración del tipo TDouble */
+G_DECLARE_FINAL_TYPE (TDouble, t_double, T, DOUBLE, GObject)
 
 /* Constructor de instancias de TDouble */
 TDouble * t_double_new (double value);
