@@ -534,11 +534,11 @@ Ok!\par
 \end{itemize}
 
 \subsection{Manejador de señal por defecto}
-Parece extraño definir el manejador (en este caso, el mensaje de error de división por cero) en
+Parece extraño definir el manejador (que en este caso, produce el mensaje de error de división por cero) en
 el fichero principal de la aplicación (\textsf{main.c}). De hecho, el error se detecta en \textsf{tdouble.c},
 por lo que ese es el lugar donde se debería haber definido. El sistema \textsf{GObject} proporciona
 un manejador de señal por defecto en el propio objeto. Este, se suele denominar ``manejador por defecto''
-(\emph{"default handler"} o \emph{"object method handler"}), y se puede definir mediante la función \texttt{g\_signal\_new\_class\_handler}.
+(\emph{"default handler"} u \emph{"object method handler"}), y se puede definir mediante la función \texttt{g\_signal\_new\_class\_handler}.
 
 \begin{lstlisting}[language=C, numbers=none]
 guint
@@ -561,6 +561,12 @@ lo que se puede fijar un manejador por defecto con \texttt{g\_signal\_new}. Pero
 una área de clase propia, por lo que es imposible utilizar \texttt{g\_signal\_new}. Esta es la razón por la que
 se usa \texttt{g\_signal\_new\_class\_handler}.
 
+El fichero \textsf{tdouble.c} cambia como se muestra abajo. Se añade la función
+\texttt{div\_by\_zero\_default\_cb} y, además, \texttt{g\_signal\_new\_class\_handler} reemplaza a
+\texttt{g\_signal\_new}. El manejador de señal por defecto no utiliza parámetros \textsf{user\_data}.
+Un parámetro \textsf{user\_data} se añade a la familia de funciones \texttt{g\_signal\_connect} cuando
+un usuario conecta su propio manejador de señal a la señal. El manejador de señal por defecto se gestiona
+por la instancia, no por el usuario Por tanto, no se suministra ningún datos de usuario como argumento.
 
                           
                             
