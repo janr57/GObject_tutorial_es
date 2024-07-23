@@ -12,8 +12,8 @@ Las señales son un medio de comunicación entre objetos. Se emiten cuando ocurr
 Pasos para programar una señal:
 \begin{enumerate}
   \tightlist
-\item Registro de la señal. Una señal pertenece a un objeto, por lo que el registro se lleva a cabo en la
-  función de inicialización de la clase del objeto.
+\item Registro de la señal. Una señal pertenece a un objeto, por lo que el registro se lleva a cabo
+  en la función de inicialización de la clase del objeto.
 \item Escritura de un manejador de señal (\emph{signal handler}). Un manejador es una función que
   se invoca cuando se emite cierta señal.
 \item Conexión entre la señal y el manejador. Los manejadores se conectan a las señales mediante
@@ -21,13 +21,14 @@ Pasos para programar una señal:
   \item Emisión de la señal.
   \end{enumerate}
 
-  Los pasos uno y cuatro se realizan sobre el objeto al que pertenece la señal; el tercero se lleva a cabo
-  generalmente fuera del objeto.
+  Los pasos uno y cuatro se realizan sobre el objeto al que pertenece la señal; el tercero se lleva
+  a cabo generalmente fuera del objeto.
 
-  El uso de las señales es complicado y llevaría mucho tiempo explicar todas sus características. El contenido
-  de esta sección se limita al mínimo necesario para escribir una señal sencilla, y por lo tanto no es del todo
-  preciso. Si se necesitara más  información, se podría consultar la guía de referencia de la API de
-  \textsf{GObject}. Hay cuatro partes de la guía que describen las señales:
+  El uso de las señales es complicado y llevaría mucho tiempo explicar todas sus características.
+  El contenido de esta sección se limita al mínimo necesario para escribir una señal sencilla, y
+  por lo tanto no es del todo preciso. Si se necesitara más  información, se podría consultar la
+  guía de referencia de la API de \textsf{GObject}.
+  Hay cuatro partes de la guía que describen las señales:
   \begin{itemize}
     \tightlist
   \item \href{https://docs.gtk.org/gobject/concepts.html#signals}
@@ -41,14 +42,13 @@ Pasos para programar una señal:
 \end{itemize}
 
 \subsection{Registro de señales}
-Aquí seguiremos utilizando los objetos \textsf{TDouble}. En particular, crearemos una señal que se emitirá
-cuando ocurra una división por cero (\emph{division-by-zero}).
+Aquí seguiremos utilizando los objetos \textsf{TDouble}. En particular, crearemos una señal que se
+emitirá cuando ocurra una división por cero (\emph{division-by-zero}).
 Primero, asignaremos un nombre a la señal, que podrá constar de letras, dígitos, guiones (-) y subrayados (\_).
 El primer carácter del nombre debe ser una letra. Elegiremos pues, la cadena \texttt{"div-by-zero"}
 como nombre de nuestra señal.
 
-Hay cuatro funciones que nos permiten registrar una señal. Aquí usaremos \texttt{g\_signal\_new} para la
-nuestra. Sus parámetros se muestran a continuación:
+Hay cuatro funciones que nos permiten registrar una señal. Aquí usaremos \texttt{g\_signal\_new} para la nuestra. Sus parámetros se muestran a continuación:
 \begin{lstlisting}[language=C, numbers=none]
 guint
 g_signal_new (const gchar *signal_name,
@@ -64,9 +64,8 @@ g_signal_new (const gchar *signal_name,
 \end{lstlisting}
 
 Se necesita mucho tiempo para explicar cada parámetro. Por ahora, se mostrará la función
-\texttt{g\_signal\_new} tal y como se utilizará en nuestro fichero \textsf{tdouble.c}. Los comentarios
-en el código fuente se mantendrán en inglés, para que la traducción que no desvirtúe el
-significado correcto:
+\texttt{g\_signal\_new} tal y como se utilizará en nuestro fichero \textsf{tdouble.c}.
+Los comentarios en el código fuente se mantendrán en inglés, para que la traducción que no desvirtúe el significado correcto:
 \begin{lstlisting}[language=C, numbers=none]
 t_double_signal =
 g_signal_new ("div-by-zero",
@@ -83,29 +82,24 @@ g_signal_new ("div-by-zero",
 
 \begin{itemize}
   \tightlist
-\item \texttt{t\_double\_signal} es una variable estática de tipo \texttt{guint}, que es equivalente a
-  \texttt{unsigned int}. La función \texttt{g\_signal\_new} retorna este tipo a la variable que almacena la
-  señal. 
+\item \texttt{t\_double\_signal} es una variable estática de tipo \texttt{guint}, que es equivalente a \texttt{unsigned int}. La función \texttt{g\_signal\_new} retorna este tipo a la variable que almacena la señal. 
 \item El segundo parámetro es el tipo \texttt{GType} del objeto al que pertenece la señal.
-  La macro \texttt{G\_TYPE\_FROM\_CLASS (class)} retorna el tipo que corresponde a la clase (\texttt{class},
-  que es un puntero a la clase del objeto \footnotemark{}).
-  \footnotetext{Recuerda que la función de inicialización de una clase (\texttt{g\_object\_class\_init})
-    tiene un parámetro que, en nuestro ejemplo, se define \texttt{TDoubleClass *class}
-    (ver, por ejemplo,  fichero \textsf{ejemplo05.c}, líneas 19--22.)}
-\item El tercer parámetro es una bandera (\emph{flag}) de la señal. Se necesitan muchas páginas para
-  explicar este parámetro. Así que por ahora, lo dejaremos tal y como está. Tal y como está este argumento
-  en el ejemplo anterior se puede utilizar en muchas situaciones. En el enlace:
+  La macro \texttt{G\_TYPE\_FROM\_CLASS (class)} retorna el tipo que corresponde a la clase (\texttt{class}, que es un puntero a la clase del objeto \footnotemark{}).
+  \footnotetext{Recuerda que la función de inicialización de una clase (\texttt{g\_object\_class\_init}) tiene un parámetro que, en nuestro ejemplo, se define \texttt{TDoubleClass *class} (ver, por ejemplo,  fichero \textsf{ejemplo05.c}, líneas 19--22.)}
+\item El tercer parámetro es una bandera (\emph{flag}) de la señal. Se necesitan muchas páginas
+  para explicar este parámetro. Así que por ahora, lo dejaremos tal y como está. Tal y como está
+  este argumento en el ejemplo anterior se puede utilizar en muchas situaciones. En el enlace:
   \href{https://docs.gtk.org/gobject/flags.SignalFlags.html}
   {\emph{\textsf{GObject API Reference  - SignalFlags}}},
   se pueden consultar los \textsf{SignalFlags}.
-\item El octavo parámetro es el tipo de sistema (\textsf{GType}) de retorno del manejador, que en este
-  caso es \texttt{G\_TYPE\_NONE}, que significa que el manejador no retorna ningún valor cuando
-  se ejecuta.
+\item El octavo parámetro es el tipo de sistema (\textsf{GType}) de retorno del manejador, que en
+  este caso es \texttt{G\_TYPE\_NONE}, que significa que el manejador no retorna ningún valor
+  cuando se ejecuta.
 \item El noveno parámetro (\texttt{n\_params}) es el número de parámetros de la señal. La que
   estamos considerando aquí (\texttt{"div-by-zero"}) no tiene parámetros, por tanto ponemos un cero.
   Esto significa que no se insertan parámetros extra después de este.
-\item Como se afirmó anteriormente, esta función se debe poner en la función de inicialización de la
-  clase (\texttt{t\_double\_class\_init}).
+\item Como se afirmó anteriormente, esta función se debe poner en la función de inicialización de
+  la clase (\texttt{t\_double\_class\_init}).
 \item Se pueden utilizar otras funciones, como \texttt{g\_signal\_newv}. Una descripción de esta
   última se puede ver en
   \href{https://docs.gtk.org/gobject/func.signal_newv.html}
@@ -113,8 +107,8 @@ g_signal_new ("div-by-zero",
 \end{itemize}
 
 \subsection{Manejador de señal}
-Un manejador de señal es una función que se ejecuta cuando se emite una cierta señal. Los manejadores
-tienen dos parámetros:
+Un manejador de señal es una función que se ejecuta cuando se emite una cierta señal.
+Los manejadores tienen dos parámetros:
 \begin{itemize}
   \tightlist
 \item La instancia a la que pertenece la señal.
@@ -126,19 +120,18 @@ Para nuestro caso, el manejador sería algo así:
 \begin{lstlisting}[language=C, numbers=none]
   void div_by_zero_cb (TDouble *self, gpointer user_data) { ... ... ...}
 \end{lstlisting}
-El primer argumento \texttt{self} es la instancia sobre la que se emite la señal. El segundo parámetro se
-puede obviar:
+El primer argumento \texttt{self} es la instancia sobre la que se emite la señal. El segundo parámetro se puede obviar:
 \begin{lstlisting}[language=C, numbers=none]
   void div_by_zero_cb (TDouble *self) { ... ... ...}
 \end{lstlisting}
 
-Si una señal tiene parámetros, estos se insertan entre la instancia y los datos de usuario. Por ejemplo, el
-manejador de la señal \textsf{"window-added"} en la instancia \textsf{GtkApplication} es:
+Si una señal tiene parámetros, estos se insertan entre la instancia y los datos de usuario.
+Por ejemplo, el manejador de la señal \textsf{"window-added"} en la instancia  \textsf{GtkApplication} es:
 \begin{lstlisting}[language=C, numbers=none]
   void window_added (GtkApplication* self, GtkWindow* window, gpointer user_data);
 \end{lstlisting}
-El segundo argumento \texttt{window} es el parámetro de la señal. La señal \textsf{"window-added"} se
-emite cuando se añade una nueva ventana a la aplicación.
+El segundo argumento \texttt{window} es el parámetro de la señal. La señal \textsf{"window-added"}
+se emite cuando se añade una nueva ventana a la aplicación.
 El parámetro \texttt{window} es un puntero a la ventana añadida. Ver la referencia a la API de GTK
 para más información:
   \href{https://docs.gtk.org/gtk4/signal.Application.window-added.html}
@@ -188,11 +181,11 @@ el próximo ejemplo de aplicación que usa el tipo \textsf{TDouble}:
 \begin{itemize}
   \tightlist
 \item El primer parámetro es la instancia que emite la señal.
-\item El segundo parámetro es el identificador de la señal (\textsf{signal id}), que es el valor que
-  retorna la función \texttt{g\_signal\_new}.
-\item El tercer parámetro es un ``detalle'' (\textsf{detail}). \textsf{"div-by-zero"} no tiene ningún ``detalle'',
-  por lo que el argumento es cero. Los ``detalles'' no se explican en esta sección, aunque generalmente se
-  suele poner un cero como tercer argumento. si quieres saber algo sobre los ``detalles'', ver
+\item El segundo parámetro es el identificador de la señal (\textsf{signal id}), que es el valor
+  que retorna la función \texttt{g\_signal\_new}.
+\item El tercer parámetro es un ``detalle'' (\textsf{detail}). \textsf{"div-by-zero"} no tiene
+  ningún ``detalle'', por lo que el argumento es cero. Los ``detalles'' no se explican en esta
+  sección, aunque generalmente se suele poner un cero como tercer argumento. si quieres saber algo sobre los ``detalles'', ver
   \href{https://docs.gtk.org/gobject/concepts.html#the-detail-argument}
   {\emph{\textsf{GObject API Reference - Signal Detail}}}.
 \item Cuando una señal tiene parámetros, estos se insertan a partir del cuarto argumento.
@@ -238,10 +231,10 @@ utilizando el tipo \textsf{TDouble}.
 \subsubsection{Comentario}
 \begin{itemize}
 \item Línea 6:\par
-  Se utiliza \texttt{\#pragma once}, que es una directiva del preprocesador que aun no siendo estándar,
-  la suportan muchos compiladores. Su función es la misma que la protección de macros en los archivos
-  de cabecera, pero sin tener que definir un identificador como \texttt{TDOUBLE\_H}, que podría
-  ocasionar problemas si en otro módulo se define otro con el mismo nombre.
+  Se utiliza \texttt{\#pragma once}, que es una directiva del preprocesador que aun no siendo
+  estándar, la suportan muchos compiladores. Su función es la misma que la protección de macros en
+  los archivos de cabecera, pero sin tener que definir un identificador como \texttt{TDOUBLE\_H},
+  que podría ocasionar problemas si en otro módulo se define otro con el mismo nombre.
 
   Así, \texttt{\#pragma once} al principio del fichero de cabecera equivale, en este caso, a
   \begin{lstlisting}{language=C, numbers=none}
@@ -399,14 +392,24 @@ t_double_aminus (TDouble *self)
   Se define la variable estática \texttt{guint t\_double\_signal}, que almacenerá el identificador de la
   señal que se definirá en la función de inicialización de la clase en la línea 26.
 \item Líneas 22--36:\par
-  Se define la función de inicialización de la clase \textsf{TDoubleClass}. Aquí se define la señal
-  \texttt{"div-by-zero''}.
+  Se define la función de inicialización de la clase \textsf{TDoubleClass}.
+  
+  En la línea 26 se define la cadena que identifica la señal, \texttt{"div-by-zero''}.
+  Esta cadena debe estar formada por caracteres alfanuméricos, excepto el primero que debe ser
+  alfabético. Además, estos se pueden separar por guiones o subrayados, pero sin mezclarlos; en
+  todo caso, se prefieren guiones.
+  
+  En la línea 29 se utiliza un valor cero para el desplazamiento de clase (\emph{class offset}).
+  Así, se declara que  las posibles subclases de \textsf{TDouble} no podrían sobreescribir
+  el manejador de clase (\temph{class handler}) en el método \textsf{class\_init}) haciendo
+  \texttt{TDouble->signal\_handler = my\_signal\_handler}; en lugar de ello deberán usar
+  \texttt{g\_signal\_override\_class\_handler()}.
 \item Líneas 114--129:\par
   Se define la función \texttt{t\_double\_div}, que actúa sobre dos instancias \textsf{TDouble},
   creando una nueva instancia, cuyo valor es el cociente de los valores de ambos objetos.
   En la definición se comprueba si el valor del segundo parámetro es cero, en cuyo caso se
-  emite la señal \texttt{"div-by-zero"} asociada al primer argumento de la función, que se corresponde
-  con el parámetro \texttt{self}. Ahora bien, esta señal necesita de un manejador que
+  emite la señal \texttt{"div-by-zero"} asociada al primer argumento de la función, que se
+  corresponde con el parámetro \texttt{self}. Ahora bien, esta señal necesita de un manejador que
   realice alguna función cuando se dé esta circunstancia. En este programa, el manejador se
   definirá en el fichero \textsf{main.c}.
 \end{itemize}
@@ -527,15 +530,15 @@ Ok!\par
   Se define el manejador de la señal \texttt{"div-by-zero"}, que imprimirá en la salida de error un
   mensaje apropiado.
 \item Líneas 17--33:\par
-  Función auxiliar que imprime la operación que se realizará con los valores de dos objetos, junto a
-  su resultado.
+  Función auxiliar que imprime la operación que se realizará con los valores de dos objetos, junto
+  a su resultado.
 \item Líneas 35--47:\par
   Función auxiliar que imprime el cambio de signo del valor de un objeto, junto a su resultado.
 \end{itemize}
 
 \subsection{Manejador de señal por defecto}
-Parece extraño definir el manejador (que en este caso, produce el mensaje de error de división por cero) en
-el fichero principal de la aplicación (\textsf{main.c}). De hecho, el error se detecta en \textsf{tdouble.c},
+Parece extraño definir el manejador (que en este caso, produce el mensaje de error de división por
+cero) en el fichero principal de la aplicación (\textsf{main.c}). De hecho, el error se detecta en \textsf{tdouble.c},
 por lo que ese es el lugar donde se debería haber definido. El sistema \textsf{GObject} proporciona
 un manejador de señal por defecto en el propio objeto. Este, se suele denominar ``manejador por defecto''
 (\emph{"default handler"} u \emph{"object method handler"}), y se puede definir mediante la función \texttt{g\_signal\_new\_class\_handler}.
@@ -555,18 +558,12 @@ g_signal_new_class_handler (const gchar *signal_name,
 \end{lstlisting}
 
 Esta función se diferencia de \texttt{g\_signal\_new} en el cuarto parámetro.
-La función \texttt{g\_signal\_new} define un manejador de función con el desplazamiento (\emph{offset}) del
-puntero a la función en la estructura de clase. Si un objeto es derivable, tiene su propia área de clase, por
-lo que se puede fijar un manejador por defecto con \texttt{g\_signal\_new}. Pero un tipo final no dispone de
-una área de clase propia, por lo que es imposible utilizar \texttt{g\_signal\_new}. Esta es la razón por la que
-se usa \texttt{g\_signal\_new\_class\_handler}.
+La función \texttt{g\_signal\_new} define un manejador de función con el desplazamiento (\emph{offset}) del puntero a la función en la estructura de clase. Si un objeto es derivable, tiene su propia área de clase, por lo que se puede fijar un manejador por defecto con \texttt{g\_signal\_new}. Pero un tipo final no dispone de una área de clase propia, por lo que es imposible utilizar \texttt{g\_signal\_new}. Esta es la razón por la que se usa \texttt{g\_signal\_new\_class\_handler}.
 
 El fichero \textsf{tdouble.c} cambia como se muestra abajo. Se añade la función
 \texttt{div\_by\_zero\_default\_cb} y, además, \texttt{g\_signal\_new\_class\_handler} reemplaza a
 \texttt{g\_signal\_new}. El manejador de señal por defecto no utiliza parámetros \textsf{user\_data}.
-Un parámetro \textsf{user\_data} se añade a la familia de funciones \texttt{g\_signal\_connect} cuando
-un usuario conecta su propio manejador de señal a la señal. El manejador de señal por defecto se gestiona
-por la instancia, no por el usuario Por tanto, no se suministra ningún datos de usuario como argumento.
+Un parámetro \textsf{user\_data} se añade a la familia de funciones \texttt{g\_signal\_connect} cuando un usuario conecta su propio manejador de señal a la señal. El manejador de señal por defecto se gestiona por la instancia, no por el usuario Por tanto, no se suministra ningún datos de usuario como argumento.
 
                           
                             
