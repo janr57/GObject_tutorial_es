@@ -401,7 +401,7 @@ t_double_aminus (TDouble *self)
   
   En la línea 29 se utiliza un valor cero para el desplazamiento de clase (\emph{class offset}).
   Así, se declara que  las posibles subclases de \textsf{TDouble} no podrían sobreescribir
-  el manejador de clase (\temph{class handler}) en el método \textsf{class\_init}) haciendo
+  el manejador de clase (\textsf{class handler}) en el método \textsf{class\_init}) haciendo
   \texttt{TDouble->signal\_handler = my\_signal\_handler}; en lugar de ello deberán usar
   \texttt{g\_signal\_override\_class\_handler()}.
 \item Líneas 114--129:\par
