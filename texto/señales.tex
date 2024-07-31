@@ -580,15 +580,19 @@ A continuación se muestra un programa en el que se utiliza una señal que alert
 
 \subsection{Ejemplo 9: señal de división por cero en el manejador por defecto}
 A continuación se muestra el programa anterior, utilizando el manejador por defecto.
+La diferencia con respecto al código del ejemplo 8 es mínima, pero se ofrece el listado
+completo (y el programa en la sección correspondiente) para mayor claridad.
+
+Los comentarios se centrarán en los cambios con respecto al ejemplo 8.
 
 
 \subsubsection{Declaración del tipo \textsf{TDouble}: fichero de cabecera \textsf{tdouble.h}}
 
 \begin{lstlisting}[language=C, numbers=left]
 /*
-* tdouble.h
-* Declaración del tipo TDouble.
-*/
+ * tdouble.h
+ * Declaración del tipo TDouble.
+ */
 
 #pragma once
 
@@ -598,7 +602,7 @@ A continuación se muestra el programa anterior, utilizando el manejador por def
 
 /* Declaración del tipo TDouble */
 G_DECLARE_FINAL_TYPE (TDouble, t_double, T, DOUBLE, GObject)
-  
+
 /* Constructor de instancias de TDouble */
 TDouble * t_double_new (double value);
 
@@ -637,41 +641,49 @@ TDouble * t_double_uminus (TDouble *self);
 
 \subsubsection{Definición del tipo \textsf{TDouble}: fichero \textsf{tdouble.c}}
 \begin{lstlisting}[language=C, numbers=left]
-  /*
-  * tdouble.c
-  * Definición del tipo TDouble.
-  */
+/*
+ * tdouble.c
+ * Definición del tipo TDouble.
+ */
 
-  #include "tdouble.h"
+#include "tdouble.h"
 
-  static guint t_double_signal;
+static guint t_double_signal;
 
-  /* Estructura que se declaró en tdouble.h como tipo C TDouble */
-  struct _TDouble {
-    GObject parent;
-    double value;
-  };
+static void
+div_by_zero_default_cb (TDouble *self) {
+  g_printerr ("\nError: division by zero.\n\n");
+}
 
-  /* Definición del tipo TDouble */
-  /* Se lleva a cabo el registro del tipo del sistema TDouble,
-  se define la función t_double_get_type, etc.
-  y se crean algunas macros auxiliares, como T_IS_DOUBLE */
-  G_DEFINE_FINAL_TYPE (TDouble, t_double, G_TYPE_OBJECT);
 
-  /* Inicialización de la clase */
-  static void
-  t_double_class_init (TDoubleClass *class)
-  {
-    t_double_signal = g_signal_new ("div-by-zero",
-			  G_TYPE_FROM_CLASS (class),
-			  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-			  0 /* Class offset. Una subclase no podría modificar el manejador de señal (manejador por defecto) */,
-			  NULL /* acumulador */,
-			  NULL /* datos del acumulador */,
-			  NULL /* C marshaller. Se usará g_closure_marshal_generic() */,
-			  G_TYPE_NONE /* Tipo de retorno del manejador */,
-			  0 /* número de parámetros */
-			  );
+/* Estructura que se declaró en tdouble.h como tipo C TDouble */
+struct _TDouble {
+  GObject parent;
+  double value;
+};
+
+/* Definición del tipo TDouble */
+/* Se lleva a cabo el registro del tipo del sistema TDouble,
+   se define la función t_double_get_type, etc.
+   y se crean algunas macros auxiliares, como T_IS_DOUBLE */
+G_DEFINE_FINAL_TYPE (TDouble, t_double, G_TYPE_OBJECT);
+
+/* Inicialización de la clase */
+static void
+t_double_class_init (TDoubleClass *class)
+{
+  t_double_signal =
+    g_signal_new_class_handler ("div-by-zero",
+				G_TYPE_FROM_CLASS (class),
+				G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE |
+				G_SIGNAL_NO_HOOKS,
+				G_CALLBACK (div_by_zero_default_cb),
+				NULL /* accumulator */,
+				NULL /* accumulator data */,
+				NULL /* C marshaller */,
+				G_TYPE_NONE /* return_type */,
+				0     /* n_params */
+				);
 }
 
 /* Inicialización del objeto */
@@ -711,68 +723,69 @@ t_double_set_value (TDouble *self, double value)
 TDouble *
 t_double_add (TDouble *self, TDouble *other)
 {
-  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-  double value;
-  if (! t_double_get_value (other, &value)) {
-    return NULL;
-  }
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    }
     
-  return t_double_new (self->value + value);
+    return t_double_new (self->value + value);
 }
 
 TDouble *
 t_double_sub (TDouble *self, TDouble *other)
 {
-  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-  double value;
-  if (! t_double_get_value (other, &value)) {
-    return NULL;
-  }
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    }
 
-  return t_double_new (self->value - value);
+    return t_double_new (self->value - value);
 }
 
 TDouble *
 t_double_mul (TDouble *self, TDouble *other)
 {
-  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-  double value;
-  if (! t_double_get_value (other, &value)) {
-    return NULL;
-  }
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    }
 
-  return t_double_new (self->value * value);
+    return t_double_new (self->value * value);
 }
 
 TDouble *
 t_double_div (TDouble *self, TDouble *other)
 {
-  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
-  g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
-  // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
-  double value;
-  if (! t_double_get_value (other, &value)) {
-    return NULL;
-  } else if (value == 0) {
-    g_signal_emit (self, t_double_signal, 0);
-    return NULL;
-  }
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (other), NULL);
+    // El valor del parámetro 'other' se debe obtener mediante el método 'getter'
+    double value;
+    if (! t_double_get_value (other, &value)) {
+      return NULL;
+    } else if (value == 0) {
+      g_print("ERROR DETECTADO\n");
+      g_signal_emit (self, t_double_signal, 0);
+      return NULL;
+    }
     
-  return t_double_new (self->value / value);
+    return t_double_new (self->value / value);
 }
 
 TDouble *
-t_double_aminus (TDouble *self)
+t_double_uminus (TDouble *self)
 {
-  g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
+    g_return_val_if_fail (T_IS_DOUBLE (self), NULL);
 
-  return t_double_new (-self->value);
+    return t_double_new (-self->value);
 }
 \end{lstlisting}
 
@@ -862,7 +875,6 @@ int
 main (int argc, char **argv)
 {
   TDouble *obj1, *obj2, *obj3;
-  double v1, v3;
 
   setlocale (LC_CTYPE, "");
 

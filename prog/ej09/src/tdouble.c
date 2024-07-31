@@ -13,7 +13,6 @@ div_by_zero_default_cb (TDouble *self) {
 }
 
 
-
 /* Estructura que se declaró en tdouble.h como tipo C TDouble */
 struct _TDouble {
   GObject parent;
