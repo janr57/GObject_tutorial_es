@@ -622,22 +622,9 @@ TDouble * t_double_uminus (TDouble *self);
 
 \subsubsection{Comentario}
 \begin{itemize}
-\item Línea 6:\par
-  Se utiliza \texttt{\#pragma once}, que es una directiva del preprocesador que aun no
-  siendo estándar, la suportan muchos compiladores. Su función es la misma que la
-  protección de macros en los archivos de cabecera, pero sin tener que definir un
-  identificador como \texttt{TDOUBLE\_H}, que podría ocasionar problemas si en otro
-  módulo se define otro con el mismo nombre.
-
-  Así, \texttt{\#pragma once} al principio del fichero de cabecera equivale, en este
-  caso, a 
-  \begin{lstlisting}{language=C, numbers=none}
-    #ifndef T_DOUBLE_H
-    #define T_DOUBLE_H
-    ...
-    #endif /* T_DOUBLE_H */
-  \end{lstlisting}
+\item Este código es idéntico al del ejemplo 8.
 \end{itemize}
+
 
 \subsubsection{Definición del tipo \textsf{TDouble}: fichero \textsf{tdouble.c}}
 \begin{lstlisting}[language=C, numbers=left]
@@ -654,7 +641,6 @@ static void
 div_by_zero_default_cb (TDouble *self) {
   g_printerr ("\nError: division by zero.\n\n");
 }
-
 
 /* Estructura que se declaró en tdouble.h como tipo C TDouble */
 struct _TDouble {
@@ -791,33 +777,15 @@ t_double_uminus (TDouble *self)
 
 \subsubsection{Comentarios}
 \begin{itemize}
-\item Línea 8:\par
-  Se define la variable estática \texttt{guint t\_double\_signal}, que almacenerá el
-  identificador de la señal que se definirá en la función de inicialización de la clase
-  en la línea 26.
-\item Líneas 22--36:\par
-  Se define la función de inicialización de la clase \textsf{TDoubleClass}.
-  
-  En la línea 26 se define la cadena que identifica la señal, \texttt{"div-by-zero''}.
-  Esta cadena debe estar formada por caracteres alfanuméricos, excepto el primero que
-  debe ser alfabético. Además, estos se pueden separar por guiones o subrayados, pero
-  sin mezclarlos; en todo caso, se prefieren guiones.
-  
-  En la línea 29 se utiliza un valor cero para el desplazamiento de clase (\emph{class
-    offset}).
-  Así, se declara que  las posibles subclases de \textsf{TDouble} no podrían
-  sobreescribir el manejador de clase (\textsf{class handler}) en el método
-  \textsf{class\_init}) haciendo
-  \texttt{TDouble->signal\_handler = my\_signal\_handler}; en lugar de ello deberán usar
-  \texttt{g\_signal\_override\_class\_handler()}.
-\item Líneas 114--129:\par
-  Se define la función \texttt{t\_double\_div}, que actúa sobre dos instancias \textsf{TDouble},
-  creando una nueva instancia, cuyo valor es el cociente de los valores de ambos objetos.
-  En la definición se comprueba si el valor del segundo parámetro es cero, en cuyo caso
-  se emite la señal \texttt{"div-by-zero"} asociada al primer argumento de la función,
-  que se corresponde con el parámetro \texttt{self}. Ahora bien, esta señal necesita de
-  un manejador que realice alguna función cuando se dé esta circunstancia. En este
-  programa, el manejador se definirá en el fichero \textsf{main.c}.
+\item Líneas 10--13:\par
+  Se define el manejador de la señal \texttt{"div-by-zero"}, que imprimirá en la salida
+  de error un mensaje apropiado. Nótese que debido a que se define como \texttt{static},
+  no se puede declarar fuera de este fichero (como en \textsf{tdouble.h}).
+  Este código se encontraba en \textsf{main.c} en el ejemplo 8.
+\item Líneas 31--42:\par
+  Aquí se utiliza la función \texttt{g\_signal\_new\_class\_handler} y en la línea
+  36 se especifica en manejador de señal por defecto, que se asigna al comentado
+  arriba (\texttt{"div-by-zero"}).
 \end{itemize}
 
 \subsubsection{Aplicación utilizando el tipo \textsf{TDouble}: fichero \textsf{main.c}}
@@ -831,12 +799,6 @@ t_double_uminus (TDouble *self)
 #include <locale.h>
 
 #include "tdouble.h"
-
-static void
-div_by_zero_cb (TDouble *self, gpointer user_data)
-{
-  g_printerr ("\nError: División por cero.\n\n");
-}
 
 static void
 t_print (char *op, TDouble *obj1, TDouble *obj2, TDouble *obj3)
@@ -901,7 +863,6 @@ main (int argc, char **argv)
     g_object_unref (obj3);
   }
 
-  g_signal_connect (obj1, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
   t_double_set_value (obj2, 0.0);
   if ((obj3 = t_double_div (obj1, obj2)) != NULL) {
     t_print ("/", obj1, obj2, obj3);
@@ -915,10 +876,20 @@ main (int argc, char **argv)
   g_print ("Ok!\n");
 
   return EXIT_SUCCESS;
-}
+}  
 \end{lstlisting}
 
-\subsubsection{Salida del ejemplo 8}
+\subsubsection{Comentario}
+\begin{itemize}
+\item Se eliminaron las líneas 11--15 del fichero \textsf{main.c} del ejemplo 8,
+  donde se definía la señal de división por cero. Estas se insertaron en
+  las líneas 11--15 del fichero \textsf{tdouble.c}.
+\item La línea 81 del fichero \textsf{main.c} del ejemplo 8 se elimina, pues su
+  función se integra en la función \texttt{g\_signal\_new\_class\_handler} del
+  fichero \textsf{tdouble.c}.
+\end{itemize}
+
+\subsubsection{Salida del ejemplo 9}
 10.000000 + 20.000000 = 30.000000\par
 10.000000 - 20.000000 = -10.000000\par
 10.000000 * 20.000000 = 200.000000\par
@@ -929,21 +900,27 @@ Error: División por cero.\par
 - (10.000000) = -10.000000\par
 Ok!\par
 
-\subsubsection{Comentarios}
+\subsection{Banderas de señal (\emph{signal flags})}
+El orden en el que se ejecutan los manejadores de señal se describe en la API de
+referencia de GObject -- 
+\href{https://docs.gtk.org/gobject/concepts.html#signal-emission}{Signal emission}
+
+Dicho orden depende de la bandera de señal que se active en \texttt{g\_signal\_new},
+\texttt{g\_signal\_new\_class\_handler}.
+Hay tres banderas que influyen en este orden:
 \begin{itemize}
-\item Líneas 11--15:\par
-  Se define el manejador de la señal \texttt{"div-by-zero"}, que imprimirá en la salida
-  de error un mensaje apropiado.
-\item Líneas 17--33:\par
-  Función auxiliar que imprime la operación que se realizará con los valores de dos
-  objetos, junto a su resultado.
-\item Líneas 35--47:\par
-  Función auxiliar que imprime el cambio de signo del valor de un objeto, junto a su
-  resultado.
+  \tightlist
+\item \texttt{G\_SIGNAL\_RUN\_FIRST}: el manejador de señal por defecto se ejecuta antes de cualquier otro manejador definido por el usuario.
+\item \texttt{G\_SIGNAL\_RUN\_LAST}: el manejador de señal por defecto se ejecuta después de cualquier otro manejador definido por el usuario (no conectado con
+  \texttt{g\_signal\_connect\_after}).
+\item \texttt{G\_SIGNAL\_RUN\_LAST} es el más apropiado en muchas situaciones.
 \end{itemize}
 
-                          
-                            
+Otras banderas de señal se describen en la API de referencia de GObject --
+\href{https://docs.gtk.org/gobject/flags.SignalFlags.html}{Signal flags}.
+
+
+
 
   
 %%% Local Variables:

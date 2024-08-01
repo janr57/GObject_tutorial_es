@@ -9,12 +9,6 @@
 #include "tdouble.h"
 
 static void
-div_by_zero_cb (TDouble *self, gpointer user_data)
-{
-  g_printerr ("\nError: División por cero.\n\n");
-}
-
-static void
 t_print (char *op, TDouble *obj1, TDouble *obj2, TDouble *obj3)
 {
   double v1, v2, v3;
@@ -77,7 +71,6 @@ main (int argc, char **argv)
     g_object_unref (obj3);
   }
 
-  g_signal_connect (obj1, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
   t_double_set_value (obj2, 0.0);
   if ((obj3 = t_double_div (obj1, obj2)) != NULL) {
     t_print ("/", obj1, obj2, obj3);
