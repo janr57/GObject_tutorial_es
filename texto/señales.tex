@@ -553,7 +553,7 @@ el error se detecta en \textsf{tdouble.c}, por lo que ese es el lugar donde se d
 haber definido. El sistema \textsf{GObject} proporciona un manejador de señal por
 defecto en el propio objeto. Este, se suele denominar ``manejador por defecto''
 (\emph{"default handler"} u \emph{"object method handler"}), y se puede definir mediante
-la función \texttt{g\_signal\_new\_class\_handler}.
+la función \texttt{g\_signal\_new\_class\_handler}, que sustituye a \texttt{g\_signal\_new}.
 
 \begin{lstlisting}[language=C, numbers=none]
 guint
