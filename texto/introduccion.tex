@@ -20,92 +20,96 @@
 \subsection{Motivación} \label{subsec:motivacion}
 Desde hace mucho, he tenido  interés en programar aplicaciones con la API de \textsf{GTK}.
 Según la Wikipedia, \textsf{GTK} es una biblioteca de componentes gráficos multiplataforma para desarrollar
-interfaces gráficas de usuario, que está licenciada bajo los términos de la GNU LGPL, por lo que
-permite la creación de software libre e incluso privativo.
-Pero, tenía otras tareas que no me permitían estudiar con profundidad dicha API, y además, cuando
-encontraba información, me parecía un galimatías que no llegaba a entender, si acaso un poco.
-Como mucho, podía programar algo, pero copiando el código que encontraba en los textos, aunque no
-terminaba de tener una imagen global.
+interfaces gráficas de usuario, que está licenciada bajo los términos de la GNU LGPL, por lo que permite la creación de software libre e incluso privativo.
+Pero, tenía otras tareas que no me permitían estudiar con profundidad dicha API, y además, cuando encontraba información, me parecía un galimatías que no llegaba a entender, si acaso un poco.
+Como mucho, podía programar algo, pero copiando el código que encontraba en los textos, pero no terminaba de tener una imagen global.
 
 Una parte del problema tenía que ver con el sistema de objetos \textsf{GObject} en el que se basa \textsf{GTK}.
-Ahora dispongo de más tiempo, no todo el que quisiera,  para dedicar al sistema, por lo que escribo este tutorial  para consolidar lo que voy aprendiendo.
+Ahora dispongo de más tiempo, no todo el que quisiera para dedicar al sistema, por lo que escribo este tutorial  para consolidar lo que voy aprendiendo.
 
-Debo reconocer la ayuda que he encontrado en los textos y tutoriales que me han ayudado mucho y
-a los que hago referencia al final del libro. Hay uno en particular [CTLP] que me ha servido para estructurar
-el tutorial, al menos el principio. No obstante, aquí y allá he añadido o eliminado algo, para adaptarme a mi manera de entender la materia.
+Debo reconocer la ayuda que he encontrado en los textos y tutoriales que me han ayudado mucho y a los que hago referencia al final del libro. Hay uno en particular [CTLP] que me ha servido para estructurar el tutorial, al menos el principio. No obstante, aquí y allá he añadido o eliminado algo, para adaptarme a mi manera de entender la materia.
+
 \subsection{Objetivos} \label{subsec:objetivos}
+A continuación escribo algunos posibles objetivos. El primero es el que estoy
+intentando terminar en este texto. El resto los intentaré alcanzar, aunque puede
+que sean demasiados para mí.
 \begin{enumerate}
   \tightlist
-\item Escribir en castellano un tutorial de \textsf{GObject} mezclando ideas de otros tutoriales y de
-  documentación, de manera que pueda servir a un profano en la materia.
-\item Utilizar \textsf{GObject} y/o \textsf{GTK} en \text{C}, \text{Julia}  y en \textsf{Rust}.
-\item Utilizar diversos programas para construir ejecutables con \textsf{GObject}, principalmente,
-  \textsf{make}, \textsf{meson}, \textsf{cmake} y \textsf{ninja}.
-\item Implementar GTK en Common Lisp.
+\item Escribir en castellano un tutorial de \textsf{GObject} mezclando ideas de otros
+  tutoriales y de documentación, de manera que pueda servir a cualquiera que esté
+  interesado en la materia.
+\item Utilizar \textsf{GObject} y/o \textsf{GTK} en \text{C}, \text{Julia}  y en
+  \textsf{Rust}.
+\item Utilizar diversos programas para construir ejecutables con \textsf{GObject},
+  principalmente, \textsf{make}, \textsf{meson}, \textsf{cmake} y \textsf{ninja}.
+\item Implementar GTK para Common Lisp.
 \end{enumerate}
 
 \subsection{¿Qué es {\sffamily GObject}?} \label{subsec:introduccion_gobject}
 \textsf{GObject} es el sistema de objetos en el que descansa \textsf{GTK}.
-Además proporciona la clase base, a partir de la que se construye el resto de los elementos de \textsf{GTK}.
+Proporciona la clase base, a partir de la que se construye el resto de los elementos de
+\textsf{GTK}.
 Por ejemplo,  \textsf{GtkApplicationWindow}, que representa la ventana principal de una
-aplicación \textsf{GTK}, deriva en última instancia de \textsf{GObject}, como se puede apreciar en la
-figura~\ref{fig:jerarquia-gtkappwindow}.
+aplicación \textsf{GTK}, deriva en última instancia de \textsf{GObject}, como se puede apreciar en la figura~\ref{fig:jerarquia-gtkappwindow}.
 \begin{figure}[ht]
   \centering
   \def\scl{1}
   \begin{tikzpicture}[%
     scale=\scl,
     every node/.style={font=\sffamily, outer xsep = -2pt},
-     background/.style={
+    background/.style={
       line width=\bgborderwidth,
       draw=\bgbordercolor,
       fill=\bgcolor,
     },
-   ]
-   % COORDENADAS
-   % - 
-   % DIBUJO
-   % Ejemplo de jerarquía de objetos de 'GObject'
-   \node (gobject) {GObject};
-   \node [below right = 4ex and 4.5em of gobject.west, anchor=west] (ginitiallyunowned) {GInitiallyUnowned};
-   \node [below right = 4ex and 4.5em of ginitiallyunowned.west, anchor = west] (gtkwidget)  {GtkWidget};
-   \node [below right = 4ex and 4.5em of gtkwidget.west, anchor = west] (gtkwindow) {GtkWindow};
-   \node [below right = 4ex and 4.5em of gtkwindow.west, anchor=west] (gtkappwindow) {GtkApplicationWindow};
-   \draw [shorten <= 0.5ex] (gobject.base west) + (1.7em,0) |- (ginitiallyunowned.west);
-   \draw [shorten <= 0.5ex] (ginitiallyunowned.base west) + (1.7em,0) |- (gtkwidget.west);
-   \draw [shorten <= 0.5ex] (gtkwidget.base west) + (1.7em,0) |- (gtkwindow.west);
-   \draw [shorten <= 0.5ex] (gtkwindow.base west) + (1.7em,0) |- (gtkappwindow.west);
-   % Fondo amarillo
-   \coordinate (limsupizda) at ($(gobject.north west)+(-6pt,6pt)$);
-   \coordinate (liminfdcha) at ($(gtkappwindow.south east)+(6pt,-6pt)$);
-   \begin{scope}[on background layer]
-     \node [background, fit= (liminfdcha) (limsupizda)] {};
-   \end{scope}
-\end{tikzpicture}
-\caption{Jerarquía del objeto {\sffamily GtkAplicationWindow} de GTK.}
-\label{fig:jerarquia-gtkappwindow}
+    ]
+    % COORDENADAS
+    % - 
+    % DIBUJO
+    % Ejemplo de jerarquía de objetos de 'GObject'
+    \node (gobject) {GObject};
+    \node [below right = 4ex and 4.5em of gobject.west, anchor=west] (ginitiallyunowned)
+    {GInitiallyUnowned};
+    \node [below right = 4ex and 4.5em of ginitiallyunowned.west, anchor = west]
+    (gtkwidget)  {GtkWidget};
+    \node [below right = 4ex and 4.5em of gtkwidget.west, anchor = west] (gtkwindow)
+    {GtkWindow};
+    \node [below right = 4ex and 4.5em of gtkwindow.west, anchor=west] (gtkappwindow)
+    {GtkApplicationWindow};
+    \draw [shorten <= 0.5ex] (gobject.base west) + (1.7em,0) |- (ginitiallyunowned.west);
+    \draw [shorten <= 0.5ex] (ginitiallyunowned.base west) + (1.7em,0) |-
+    (gtkwidget.west);
+    \draw [shorten <= 0.5ex] (gtkwidget.base west) + (1.7em,0) |- (gtkwindow.west);
+    \draw [shorten <= 0.5ex] (gtkwindow.base west) + (1.7em,0) |- (gtkappwindow.west);
+    % Fondo amarillo
+    \coordinate (limsupizda) at ($(gobject.north west)+(-6pt,6pt)$);
+    \coordinate (liminfdcha) at ($(gtkappwindow.south east)+(6pt,-6pt)$);
+    \begin{scope}[on background layer]
+      \node [background, fit= (liminfdcha) (limsupizda)] {};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Jerarquía del objeto {\sffamily GtkAplicationWindow} de GTK.}
+  \label{fig:jerarquia-gtkappwindow}
 \end{figure}
 
-{\sffamily GObject} también se puede utilizar para desarrollar una jerarquía de objetos independiente de los
-elementos de GTK y que sea completamente independiente de ellos.
+{\sffamily GObject} también se puede utilizar para desarrollar una jerarquía de objetos independiente de los elementos de GTK y que sea completamente independiente de ellos.
 
 \subsection{Clase e instancias de \textsf{GObject}} \label{subsec:clase_instancias_gobject}
 
 \subsubsection{Teoría}
-En sentido amplio, \textsf{GObject} es un sistema de objetos que proporciona dos entidades relacionadas:
-instancias y clases. La función \texttt{g\_object\_new} se encarga de crear instancias de clases:
+En sentido amplio, \textsf{GObject} es un sistema de objetos que proporciona dos entidades relacionadas: instancias y clases. La función \texttt{g\_object\_new} se
+encarga de ello:
 \begin{itemize}
   \tightlist
-\item Una clase \textsf{GObject} ---\textsf{GObjectClass}--- se crea la primera vez que se ejecuta la función
-  \texttt{g\_object\_new}. Sólo puede existir una clase que represente a \textsf{GObject}, por ello se crea la
-  primera vez que se ejecuta la función.
-  La clase se materializa como una estructura en lenguaje C que la representa, pero como es compleja no es
-  conveniente mostrarla aquí. Solo decir que la primera vez que se llama a \texttt{g\_object\_new} se reserva
-  espacio para la estructura \textsf{GObjectClass} y se inicializa.
-
+\item La clase \textsf{GObject} ---\textsf{GObjectClass}--- se crea la primera vez que
+  se ejecuta la función \texttt{g\_object\_new}. Sólo puede existir una clase que
+  represente a \textsf{GObject} que se crea la primera vez que se ejecuta la función.
+  La clase se materializa como una estructura en lenguaje C, pero como es compleja no es
+  conveniente mostrarla aquí. Solo decir que la primera vez que se llama a \texttt{g\_object\_new} se reserva espacio para la estructura \textsf{GObjectClass} y se
+  inicializa.
 \item Una instancia de \textsf{GObject} se crea cada vez que se ejecuta la función
   \texttt{g\_object\_new}. Puede haber una o más instancias de \textsf{GObject}.
-  A continuación se muetra la estructura que las representa,tomada de '\textsf{gobject.h}':
+  A continuación se muetra la estructura que las representa,tomada de \textsf{gobject.h}':
 \begin{lstlisting}[language=C]
   typedef struct _GObject GObject;
   struct _GObject {
@@ -116,15 +120,14 @@ instancias y clases. La función \texttt{g\_object\_new} se encarga de crear ins
     GData *qdata;
   };
 \end{lstlisting}
-La función \passthrough{\lstinline!g\_object\_new!} reserva espacio para la estructura, inicializa la
-memoria y devuelve el puntero a esa estructura. La memoria representada por este puntero
-es una instancia de \textsf{GObject}.
+La función \passthrough{\lstinline!g\_object\_new!} reserva espacio para la estructura,
+inicializa la memoria y devuelve el puntero a esa estructura. La memoria representada por este puntero es una instancia de \textsf{GObject}.
 \end{itemize}
 
 \subsubsection{Ejemplo 1}
-En este ejemplo se crean dos instancias diferentes de la clase \textsf{GObject}, comprobándose que
-estas pertenecen a la misma clase. En el directorio '\textsf{prog}' se encuentran este y otros programas
-de ejemplo. Puede consultar las instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
+En este ejemplo se crean dos instancias diferentes de la clase \textsf{GObject}, comprobándose que estas pertenecen a la misma clase. En el directorio '\textsf{prog}' se
+encuentran este y otros programas de ejemplo. Puede consultar las instrucciones para
+compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
@@ -180,28 +183,27 @@ El listado es:
 \item Líneas 14 y 15:\par
   Se declaran dos punteros a objetos de \textsf{GObject}, por lo que podremos crear dos
   instancias de esta clase.
-  Se declaran dos punteros de \textsf{GObjectClass}, a los que asignaremos la clase a la que pertenecen
-  las instancias anteriores.
+  Se declaran dos punteros de \textsf{GObjectClass}, a los que asignaremos la clase a la
+  que pertenecen las instancias anteriores.
 \item Línea 19:\par
-  Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la función
-  \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
-  y se puedan ver los acentos correctamente en la consola UTF-8.
+  Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la
+  función \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza
+  (en este caso UTF-8) y se puedan ver los acentos correctamente en la consola UTF-8.
 \item Líneas 22 -- 25:\par
-  Se crean dos instancias diferentes de \textsf{GObject} mediante la función 
-  \passthrough{\lstinline!g\_object\_new!}. Posteriormente se comprueba que son diferentes, dado que
-  sus punteros son distintos.
+  Se crean dos instancias diferentes de \textsf{GObject} mediante la función
+  \passthrough{\lstinline!g\_object\_new!}. Posteriormente se comprueba que son
+  diferentes, dado que sus punteros son distintos.
 \item Líneas 28 -- 31:\par
-  Se obtiene el puntero a la clase a la que pertenecen 'instancia1' e 'instancia2', estos punteros se
-  almacenan en 'clase1' y 'clase2', respectivamente. Esta tarea se realiza mediante la macro
-  \passthrough{\lstinline!G\_OBJECT\_GET\_CLASS!}. Al imprimir en pantalla los punteros de las
-  dos clases observamos que son iguales, de manera que ambas instancias pertenecen a la misma
-  clase \textsf{GObjectClass}, que se creó la primera vez que se ejecutó la función
-  \passthrough{\lstinline!g\_object\_new!} en la línea 14, a la vez que se creó la primera instancia,
-  'instancia1'.
+  Se obtiene el puntero a la clase a la que pertenecen 'instancia1' e 'instancia2',
+  estos punteros se almacenan en 'clase1' y 'clase2', respectivamente. Esta tarea se
+  realiza mediante la macro \passthrough{\lstinline!G\_OBJECT\_GET\_CLASS!}. Al imprimir
+  en pantalla los punteros de las dos clases observamos que son iguales, de manera que
+  ambas instancias pertenecen a la misma clase \textsf{GObjectClass}, que se creó la
+  primera vez que se ejecutó la función \passthrough{\lstinline!g\_object\_new!} en la
+  línea 14, a la vez que se creó la primera instancia, 'instancia1'.
 \item Líneas 34 -- 35:\par
-  Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa. Nos podríamos
-  preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a
-  se aclarará en la siguiente sección.
+  Se liberan los objetos 'instancia1' e 'instancia2' antes de que termine el programa.
+  Nos podríamos preguntar qué le ocurre a la clase \textsf{GObjectClass} que se creó en la línea 14. La respuesta a se aclarará en la siguiente sección.
 \end{itemize}
 
 \begin{figure}[ht]
@@ -260,101 +262,110 @@ El listado es:
 
 \subsection{Referencias a instancias de \textsf{GObject}} \label{subsec:ref_instancias_gobject}
 \subsubsection{Teoría}
-Toda instancia de \textsf{GObject} contiene un bloque de memoria asociado que el sistema asigna e inicializa
-cuando esta se crea.
-Cuando la instancia deja de ser necesaria, se debe eliminar liberando la memoria que tiene asignada.
+Toda instancia de \textsf{GObject} contiene un bloque de memoria asociado que el sistema asigna e inicializa cuando esta se crea.
+Cuando la instancia deja de ser necesaria, se debe eliminar liberando la memoria que
+tiene asignada.
 % \href{run:./sample.txt}{here}
 
 ¿Pero cómo sabe el sistema \textsf{GObject}  que no se utiliza una instancia determinada?
 Lo resuelve mediante el
 \href{https://es.wikipedia.org/wiki/Conteo_de_referencias}{conteo de referencias}
 (\href{https://en.wikipedia.org/wiki/Reference_counting}{\textit{reference counting}}).
-Cuando se crea una instancia (mediante la función \passthrough{\lstinline!g\_object\_new!}), se dice que
-la instancia está referida (\emph{referred}), y se le asigna una cuenta de referencia (\textit{reference count}), haciendo la variable \texttt{ref\_count} igual a 1, indicando que hay un módulo, función u objeto que la está utilizando. Llamemos \textbf{A} a este elemento.
+Cuando se crea una instancia (mediante la función \passthrough{\lstinline!g\_object\_new!}), se dice que la instancia está referida
+(\emph{referred}), y se le asigna una cuenta de referencia (\textit{reference count}), haciendo la variable \texttt{ref\_count} igual a 1, indicando que hay un módulo, función u objeto que la está utilizando. Llamemos \textbf{A} a este elemento.
 Ahora pueden ocurrir diversas circunstancias, entre otras:
 \begin{itemize}
   \tightlist
-\item Si \textbf{A} no necesita utilizar más la instancia, la desreferencia mediante \passthrough{\lstinline!g\_object\_unref!}, utilizando un puntero a la instancia como argumento de la función.
-  Entonces, el sistema decrementa la cuenta de referencia en una unidad, de manera que ahora valdría cero.
-  En este supuesto, el sistema detecta que ya no se utiliza la instancia y la elimina, liberando su memoria asociada.
-  \item Pero imaginemos que se pasa la instancia (su puntero) a otro módulo, función u objeto del programa,
-    que llamaremos \textbf{B}. Este debe referenciar la instancia para evitar la posibilidad de que \textbf{A} la
-    elimine antes de \textbf{B} termine de utilizarla, y para ello debe llamar a la función
-    \passthrough{\lstinline!g\_object\_ref!}, utilizando la el puntero a la instancia como argumento.
-    Ahora la cuenta de referencia de la instancia se incrementaría en una unidad pasando a valer 2.
+\item Si \textbf{A} no necesita utilizar más la instancia, la desreferencia mediante
+  \passthrough{\lstinline!g\_object\_unref!}, utilizando un puntero a la instancia como
+  argumento de la función.
+  Entonces, el sistema decrementa la cuenta de referencia en una unidad, de manera que
+  ahora valdría cero.
+  En este supuesto, el sistema detecta que ya no se utiliza la instancia y la elimina,
+  liberando su memoria asociada.
+\item Pero imaginemos que se pasa la instancia (su puntero) a otro módulo, función u
+  objeto del programa, que llamaremos \textbf{B}. Este debe referenciar la instancia
+  para evitar la posibilidad de que \textbf{A} la elimine antes de \textbf{B} termine de
+  utilizarla, y para ello debe llamar a la función    \passthrough{\lstinline!g\_object\_ref!}, utilizando la el puntero a la instancia como
+  argumento.
+  Ahora la cuenta de referencia de la instancia se incrementaría en una unidad pasando a
+  valer 2.
 
-    Si \textbf{A}, decidiera que ya no necesita más la instancia, llamaría a
-    \passthrough{\lstinline!g\_object\_unref!} y la cuenta de referencia bajaría a 1. Este valor indicaría al sistema
-    que todavía queda otro elemento que la esta utilizando (en este caso \textbf{B}). Así,
-    la memoria asociada no se liberaría, hasta que \textbf{B} decidiera prescindir de la instania, en cuyo caso,
-    la cuenta de referencia bajaría a cero y, solo entonces, se liberaría la memoria asociada y la instancia dejaría de
-    existir en el sistema.
-  \end{itemize}
+  Si \textbf{A}, decidiera que ya no necesita más la instancia, llamaría a
+  \passthrough{\lstinline!g\_object\_unref!} y la cuenta de referencia bajaría a 1. Este
+  valor indicaría al sistema que todavía queda otro elemento que la esta utilizando (en
+  este caso \textbf{B}). Así, la memoria asociada no se liberaría, hasta que \textbf{B}
+  decidiera prescindir de la instania, en cuyo caso, la cuenta de referencia bajaría a
+  cero y, solo entonces, se liberaría la memoria asociada y la instancia dejaría de
+  existir en el sistema.
+\end{itemize}
 
 \subsubsection{Ejemplo 2}
-En el siguiente ejemplo se una instancia de la clase \textsf{GObject}, después se referencia una vez.
-Finalmente se desreferencia dos veces hasta que el sistema destruye la instancia y libera la memoria.
+En el siguiente ejemplo se una instancia de la clase \textsf{GObject}, después se
+referencia una vez.
+Finalmente se desreferencia dos veces hasta que el sistema destruye la instancia y
+libera la memoria.
 Ver instrucciones para compilar los programas en la sección \ref{sec:compilacion}.
 
 El listado es:
 \begin{lstlisting}[language=C, numbers=left]
-/*
- * ejemplo02.c
- * Prueba de las referencias a una instancia.
- */
+  /*
+  * ejemplo02.c
+  * Prueba de las referencias a una instancia.
+  */
 
-#include <locale.h>
-#include <glib-object.h>
+  #include <locale.h>
+  #include <glib-object.h>
 
-static void
-show_ref_count  (GObject *inst)
-{
-  if  (G_IS_OBJECT (inst)) {
-    /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
-       pues interferirían de una forma impredecible con GObject */
-    /* Aquí se utiliza solo como demostración */
-    g_print ("  Cuenta de referencia de la instancia: %d.\n", inst->ref_count);
+  static void
+  show_ref_count  (GObject *inst)
+  {
+    if  (G_IS_OBJECT (inst)) {
+      /* Los usuarios no deberían utilizar el método 'ref_count' en sus programas.
+      pues interferirían de una forma impredecible con GObject */
+      /* Aquí se utiliza solo como demostración */
+      g_print ("  Cuenta de referencia de la instancia: %d.\n", inst->ref_count);
+    }
+    else {
+      g_print ("  La instancia recibida no es un objeto de 'GObjectClass'.\n");
+    }
   }
-  else {
-    g_print ("  La instancia recibida no es un objeto de 'GObjectClass'.\n");
+
+  int
+  main (int argc, char **argv)
+  {
+    GObject *instancia;
+
+    // Para que g_print no transforme la codificación de caracteres
+    // por su cuenta y no se vean los acentos.
+    setlocale(LC_CTYPE, "");
+
+    g_print ("- Se crea el objeto 'instancia', llamando a 'g_object_new'.\n");
+    instancia = g_object_new(G_TYPE_OBJECT, NULL);
+    show_ref_count (instancia);
+    g_print("\n");
+  
+    g_print ("- Se añade una referencia a 'instancia', llamando a 'g_object_ref'.\n");
+    g_object_ref (instancia);
+    show_ref_count (instancia);
+    g_print("\n");
+
+    g_print ("- Se elimina una referencia, llamando a 'g_object_unref'.\n");
+    g_object_unref(instancia);
+    show_ref_count (instancia);
+    g_print("\n");
+
+    g_print ("- Se elimina la última referencia, llamando a 'g_object_unref'.\n");
+    g_object_unref (instancia);
+    g_print ("  La cuenta de referencia vale cero y la instancia se destruye.\n");
+    g_print ("  Su memoria asociada se libera.\n");
+    g_print("  Una llamada a 'show_ref_count(instance)' daría un error, pues la\n");
+    g_print("  instancia  no existe.\n");
+    g_print("  Por ello, se ha comentado esta línea en el código fuente.\n");
+    /* show_ref_count (instancia); */
+  
+    return 0;
   }
-}
-
-int
-main (int argc, char **argv)
-{
-  GObject *instancia;
-
-  // Para que g_print no transforme la codificación de caracteres
-  // por su cuenta y no se vean los acentos.
-  setlocale(LC_CTYPE, "");
-
-  g_print ("- Se crea el objeto 'instancia', llamando a 'g_object_new'.\n");
-  instancia = g_object_new(G_TYPE_OBJECT, NULL);
-  show_ref_count (instancia);
-  g_print("\n");
-  
-  g_print ("- Se añade una referencia a 'instancia', llamando a 'g_object_ref'.\n");
-  g_object_ref (instancia);
-  show_ref_count (instancia);
-  g_print("\n");
-
-  g_print ("- Se elimina una referencia, llamando a 'g_object_unref'.\n");
-  g_object_unref(instancia);
-  show_ref_count (instancia);
-  g_print("\n");
-
-  g_print ("- Se elimina la última referencia, llamando a 'g_object_unref'.\n");
-  g_object_unref (instancia);
-  g_print ("  La cuenta de referencia vale cero y la instancia se destruye.\n");
-  g_print ("  Su memoria asociada se libera.\n");
-  g_print("  Una llamada a 'show_ref_count(instance)' daría un error, pues la\n");
-  g_print("  instancia  no existe.\n");
-  g_print("  Por ello, se ha comentado esta línea en el código fuente.\n");
-  /* show_ref_count (instancia); */
-  
-  return 0;
-}
 \end{lstlisting}
 
 \subsubsection{Salida del programa 'ejemplo02'}
@@ -377,15 +388,20 @@ main (int argc, char **argv)
 \subsubsection{Comentarios}
 \begin{itemize}
 \item Línea 9:\par
-  Se declara la función \passthrough{\lstinline!show\_ref\_count!} como \texttt{static void}.
-  El identificador \texttt{static} especifica que el alcance (\textit{scope}) de la función es
-  este fichero. Si hubiera algún otro fichero, no podría utilizar la función que se define aquí,
-  pero podría llamar a otra definida en otro lugar que se llamara igual.
+  Se declara la función \passthrough{\lstinline!show\_ref\_count!} como \texttt{static
+    void}.
+  El identificador \texttt{static} especifica que el alcance (\textit{scope}) de la
+  función es
+  este fichero. Si hubiera algún otro fichero, no podría utilizar la función que se
+  define aquí, pero podría llamar a otra definida en otro lugar que se llamara igual.
 \item Línea 26:\par
-  Se declara un puntero a objeto de \textsf{GObject}, lo que no permitirá crear una instancia.
+  Se declara un puntero a objeto de \textsf{GObject}, lo que no permitirá crear una
+  instancia.
 \item Línea 30:\par
-  Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la función
-  \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en este caso UTF-8)
+  Se asigna a la variable de entorno \texttt{L\_CTYPE} la cadena vacía para que la
+  función
+  \passthrough{\lstinline!g\_print!} no modifique la codificación que se utiliza (en
+  este caso UTF-8)
   y se puedan ver los acentos correctamente en la consola UTF-8.
 \item Líneas 32 -- 35:\par
   Se crea una instancia de \textsf{GObject} mediante la función \passthrough{\lstinline!g\_object\_new!}.
@@ -402,8 +418,9 @@ main (int argc, char **argv)
   Por esa razón, no se puede mostrar su cuenta de referencia, porque
   \passthrough{\lstinline!instancia->ref_count!}, de la línea 16 daría un error.
   Por ello, se ha comentado la línea 54 que produciría ese error.
-  El lector puede descomentar la citada línea y comprobar el error de segmentación que se produciría.
-  \end{itemize}
+  El lector puede descomentar la citada línea y comprobar el error de segmentación que
+  se produciría.
+\end{itemize}
 
 
 %%% Local Variables:
@@ -413,4 +430,3 @@ main (int argc, char **argv)
 %%% TeX-master: "../GObject_tutorial_es.tex"
 %%% End:
 
-% LaTeX-command: "lualatex --shell-escape"
