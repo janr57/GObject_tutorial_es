@@ -100,13 +100,13 @@ En sentido amplio, \textsf{GObject} es un sistema de objetos que proporciona dos
 encarga de ello:
 \begin{itemize}
   \tightlist
-\item La clase \textsf{GObject} ---\textsf{GObjectClass}--- se crea la primera vez que
-  se ejecuta la función \texttt{g\_object\_new}. Sólo puede existir una clase que
+\item Se crea la clase \textsf{GObject} ---\textsf{GObjectClass}--- la primera vez que
+  se ejecuta la función \texttt{g\_object\_new}. Solo puede existir una clase que
   represente a \textsf{GObject} que se crea la primera vez que se ejecuta la función.
   La clase se materializa como una estructura en lenguaje C, pero como es compleja no es
   conveniente mostrarla aquí. Solo decir que la primera vez que se llama a \texttt{g\_object\_new} se reserva espacio para la estructura \textsf{GObjectClass} y se
   inicializa.
-\item Una instancia de \textsf{GObject} se crea cada vez que se ejecuta la función
+\item Se crea una instancia de \textsf{GObject} cada vez que se ejecuta la función
   \texttt{g\_object\_new}. Puede haber una o más instancias de \textsf{GObject}.
   A continuación se muetra la estructura que las representa,tomada de \textsf{gobject.h}':
 \begin{lstlisting}[language=C]
