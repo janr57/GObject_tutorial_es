@@ -7,6 +7,129 @@
 %    Licencia Creative Commons Recognition Share alike. (CC-BY-SA)
 
 \section{Propiedades}
+El sistema \textsf{GObject} contempla el que las instancias puedan contener propiedades. Las propiedades son valores que se almacenan en las instancias que descienden de \textsf{GObject} y, a su vez, estarían disponibles para posibles instancias hijas.
+Las propiedades se identifican, y se accede a ellas, mediante sus nombres.
+
+Por ejemplo, \textsf{GtkWindow} tiene las propiedades "\texttt{title}",
+"\texttt{default-width}" y "\texttt{default-height}", entre otras. La cadena
+"\texttt{title}" es el nombre de una propiedad. El nombre de una propiedad es una cadena
+que comienza con una letra seguida de letras, dígitos, guiones ('-') o subrayados
+('\_'). Estos dos últimos se utilizan como separadores, pero no se pueden mezclar. El
+uso de guiones es más eficiente que el de subrayados. Por ejemplo, "\texttt{value}",
+"\texttt{double}" y "\texttt{double-value}" son nombres válidos de propiedades.
+"\texttt{-value}" o "\texttt{\_value}" son incorrectos.
+
+A las propiedades se les asigna un tipo. El tipo de la propiedad "\texttt{title}" es una cadena, el de "\texttt{default-width}" y "\texttt{default-height}" es un entero.
+
+Las propiedades se almacenan y se recuperan mediante funciones definidas en
+\textsf{GObject}:
+\vspace{-\topsep}
+\begin{itemize}
+  \tightlist
+\item Las que más se utilizan para almacenarlas son \texttt{g\_object\_new} y \texttt{g\_object\_set}.
+\item Para recuperarlas, la que se usa más frecuentemente es \texttt{g\_object\_get}.
+\end{itemize}
+
+A continuación se muestra un ejemplo de \textsf{GtkWindow}, que desciende de
+\textsf{GObject}. Mediante la función \texttt{g\_object\_new} se crea una instancia y se
+definen sus propiedades:
+\begin{lstlisting}[language=C]
+GtkWindow *win;
+win = g_object_new (GTK_TYPE_WINDOW,
+                    "title", "Hola", "default-width", 800, "default-height", 600,
+                    NULL);
+\end{lstlisting}
+El ejemplo anterior crea una instancia de \textsf{GtkWindow} y almacena sus propiedades.
+
+\vspace{-\topsep}
+\begin{itemize}
+  \tightlist
+\item A la propiedad "\texttt{title}" se le asigna "\texttt{Hola}".
+\item A "\texttt{default-width}" se le asigna \texttt{800}.
+\item A "\texttt{default-height}" se le asigna \texttt{600}.
+\item El último parámetro de \texttt{g\_object\_new} es \texttt{NULL} que indica el
+  final de la lista de propiedades.
+\end{itemize}
+
+Si ya se hubiera creado la instancia de \textsf{GtkWindow} y quisiéramos asignar su
+título, se puede usar \texttt{g\_object\_set}:
+\begin{lstlisting}[language=C]
+GtkWindow *win;
+win = g_object_new (GTK_TYPE_WINDOW, NULL);
+g_object_set (win, "title", "Adiós", NULL);
+\end{lstlisting}
+
+Para recuperar el valor de una propiedad se puede usar \texttt{g\_object\_get}:
+
+\begin{lstlisting}[language=C]
+GtkWindow *win;
+char *title;
+int width, height;
+
+win = g_object_new (GTK_TYPE_WINDOW,
+                    "title", "Hello", "default-width", 800, "default-height", 600,
+                    NULL);
+g_object_get (win,
+              "title", &title, "default-width", &width, "default-height", &height,
+              NULL);
+g_print ("%s, %d, %d\n", title, width, height);
+g_free (title);
+\end{lstlisting}
+
+En el resto de esta sección se explica cómo se implementan las propiedades de una
+instancia que descienda de \textsf{GObject}. La explicación se divide en dos partes:
+\vspace{-\topsep}
+\begin{itemize}
+  \tightlist
+\item Registro de una propiedad.
+\item Definición de los métodos de clase \texttt{set\_property} y \texttt{get\_property},
+  que se relacionan con \texttt{g\_object\_set} y \texttt{g\_object\_get}.
+\end{itemize}
+
+\section{\textsf{GParamSpec}}
+\textsf{GParamSpec} es un objeto fundamental. \textsf{GParamSpec} y \textsf{GObject}
+no tienen una relación padre-hijo. \textsf{GParamSpec} lleva la información de los
+parámetros. \textsf{"ParamSpec"} es una abreviatura de "\emph{Parameter Specification"}.
+Por ejemplo:
+
+\begin{lstlisting}[language=C]
+double_property = g_param_spec_double ("value", "val", "Valor doble",
+                                       -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                                        G_PARAM_READWRITE);
+\end{lstlisting}
+
+Esta función crea una instancia de \textsf{GParamSpec}, más precisamente, una instancia
+de \textsf{GParamSpecDouble}. Esta última es hija de la primera.
+
+La instancia tiene la siguiente información:
+\vspace{-\topsep}
+\begin{itemize}
+  \tightlist
+\item El tipo del valor es \texttt{double}. El sufijo del nombre de la función,
+  \texttt{double} en \texttt{g\_param\_spec\_double} lo indica.
+\item El nombre es \texttt{"value"}.
+\item El apodo es \texttt{"val"}.
+\item La descripción es \texttt{"Valor doble"}.
+\item El mínimo valor es \texttt{-G\_MAXDOUBLE}, el máximo es \texttt{G\_MAXDOUBLE}.
+  Estos valores se describen en el manual de referencia de GLib
+  \href{https://docs.gtk.org/glib/types.html#gdouble}{(GLib Reference Manual -- \texttt{G\_MAXDOUBLE} and \texttt{G\_MINDOUBLE})}.
+\item El valor por defecto es \texttt{0.0}.
+\item \texttt{G\_PARAM\_READWRITE} es una bandera (\emph{flag}). Significa que el
+  parámetro es de lectura--escritura.
+\item Para más información ver la API de referencia de \textsf{GObject}:
+  \vspace{-\topsep}
+  \vspace{0.8ex}
+  \begin{itemize}
+    \tightlist
+  \item \href{https://docs.gtk.org/gobject/index.html#classes}
+    {\texttt{GParamSpec} and its subclasses}.
+  \item \href{https://docs.gtk.org/gobject/index.html#functions}
+    {\texttt{g\_paramspec\_double} and similar functions}.
+  \item \href{https://docs.gtk.org/gobject/struct.Value.html}
+    {\texttt{GValue}}.
+  \end{itemize}
+\end{itemize}
+
 
 
 
