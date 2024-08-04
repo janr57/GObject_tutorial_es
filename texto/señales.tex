@@ -11,6 +11,7 @@ Las señales son un medio de comunicación entre objetos. Se emiten cuando ocurr
 completa algo.
 
 Pasos para programar una señal:
+\vspace{-\topsep}
 \begin{enumerate}
   \tightlist
 \item Registro de la señal. Una señal pertenece a un objeto, por lo que el registro se
@@ -31,6 +32,7 @@ El contenido de esta sección se limita al mínimo necesario para escribir una s
 sencilla, y por lo tanto no es del todo preciso. Si se necesitara más  información, se
 podría consultar la guía de referencia de la API de \textsf{GObject}.
 Hay cuatro partes de la guía que describen las señales:
+\vspace{-\topsep}
 \begin{itemize}
   \tightlist
 \item \href{https://docs.gtk.org/gobject/concepts.html#signals}
@@ -81,6 +83,7 @@ g_signal_new ("div-by-zero",
               );
 \end{lstlisting}
 
+\vspace{-\topsep}
 \begin{itemize}
   \tightlist
 \item \texttt{t\_double\_signal} es una variable estática de tipo \texttt{guint}, que es equivalente a \texttt{unsigned int}. La función \texttt{g\_signal\_new} retorna este tipo a la variable que almacena la señal. 
@@ -113,6 +116,7 @@ g_signal_new ("div-by-zero",
 \subsection{Manejador de señal}
 Un manejador de señal es una función que se ejecuta cuando se emite una cierta señal.
 Los manejadores tienen dos parámetros:
+\vspace{-\topsep}
 \begin{itemize}
   \tightlist
 \item La instancia a la que pertenece la señal.
@@ -155,6 +159,7 @@ Una señal y un manejador se conectan mediante la función \texttt{g\_signal\_co
   g_signal_connect (self, "div-by-zero", G_CALLBACK (div_by_zero_cb), NULL);
 \end{lstlisting}
 
+\vspace{-\topsep}
 \begin{itemize}
   \tightlist
 \item El primer argumento, \texttt{self}, es la instancia a la que se conecta la señal.
@@ -181,7 +186,7 @@ el próximo ejemplo de aplicación que usa el tipo \textsf{TDouble}:
     return t_double_new (self->value / value);
   }
 \end{lstlisting}
-
+\vspace{-\topsep}
 \begin{itemize}
   \tightlist
 \item El primer parámetro es la instancia que emite la señal.
@@ -908,6 +913,7 @@ referencia de GObject --
 Dicho orden depende de la bandera de señal que se active en \texttt{g\_signal\_new},
 \texttt{g\_signal\_new\_class\_handler}.
 Hay tres banderas que influyen en este orden:
+\vspace{-\topsep}
 \begin{itemize}
   \tightlist
 \item \texttt{G\_SIGNAL\_RUN\_FIRST}: el manejador de señal por defecto se ejecuta antes de cualquier otro manejador definido por el usuario.
