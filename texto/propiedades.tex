@@ -86,7 +86,7 @@ instancia que descienda de \textsf{GObject}. La explicación se divide en dos pa
   que se relacionan con \texttt{g\_object\_set} y \texttt{g\_object\_get}.
 \end{itemize}
 
-\section{\textsf{GParamSpec}}
+\subsection{\textsf{GParamSpec}}
 \textsf{GParamSpec} es un objeto fundamental. \textsf{GParamSpec} y \textsf{GObject}
 no tienen una relación padre-hijo. \textsf{GParamSpec} lleva la información de los
 parámetros. \textsf{"ParamSpec"} es una abreviatura de "\emph{Parameter Specification"}.
@@ -130,6 +130,49 @@ La instancia tiene la siguiente información:
   \end{itemize}
 \end{itemize}
 
+\textsf{GParamSpec} se usa para registrar propiedades de instancias \textsf{GObject}
+o descendientes de esta. Este código se extrae del ejemplo xx:
+\begin{lstlisting}[language=C]
+#define PROP_DOUBLE 1
+static GParamSpec *double_property = NULL;
+
+static void
+t_double_class_init (TDoubleClass *class) {
+  GObjectClass *gobject_class = G_OBJECT_CLASS (class);
+
+  gobject_class->set_property = t_double_set_property;
+  gobject_class->get_property = t_double_get_property;
+  double_property = g_param_spec_double ("value", "val", "Double value", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_DOUBLE, double_property);
+}
+\end{lstlisting}
+
+La variable \texttt{double\_property} es estática. Esta variable es una instancia de \texttt{GParamSpec}.
+
+La función \texttt{g\_object\_class\_install\_property} instala una propiedad.
+Se debe ejecutar después de que se hayan sobrescrito los métodos \texttt{set\_property}
+y \texttt{get\_property}. Estos métodos se explicarán más adelante. Los argumentos
+son la clase \texttt{TDoubleClass}, el identificador de la propiedad
+\texttt{PROP\_DOUBLE} y la instancia \texttt{GParamSpec}. El identificador de la
+propiedad se usa para identificar la propiedad en \textsf{tdouble.c} y es un entero
+positivo.
+
+\subsection{Sobrescritura de los métodos de clase \texttt{set\_property} y
+  \texttt{get\_property}}
+Los valores de las propiedades pueden diferir de una instancia a otra. Por lo tanto,
+el valor se almacena en cada una de las instancias, independientemente del resto de
+las demás.
+
+En la función \texttt{g\_object\_set} se presenta un valor como argumento para
+almacenarlo. Pero, ¿cómo sabe esta función en qué instancia se almacena el valor?
+Esto se compila antes de que se haga el cree la instancia. Así, no sabe en absoluto
+en qué instancia se almacenará. Esa parte se tendrá que programar cuando se
+diseñe el objeto a través de la sobrescritura.
+
+La función \texttt{g\_object\_set} primero comprueba la propiedad y el valor, después
+crea un valor genérico \texttt{GValue} para la propiedad. Finalmente, llama a una
+función cuyo puntero se pasa por \texttt{set\_property} en la clase. Observar el
+siguiente diagrama.
 
 
 
